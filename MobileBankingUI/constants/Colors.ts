@@ -1,31 +1,41 @@
 // constants/Colors.ts
 export default {
   light: {
-    background: "#f8f9fa",
-    primary: "#4361ee",         // Bleu vif moderne
-    secondary: "#3a0ca3",       // Bleu foncé
-    text: "#2b2d42",            // Noir bleuté
-    secondaryText: "#6c757d",   // Gris texte secondaire
-    inputBackground: "#f1f3f5", // Fond des inputs
-    inputBorder: "#dee2e6",     // Bordure des inputs
-    success: "#4cc9f0",         // Bleu clair positif (pour trends up)
-    warning: "#f72585",         // Rose vif (pour trends down)
-    error: "#ef233c",           // Rouge pour les erreurs
-    card: "#ffffff",            // Fond des cartes
-    accent: "#7209b7",          // Couleur d'accentuation
+    background: "#ffffff",
+    primary: "#007AFF",
+    secondary: "#5AC8FA",
+    text: "#000000",
+    secondaryText: "#8E8E93",
+    inputBackground: "#F2F2F7",
+    inputBorder: "#C7C7CC",
+    success: "#34C759",
+    warning: "#FF9500",
+    error: "#FF3B30",
+    card: "#ffffff",
+    accent: "#5856D6",
+    
+    // Add these new properties
+    tabBarBackground: "#ffffff",
+    tabBarActiveTint: "#007AFF",
+    tabBarInactiveTint: "#8E8E93",
   },
   dark: {
-    background: "#121212",
-    primary: "#4895ef",
-    secondary: "#3f37c9",
-    text: "#f8f9fa",
-    secondaryText: "#adb5bd",
-    inputBackground: "#2b2d42",
-    inputBorder: "#495057",
-    success: "#4cc9f0",
-    warning: "#f72585",
-    error: "#ff0033",
-    card: "#1e1e1e",
-    accent: "#b5179e",
+    background: "#000000",
+    primary: "#0A84FF",
+    secondary: "#5AC8FA",
+    text: "#ffffff",
+    secondaryText: "#98989D",
+    inputBackground: "#1C1C1E",
+    inputBorder: "#38383A",
+    success: "#30D158",
+    warning: "#FF9F0A",
+    error: "#FF453A",
+    card: "#1C1C1E",
+    accent: "#5856D6",
+    
+    // Add these new properties
+    tabBarBackground: "#1C1C1E",
+    tabBarActiveTint: "#0A84FF",
+    tabBarInactiveTint: "#98989D",
   },
 };
