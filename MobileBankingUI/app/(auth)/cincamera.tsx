@@ -9,6 +9,7 @@ export default function CameraCard() {
   const [permission, requestPermission] = useCameraPermissions();
   const [step, setStep] = useState<'front' | 'back' | 'done'>('front');
   const [frontPhoto, setFrontPhoto] = useState<any>(null);
+  const [cameraMode, setCameraMode] = useState<'normal' | 'selfie'>('normal'); 
   const [backPhoto, setBackPhoto] = useState<any>(null);
   const cameraRef = useRef<CameraView | null>(null);
   const router = useRouter();
@@ -65,8 +66,13 @@ export default function CameraCard() {
     }
   };
 
+  const switchCameraMode = (mode: 'normal' | 'selfie') => {
+    setCameraMode(mode);
+    setFacing(mode === 'selfie' ? 'front' : 'back');
+  };
+
   const handleNext = () => {
-    router.push("/(tabs)/verification");
+    router.push("/(auth)/verification");
   };
 
   return (
@@ -77,9 +83,23 @@ export default function CameraCard() {
             {step === 'front' ? 'Scan front side of the ID card' : 'Scan back side of the ID card'}
           </Text>
           <CameraView ref={cameraRef} facing={facing} style={styles.camera} />
+
+          {/* Switch camera button */}
+          <TouchableOpacity
+            style={styles.switchButton}
+            onPress={() =>
+              switchCameraMode(cameraMode === 'normal' ? 'selfie' : 'normal')
+            }
+          >
+            <Text style={styles.switchButtonText}>
+              Switch to {cameraMode === 'normal' ? 'Selfie' : 'Back'} Camera
+            </Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.button} onPress={handleTakePhoto}>
             <Text style={styles.buttonText}>Take a photo</Text>
           </TouchableOpacity>
+
           <TouchableOpacity style={styles.secondaryButton} onPress={handlePickFromGallery}>
             <Text style={styles.secondaryButtonText}>Import from gallery</Text>
           </TouchableOpacity>
@@ -139,6 +159,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     marginBottom: 20,
+  },
+  switchButton: {
+    marginBottom: 15,
+    padding: 10,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 30,
+    width: '90%',
+    alignItems: 'center',
+  },
+  switchButtonText: {
+    color: '#333',
+    fontSize: 16,
   },
   button: {
     backgroundColor: '#007AFF',

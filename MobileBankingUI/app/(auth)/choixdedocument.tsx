@@ -17,7 +17,7 @@ const ScanSelectionScreen = () => {
         {/* Passport Card */}
         <TouchableOpacity 
           style={styles.card}
-          onPress={() => router.push("/(tabs)/scanpassport")}
+          onPress={() => router.push("/(auth)/scanpassport")}
         >
           <View style={styles.cardIconContainer}>
             <Ionicons name="document" size={40} color="#1E90FF" />
@@ -29,7 +29,7 @@ const ScanSelectionScreen = () => {
         {/* ID Card */}
         <TouchableOpacity 
           style={styles.card}
-          onPress={() => router.push("/(tabs)/scancart")}
+          onPress={() => router.push("/(auth)/scancart")}
         >
           <View style={styles.cardIconContainer}>
             <Ionicons name="card" size={40} color="#1E90FF" />

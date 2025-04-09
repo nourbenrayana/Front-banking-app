@@ -27,24 +27,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="wallet"
-        options={{
-          title: "Wallet",
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Ionicons name="wallet-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="analytics"
-        options={{
-          title: "Analytics",
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Ionicons name="stats-chart-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",

@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from 'react-native';
 import LottieView from 'lottie-react-native';
+import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
 const SelfieVerificationScreen = () => {
+  const router = useRouter();
   return (
     <SafeAreaView style={styles.container}>
       {/* En-tête */}
@@ -48,9 +50,13 @@ const SelfieVerificationScreen = () => {
 
       {/* Bouton déplacé au bas */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.cameraButton}>
+      <TouchableOpacity
+          style={styles.cameraButton}
+          onPress={() => router.push("/(auth)/face-camera")}
+        >
           <Text style={styles.cameraButtonText}>Open Camera</Text>
-        </TouchableOpacity>
+      </TouchableOpacity>
+
       </View>
     </SafeAreaView>
   );

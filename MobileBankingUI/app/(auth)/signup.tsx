@@ -1,11 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
+import {
+  StyleSheet, Text, View, TextInput, TouchableOpacity,
+  SafeAreaView, Alert
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import { useRouter } from "expo-router";
-const router = useRouter();
 
 export default function SignUpScreen() {
+  const router = useRouter();
+
   const [formData, setFormData] = React.useState({
     fullName: '',
     email: '',
@@ -15,6 +19,7 @@ export default function SignUpScreen() {
   });
 
   const [errors, setErrors] = React.useState({
+    fullName: '',
     email: '',
     birthDate: '',
     phone: '',
@@ -23,25 +28,23 @@ export default function SignUpScreen() {
 
   const handleNumberInput = (name: string, value: string) => {
     if (/^\d*$/.test(value)) {
-      setFormData(prev => ({...prev, [name]: value}));
-      setErrors(prev => ({...prev, [name]: ''}));
+      setFormData(prev => ({ ...prev, [name]: value }));
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
   const handleDateInput = (value: string) => {
-    // Formatage automatique DD/MM/YYYY
     let formatted = value.replace(/[^0-9]/g, '');
-    
+
     if (formatted.length > 2) {
       formatted = formatted.slice(0, 2) + '/' + formatted.slice(2);
     }
     if (formatted.length > 5) {
       formatted = formatted.slice(0, 5) + '/' + formatted.slice(5, 9);
     }
-    
-    setFormData(prev => ({...prev, birthDate: formatted}));
-    
-    // Validation du format complet
+
+    setFormData(prev => ({ ...prev, birthDate: formatted }));
+
     if (formatted.length === 10) {
       const [day, month, year] = formatted.split('/');
       const isValidDate = !isNaN(new Date(`${year}-${month}-${day}`).getTime());
@@ -50,7 +53,7 @@ export default function SignUpScreen() {
         birthDate: isValidDate ? '' : 'Date invalide'
       }));
     } else {
-      setErrors(prev => ({...prev, birthDate: ''}));
+      setErrors(prev => ({ ...prev, birthDate: '' }));
     }
   };
 
@@ -60,7 +63,7 @@ export default function SignUpScreen() {
   };
 
   const handleEmailChange = (value: string) => {
-    setFormData(prev => ({...prev, email: value}));
+    setFormData(prev => ({ ...prev, email: value }));
     setErrors(prev => ({
       ...prev,
       email: value && !validateEmail(value) ? 'Email doit contenir @ et un domaine valide' : ''
@@ -70,31 +73,33 @@ export default function SignUpScreen() {
   const validateForm = () => {
     let isValid = true;
     const newErrors = {
+      fullName: '',
       email: '',
       birthDate: '',
       phone: '',
       idNumber: ''
     };
 
-    // Validation email
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Nom complet requis';
+      isValid = false;
+    }
+
     if (!formData.email || !validateEmail(formData.email)) {
       newErrors.email = 'Email invalide';
       isValid = false;
     }
 
-    // Validation date de naissance
     if (!/^\d{2}\/\d{2}\/\d{4}$/.test(formData.birthDate)) {
       newErrors.birthDate = 'Format DD/MM/YYYY requis';
       isValid = false;
     }
 
-    // Validation téléphone
     if (!formData.phone || formData.phone.length < 8) {
       newErrors.phone = 'Numéro invalide (min 8 chiffres)';
       isValid = false;
     }
 
-    // Validation carte d'identité
     if (!formData.idNumber || formData.idNumber.length < 5) {
       newErrors.idNumber = 'Numéro invalide (min 5 chiffres)';
       isValid = false;
@@ -104,19 +109,37 @@ export default function SignUpScreen() {
     return isValid;
   };
 
-  const handleSubmit = () => {
-    if (validateForm()) {
-      console.log('Form data submitted:', formData);
-      Alert.alert('Succès', 'Inscription réussie!');
-      // Soumission au backend ici
-    } else {
-      Alert.alert('Erreur', 'Veuillez corriger les erreurs');
+  const handleSignUp = async () => {
+    if (!validateForm()) {
+      Alert.alert('Erreur', 'Veuillez remplir tous les champs correctement.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://192.168.1.29:3000/api/users/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        Alert.alert('Erreur', data.error || 'Erreur lors de l’inscription');
+      } else {
+        Alert.alert('Succès', 'Inscription réussie!');
+        router.push("/(auth)/get-started");
+      }
+    } catch (error) {
+      console.error('Erreur réseau:', error);
+      Alert.alert('Erreur', 'Impossible de contacter le serveur.');
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Animation Lottie */}
       <View style={styles.animationContainer}>
         <LottieView
           source={require('../../assets/animations/signup-animation.json')}
@@ -132,22 +155,21 @@ export default function SignUpScreen() {
       </View>
 
       <View style={styles.form}>
-        {/* Champ Nom complet */}
         <View style={styles.inputContainer}>
           <Ionicons name="person-outline" size={20} color="#2E86DE" style={styles.icon} />
-          <TextInput 
+          <TextInput
             style={styles.input}
             placeholder="Full Name"
             placeholderTextColor="#888"
             value={formData.fullName}
-            onChangeText={(text) => setFormData(prev => ({...prev, fullName: text}))}
+            onChangeText={(text) => setFormData(prev => ({ ...prev, fullName: text }))}
           />
         </View>
+        {errors.fullName ? <Text style={styles.errorText}>{errors.fullName}</Text> : null}
 
-        {/* Champ Email */}
         <View style={styles.inputContainer}>
           <Ionicons name="mail-outline" size={20} color="#2E86DE" style={styles.icon} />
-          <TextInput 
+          <TextInput
             style={styles.input}
             placeholder="Email (ex: user@example.com)"
             placeholderTextColor="#888"
@@ -159,10 +181,9 @@ export default function SignUpScreen() {
         </View>
         {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
-        {/* Champ Téléphone */}
         <View style={styles.inputContainer}>
           <Ionicons name="call-outline" size={20} color="#2E86DE" style={styles.icon} />
-          <TextInput 
+          <TextInput
             style={styles.input}
             placeholder="Phone Number "
             placeholderTextColor="#888"
@@ -174,10 +195,9 @@ export default function SignUpScreen() {
         </View>
         {errors.phone ? <Text style={styles.errorText}>{errors.phone}</Text> : null}
 
-        {/* Champ Date de naissance */}
         <View style={styles.inputContainer}>
           <Ionicons name="calendar-outline" size={20} color="#2E86DE" style={styles.icon} />
-          <TextInput 
+          <TextInput
             style={styles.input}
             placeholder="Date of Birth (DD/MM/YYYY)"
             placeholderTextColor="#888"
@@ -189,10 +209,9 @@ export default function SignUpScreen() {
         </View>
         {errors.birthDate ? <Text style={styles.errorText}>{errors.birthDate}</Text> : null}
 
-        {/* Champ Carte d'identité */}
         <View style={styles.inputContainer}>
           <Ionicons name="card-outline" size={20} color="#2E86DE" style={styles.icon} />
-          <TextInput 
+          <TextInput
             style={styles.input}
             placeholder="ID Card Number"
             placeholderTextColor="#888"
@@ -205,10 +224,9 @@ export default function SignUpScreen() {
         {errors.idNumber ? <Text style={styles.errorText}>{errors.idNumber}</Text> : null}
       </View>
 
-      {/* Bouton Next */}
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.nextButton}
-        onPress={() => router.push("/(tabs)/Get Started")}
+        onPress={handleSignUp}
       >
         <Text style={styles.nextButtonText}>Next</Text>
         <Ionicons name="arrow-forward" size={20} color="white" />

@@ -1,10 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from 'react-native';
+import { useRouter } from "expo-router";
 import LottieView from 'lottie-react-native';
 
-import { useRouter } from "expo-router";
 const router = useRouter();
-
 const { width, height } = Dimensions.get('window');
 
 const PassportScanScreen = () => {
@@ -12,7 +11,7 @@ const PassportScanScreen = () => {
     <SafeAreaView style={styles.container}>
       {/* En-tête */}
       <View style={styles.header}>
-        <Text style={styles.title}>Scan cart</Text>
+        <Text style={styles.title}>Scan Passport</Text>
         <Text style={styles.instructions}>
           Now place your phone directly on top of your passport
           {'\n'}so we can connect securely
@@ -21,17 +20,17 @@ const PassportScanScreen = () => {
 
       {/* Conteneur de l'animation Lottie */}
       <View style={styles.animationContainer}>
-        <LottieView
-          source={require('../../assets/animations/Main Scene.json')}
-          autoPlay
-          loop
+        <LottieView 
+          source={require('../../assets/animations/scanpassport.json')} 
+          autoPlay 
+          loop 
           style={styles.animation}
         />
       </View>
 
       {/* Bouton de scan */}
       <TouchableOpacity style={styles.scanButton}
-      onPress={() => router.push("/(tabs)/cincamera")}>
+       onPress={() => router.push("/(auth)/camera")}>
         <Text style={styles.scanButtonText}>Scan Now</Text>
       </TouchableOpacity>
     </SafeAreaView>

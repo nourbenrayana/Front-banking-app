@@ -27,9 +27,11 @@ const VerificationSuccessScreen = () => {
       </View>
 
       {/* Bouton en bas */}
-      <TouchableOpacity style={styles.continueButton}>
-        <Text style={styles.continueButtonText}
-        onPress={() => router.push("/(tabs)/detectface")}>Continue</Text>
+      <TouchableOpacity
+          style={styles.continueButton}
+          onPress={() => router.push("/(tabs)")}
+        >
+          <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </View>
   );
