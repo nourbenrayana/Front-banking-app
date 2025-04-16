@@ -72,7 +72,7 @@ export default function CameraCard() {
   };
 
   const handleNext = () => {
-    router.push("/(auth)/verification");
+    router.push("/(auth)/detectface");
   };
 
   return (

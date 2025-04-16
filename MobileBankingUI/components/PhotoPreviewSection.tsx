@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
+import { useUser } from '../context/UserContext'; 
 
 const blobToBase64 = (blob: Blob): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -26,13 +27,16 @@ const blobToBase64 = (blob: Blob): Promise<string> => {
     });
 };
 
+
 const PhotoPreviewSection = ({
     photo,
     handleRetakePhoto,
 }: {
+    
     photo: CameraCapturedPicture;
     handleRetakePhoto: () => void;
 }) => {
+    const { userData } = useUser(); // accès à userId
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -49,15 +53,16 @@ const PhotoPreviewSection = ({
             const cleanUri = Platform.OS === 'android' ? photo.uri : photo.uri.replace('file://', '');
 
             const formData = new FormData();
+            formData.append('userId', userData.userId);
             formData.append('image', {
                 uri: cleanUri,
                 type: 'image/jpeg',
                 name: 'photo.jpg',
             } as any);
 
-            const backendResponse = await axios.post('http://192.168.1.29:5000/api/detect_face', formData, {
+            const backendResponse = await axios.post('http://192.168.1.21:5000/api/detect_face', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                responseType: 'blob',
+
             });
 
             const base64Image = await blobToBase64(backendResponse.data);

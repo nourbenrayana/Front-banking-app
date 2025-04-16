@@ -51,7 +51,7 @@ export default function SettingsScreen() {
         {
           icon: 'lock-closed' as IconName,
           name: 'Change PIN',
-          action: () => router.push('/(tabs)/changercodepin'), // ✅ Redirection ici
+          action: () => router.push('/changercodepin'), // ✅ Redirection ici
           type: 'button',
         },
         {

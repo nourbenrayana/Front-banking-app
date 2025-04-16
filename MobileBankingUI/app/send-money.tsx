@@ -9,11 +9,12 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
-import { RadioButton } from "react-native-paper";
-
-const currencyList = ["TND","BRL", "EUR", "USD", "GBP", "CHF", "SAR", "CAD", "AED", "SEK"];
+import LottieView from "lottie-react-native"; 
+import animationSource from "../assets/lotties/send-money.json";
+const currencyList = ["TND", "BRL", "EUR", "USD", "GBP", "CHF", "SAR", "CAD", "AED", "SEK"];
 
 const SendMoney = () => {
   const { nomComplet, rib } = useLocalSearchParams();
@@ -34,220 +35,170 @@ const SendMoney = () => {
   };
 
   return (
-    <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Send Money</Text>
-      </View>
+    <SafeAreaView style={styles.container}>
+      <LottieView
+        source={animationSource}
+        autoPlay
+        loop
+        style={styles.lottie}
+      />
+      <Text style={styles.title}>SEND MONEY</Text>
+      <Text style={styles.subtitle}>Transfer details</Text>
 
-      {/* Recipient Card */}
-      <View style={styles.card}>
-        <View style={styles.sectionHeader}>
-          <FontAwesome name="user" size={18} color="#6B7280" style={styles.icon} />
-          <Text style={styles.sectionTitle}>Recipient</Text>
+      <ScrollView keyboardShouldPersistTaps="handled">
+        {/* Recipient Card */}
+        <View style={styles.infoContainer}>
+          <FontAwesome name="user" size={20} color="#2E86DE" style={styles.icon} />
+          <Text style={styles.infoText}>{nomComplet}</Text>
         </View>
-        <View style={styles.recipientInfo}>
-          <Text style={styles.recipientName}>{nomComplet}</Text>
-          <View style={styles.ribContainer}>
-            <MaterialCommunityIcons name="credit-card" size={16} color="#9CA3AF" />
-            <Text style={styles.ribText}>RIB ending with ••••{rib?.slice(-4)}</Text>
-          </View>
-        </View>
-      </View>
 
-      {/* Amount Input */}
-      <View style={styles.card}>
-        <View style={styles.sectionHeader}>
-          <MaterialCommunityIcons name="cash" size={18} color="#6B7280" style={styles.icon} />
-          <Text style={styles.sectionTitle}>Amount</Text>
+        <View style={styles.infoContainer}>
+          <MaterialCommunityIcons name="credit-card" size={20} color="#2E86DE" style={styles.icon} />
+          <Text style={styles.infoText}>RIB ending with ••••{rib?.slice(-4)}</Text>
         </View>
-        <View style={styles.amountInputContainer}>
-          <Text style={styles.currencySymbol}>{selectedCurrency}</Text>
+
+        {/* Amount Input */}
+        <View style={styles.inputContainer}>
+          <MaterialCommunityIcons name="cash" size={20} color="#2E86DE" style={styles.icon} />
           <TextInput
-            style={styles.amountInput}
-            placeholder="0.00"
-            placeholderTextColor="#9CA3AF"
+            style={styles.input}
+            placeholder="Amount"
             keyboardType="decimal-pad"
             value={amount}
             onChangeText={setAmount}
-            autoFocus={true}
           />
         </View>
-      </View>
 
-      {/* Currency Selector */}
-      <View style={styles.card}>
-        <View style={styles.sectionHeader}>
-          <MaterialCommunityIcons name="earth" size={18} color="#6B7280" style={styles.icon} />
-          <Text style={styles.sectionTitle}>Currency</Text>
-        </View>
-        <TouchableOpacity 
-          style={styles.currencySelector} 
+        {/* Currency Selector */}
+        <TouchableOpacity
+          style={styles.inputContainer}
           onPress={() => setModalVisible(true)}
-          activeOpacity={0.7}
         >
-          <Text style={styles.currencyText}>{selectedCurrency}</Text>
-          <MaterialCommunityIcons name="chevron-down" size={20} color="#6B7280" />
+          <MaterialCommunityIcons name="earth" size={20} color="#2E86DE" style={styles.icon} />
+          <Text style={[styles.input, { paddingTop: 2 }]}>{selectedCurrency}</Text>
+          <MaterialCommunityIcons name="chevron-down" size={20} color="#2E86DE" />
         </TouchableOpacity>
-      </View>
 
-      {/* Currency Selection Modal */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Select Currency</Text>
-            <ScrollView style={styles.currencyList}>
-              {currencyList.map((currency) => (
-                <TouchableOpacity
-                  key={currency}
-                  style={[
-                    styles.currencyItem,
-                    selectedCurrency === currency && styles.selectedCurrencyItem
-                  ]}
-                  onPress={() => {
-                    setSelectedCurrency(currency);
-                    setModalVisible(false);
-                  }}
-                  activeOpacity={0.6}
-                >
-                  <Text style={[
-                    styles.currencyItemText,
-                    selectedCurrency === currency && styles.selectedCurrencyText
-                  ]}>
-                    {currency}
-                  </Text>
-                  {selectedCurrency === currency && (
-                    <MaterialCommunityIcons name="check" size={20} color="#4F46E5" />
-                  )}
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-            <TouchableOpacity
-              style={styles.modalCloseButton}
-              onPress={() => setModalVisible(false)}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.modalCloseButtonText}>Close</Text>
-            </TouchableOpacity>
+        {/* Modal pour sélectionner la devise */}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Select Currency</Text>
+              <ScrollView>
+                {currencyList.map((currency) => (
+                  <TouchableOpacity
+                    key={currency}
+                    style={[
+                      styles.currencyItem,
+                      selectedCurrency === currency && styles.selectedCurrencyItem,
+                    ]}
+                    onPress={() => {
+                      setSelectedCurrency(currency);
+                      setModalVisible(false);
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.currencyText,
+                        selectedCurrency === currency && styles.selectedCurrencyText,
+                      ]}
+                    >
+                      {currency}
+                    </Text>
+                    {selectedCurrency === currency && (
+                      <MaterialCommunityIcons name="check" size={20} color="#2E86DE" />
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <TouchableOpacity
+                style={styles.modalCloseButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.modalCloseText}>Close</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
 
-      {/* Confirm Button */}
-      <TouchableOpacity 
-        style={[
-          styles.confirmButton,
-          !amount && styles.disabledButton
-        ]} 
-        onPress={handleConfirm}
-        disabled={!amount}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.confirmButtonText}>Confirm Transfer</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        {/* Confirm Button */}
+        <TouchableOpacity
+          style={[styles.confirmButton, !amount && styles.disabledButton]}
+          onPress={handleConfirm}
+          disabled={!amount}
+        >
+          <Text style={styles.confirmButtonText}>Confirm Transfer</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
-    paddingHorizontal: 16,
+    padding: 25,
+    justifyContent: "center", // Centre verticalement
   },
-  header: {
-    paddingVertical: 24,
-    paddingHorizontal: 8,
-  },
-  headerTitle: {
+  
+  title: {
     fontSize: 28,
-    fontWeight: "700",
-    color: "#111827",
+    fontWeight: "bold",
+    color: "#2E86DE",
+    marginBottom: 5,
+    textAlign: "center",
   },
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+  subtitle: {
+    fontSize: 16,
+    color: "#2E86DE",
+    fontWeight: "500",
+    marginBottom: 25,
+    textAlign: "center",
   },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#6B7280",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  icon: {
-    marginRight: 8,
-  },
-  recipientInfo: {
-    paddingLeft: 6,
-  },
-  recipientName: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 4,
-  },
-  ribContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  ribText: {
-    fontSize: 14,
-    color: "#9CA3AF",
-    marginLeft: 6,
-  },
-  amountInputContainer: {
+  inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-    paddingBottom: 8,
-    marginLeft: 6,
+    borderBottomColor: "#2E86DE",
+    marginBottom: 20,
+    paddingVertical: 6,
   },
-  currencySymbol: {
-    fontSize: 24,
-    fontWeight: "600",
-    color: "#111827",
-    marginRight: 8,
-  },
-  amountInput: {
+  input: {
     flex: 1,
-    fontSize: 24,
-    fontWeight: "600",
-    color: "#111827",
-    paddingVertical: 8,
-  },
-  currencySelector: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#F3F4F6",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginLeft: 6,
-  },
-  currencyText: {
+    height: 40,
     fontSize: 16,
-    fontWeight: "600",
-    color: "#111827",
+    color: "#333",
+    marginLeft: 10,
+  },
+  icon: {
+    width: 24,
+    textAlign: "center",
+  },
+  confirmButton: {
+    backgroundColor: "#2E86DE",
+    padding: 15,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 30,
+    elevation: 3,
+    shadowColor: "#2E86DE",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  confirmButtonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  disabledButton: {
+    backgroundColor: "#B0C4DE",
   },
   modalOverlay: {
     flex: 1,
@@ -269,9 +220,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: "center",
   },
-  currencyList: {
-    marginBottom: 16,
-  },
   currencyItem: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -279,51 +227,57 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: "#E5E7EB",
   },
   selectedCurrencyItem: {
-    backgroundColor: "#F5F3FF",
+    backgroundColor: "#EAF2FB",
   },
-  currencyItemText: {
+  currencyText: {
     fontSize: 16,
     color: "#374151",
   },
   selectedCurrencyText: {
-    color: "#4F46E5",
+    color: "#2E86DE",
     fontWeight: "600",
   },
   modalCloseButton: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: "#2E86DE",
     borderRadius: 12,
-    padding: 16,
+    padding: 14,
     alignItems: "center",
+    marginTop: 10,
   },
-  modalCloseButtonText: {
+  modalCloseText: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
   },
-  confirmButton: {
-    backgroundColor: "#4F46E5",
-    borderRadius: 12,
-    padding: 18,
+  lottie: {
+    width: 200,
+    height: 200,
+    alignSelf: "center",
+    marginBottom: -20,
+  },
+  infoContainer: {
+    flexDirection: "row",
     alignItems: "center",
-    marginVertical: 24,
-    shadowColor: "#4F46E5",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    backgroundColor: "#F5F9FF",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#2E86DE",
   },
-  disabledButton: {
-    backgroundColor: "#E5E7EB",
-    shadowColor: "transparent",
-  },
-  confirmButtonText: {
-    color: "#FFFFFF",
+  
+  infoText: {
     fontSize: 16,
-    fontWeight: "600",
+    color: "#2E86DE",
+    fontWeight: "500",
+    marginLeft: 10,
+    flexShrink: 1,
   },
+  
+  
 });
 
 export default SendMoney;

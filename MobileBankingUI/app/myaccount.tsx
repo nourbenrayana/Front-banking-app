@@ -1,36 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useUser } from '../context/UserContext';
 
-// Simulate a banking API
-const fetchBankData = async () => {
-  return new Promise(resolve =>
-    setTimeout(() =>
-      resolve({
-        accountNumber: '20233339',
-        accountType: 'Checking Account',
-        bankName: 'CaixaBank, S.A.',
-        branch: 'Main Branch',
-        balance: '15,450.00 €',
-        currency: 'EUR',
-        clientSince: '15/02/2018',
-        status: 'Active',
-        website: 'https://www.caixabank.com'
-      }), 1000));
+// Informations fixes de la banque
+const bankInfo = {
+  bankName: 'CaixaBank, S.A.',
+  branch: 'Main Branch',
+  clientSince: '15/02/2018',
+  status: 'Active',
+  website: 'https://www.caixabank.com'
 };
 
 export default function MyAccountScreen() {
-  const [bankData, setBankData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      const data = await fetchBankData();
-      setBankData(data);
-      setLoading(false);
-    };
-    loadData();
-  }, []);
+  const [loading, setLoading] = useState(false); // Maintenant inutile mais gardé pour structure
+  const { userData, accountData } = useUser();
 
   if (loading) {
     return (
@@ -50,27 +34,29 @@ export default function MyAccountScreen() {
 
       {/* User Info */}
       <View style={styles.card}>
-        <Text style={styles.userName}>Shakhpur Rahman</Text>
+        <Text style={styles.userName}>{userData.fullName}</Text>
 
         <View style={styles.infoGrid}>
           <View style={styles.infoItem}>
             <Text style={styles.infoLabel}>Account Number</Text>
-            <Text style={styles.infoValue}>{bankData.accountNumber}</Text>
+            <Text style={styles.infoValue}>{accountData.accountNumber}</Text>
           </View>
 
           <View style={styles.infoItem}>
             <Text style={styles.infoLabel}>Balance</Text>
-            <Text style={[styles.infoValue, styles.balance]}>{bankData.balance}</Text>
+            <Text style={[styles.infoValue, styles.balance]}>
+              {Number(accountData.balance).toFixed(2)} €
+            </Text>
           </View>
 
           <View style={styles.infoItem}>
             <Text style={styles.infoLabel}>Account Type</Text>
-            <Text style={styles.infoValue}>{bankData.accountType}</Text>
+            <Text style={styles.infoValue}>{accountData.accountType}</Text>
           </View>
 
           <View style={styles.infoItem}>
             <Text style={styles.infoLabel}>Currency</Text>
-            <Text style={styles.infoValue}>{bankData.currency}</Text>
+            <Text style={styles.infoValue}>{accountData.currency}</Text>
           </View>
         </View>
       </View>
@@ -83,7 +69,7 @@ export default function MyAccountScreen() {
           <Ionicons name="business" size={18} color="#1E90FF" style={styles.detailIcon} />
           <View>
             <Text style={styles.detailLabel}>Bank</Text>
-            <Text style={styles.detailValue}>{bankData.bankName}</Text>
+            <Text style={styles.detailValue}>{bankInfo.bankName}</Text>
           </View>
         </View>
 
@@ -91,7 +77,7 @@ export default function MyAccountScreen() {
           <Ionicons name="location" size={18} color="#1E90FF" style={styles.detailIcon} />
           <View>
             <Text style={styles.detailLabel}>Branch</Text>
-            <Text style={styles.detailValue}>{bankData.branch}</Text>
+            <Text style={styles.detailValue}>{bankInfo.branch}</Text>
           </View>
         </View>
 
@@ -99,19 +85,19 @@ export default function MyAccountScreen() {
           <Ionicons name="calendar" size={18} color="#1E90FF" style={styles.detailIcon} />
           <View>
             <Text style={styles.detailLabel}>Client Since</Text>
-            <Text style={styles.detailValue}>{bankData.clientSince}</Text>
+            <Text style={styles.detailValue}>{bankInfo.clientSince}</Text>
           </View>
         </View>
 
         <TouchableOpacity
           style={styles.detailItem}
-          onPress={() => Linking.openURL(bankData.website)}
+          onPress={() => Linking.openURL(bankInfo.website)}
         >
           <Ionicons name="globe-outline" size={18} color="#1E90FF" style={styles.detailIcon} />
           <View>
             <Text style={styles.detailLabel}>Website</Text>
-            <Text style={[styles.detailValue, { color: '#1E90FF', textDecorationLine: 'underline' }]} >
-              www.caixabank.com
+            <Text style={[styles.detailValue, { color: '#1E90FF', textDecorationLine: 'underline' }]}>
+              {bankInfo.website.replace('https://', '')}
             </Text>
           </View>
         </TouchableOpacity>
@@ -121,7 +107,7 @@ export default function MyAccountScreen() {
       <View style={[styles.card, styles.statusCard]}>
         <View style={styles.statusBadge}>
           <Ionicons name="checkmark-circle" size={18} color="#FFF" />
-          <Text style={styles.statusText}>{bankData.status}</Text>
+          <Text style={styles.statusText}>{bankInfo.status}</Text>
         </View>
         <Text style={styles.statusMessage}>Your account is in good standing and active</Text>
       </View>
@@ -191,13 +177,13 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#2C3E50',
+    fontWeight:'500',
+    color: '#000000',
   },
   balance: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1E90FF',
+    fontSize: 16,
+    fontWeight:'500',
+    color: '#000000',
   },
   sectionTitle: {
     fontSize: 18,

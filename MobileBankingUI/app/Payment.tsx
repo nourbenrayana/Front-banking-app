@@ -7,18 +7,17 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  SafeAreaView,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FontAwesome, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
-import CountryPicker, { Country, CountryCode } from 'react-native-country-picker-modal';
 
 const Payment = () => {
   const router = useRouter();
   const [fullName, setFullName] = useState('');
   const [bankAccount, setBankAccount] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [countryCode, setCountryCode] = useState<CountryCode>('TN');
-  const [country, setCountry] = useState<Country | null>(null);
 
   const handleAdd = () => {
     if (!bankAccount) {
@@ -32,183 +31,166 @@ const Payment = () => {
         nomComplet: fullName,
         rib: bankAccount,
         telephone: phoneNumber,
-        countryCode
       },
     } as any);
   };
 
   return (
-    <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Add Recipient</Text>
-      </View>
-
-      {/* Full Name */}
-      <View style={styles.card}>
-        <View style={styles.sectionHeader}>
-          <FontAwesome name="user" size={18} color="#6B7280" style={styles.icon} />
-          <Text style={styles.sectionTitle}>Full Name</Text>
-        </View>
-        <TextInput
-          style={styles.input}
-          placeholder="Account holder's full name"
-          value={fullName}
-          onChangeText={setFullName}
-        />
-      </View>
-
-      {/* Bank Account */}
-      <View style={styles.card}>
-        <View style={styles.sectionHeader}>
-          <MaterialCommunityIcons name="bank" size={18} color="#6B7280" style={styles.icon} />
-          <Text style={styles.sectionTitle}>Bank Account (RIB) *</Text>
-        </View>
-        <TextInput
-          style={styles.input}
-          value={bankAccount}
-          onChangeText={setBankAccount}
-          keyboardType="numeric"
-          placeholder="Enter RIB number"
-        />
-      </View>
-
-      {/* Phone Number */}
-      <View style={styles.card}>
-        <View style={styles.sectionHeader}>
-          <Ionicons name="call-outline" size={18} color="#6B7280" style={styles.icon} />
-          <Text style={styles.sectionTitle}>Phone Number (Optional)</Text>
-        </View>
-        <TextInput
-          style={styles.input}
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-          keyboardType="phone-pad"
-          placeholder="Enter phone number"
-        />
-      </View>
-
-      {/* Country Picker */}
-      <View style={styles.card}>
-        <View style={styles.sectionHeader}>
-          <Ionicons name="globe-outline" size={18} color="#6B7280" style={styles.icon} />
-          <Text style={styles.sectionTitle}>Country</Text>
-        </View>
-        <View style={styles.countryPicker}>
-          <CountryPicker
-            withFilter
-            withFlag
-            withCountryNameButton
-            withAlphaFilter
-            withCallingCode
-            countryCode={countryCode}
-            onSelect={(country) => {
-              setCountryCode(country.cca2);
-              setCountry(country);
-            }}
-          />
-          <Text style={styles.countryText}>
-            {typeof country?.name === 'object' ? country.name.common : 'Select a country'}
-          </Text>
-        </View>
-      </View>
-
-      {/* Add Button */}
-      <TouchableOpacity
-        style={[styles.confirmButton, !bankAccount && styles.disabledButton]}
-        onPress={handleAdd}
-        disabled={!bankAccount}
-        activeOpacity={0.8}
+    <SafeAreaView style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent} 
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.confirmButtonText}>Add</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <View style={styles.header}>
+          <Text style={styles.title}>ADD RECIPIENT</Text>
+          <Text style={styles.subtitle}>Enter Payment Details</Text>
+        </View>
+
+        <View style={styles.formContainer}>
+          {/* Full Name */}
+          <View style={styles.inputContainer}>
+            <FontAwesome name="user" size={20} color="#2E86DE" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Full Name"
+              value={fullName}
+              onChangeText={setFullName}
+              placeholderTextColor="#999"
+            />
+          </View>
+
+          {/* Spacer */}
+          <View style={styles.spacer} />
+
+          {/* Bank Account */}
+          <View style={styles.inputContainer}>
+            <MaterialCommunityIcons name="bank" size={20} color="#2E86DE" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Bank Account (RIB) *"
+              keyboardType="numeric"
+              value={bankAccount}
+              onChangeText={setBankAccount}
+              placeholderTextColor="#999"
+            />
+          </View>
+
+          {/* Spacer */}
+          <View style={styles.spacer} />
+
+          {/* Phone Number */}
+          <View style={styles.inputContainer}>
+            <Ionicons name="call-outline" size={20} color="#2E86DE" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Phone Number (optional)"
+              keyboardType="phone-pad"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              placeholderTextColor="#999"
+            />
+          </View>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.addButton, !bankAccount && styles.disabledButton]}
+            onPress={handleAdd}
+            disabled={!bankAccount}
+          >
+            <Text style={styles.addButtonText}>Add</Text>
+            <Ionicons name="arrow-forward" size={20} color="white" style={{ marginLeft: 8 }} />
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
-    paddingHorizontal: 16,
+    backgroundColor: '#fff',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 25,
+    paddingVertical: 30,
+    justifyContent: 'space-between',
   },
   header: {
-    paddingVertical: 24,
-    paddingHorizontal: 8,
+    marginTop:50,
   },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#111827",
+  title: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#2E86DE',
+    textAlign: 'center',
+    marginBottom: 8,
   },
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#6B7280",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  icon: {
-    marginRight: 8,
-  },
-  input: {
+  subtitle: {
     fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 12,
-    color: "#111827",
+    color: '#2E86DE',
+    fontWeight: '500',
+    textAlign: 'center',
   },
-  countryPicker: {
+  formContainer: {
+    marginBottom: 100,
+  },
+  inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    backgroundColor: '#F9F9F9',
+    borderColor: '#2E86DE',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
     borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingVertical: Platform.OS === 'ios' ? 16 : 12,
+    shadowColor: '#2E86DE',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  countryText: {
-    marginLeft: 12,
+  input: {
+    flex: 1,
     fontSize: 16,
-    color: "#111827",
+    color: '#333',
+    marginLeft: 12,
+    paddingVertical: Platform.OS === 'ios' ? 2 : 0,
   },
-  confirmButton: {
-    backgroundColor: "#4F46E5",
-    borderRadius: 12,
-    padding: 18,
-    alignItems: "center",
-    marginVertical: 24,
-    shadowColor: "#4F46E5",
+  icon: {
+    width: 24,
+    textAlign: 'center',
+  },
+  spacer: {
+    height: 20,
+  },
+  buttonContainer: {
+    marginTop: 20,
+  },
+  addButton: {
+    backgroundColor: '#2E86DE',
+    paddingVertical: 16,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    shadowColor: '#2E86DE',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  addButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   disabledButton: {
-    backgroundColor: "#E5E7EB",
-    shadowColor: "transparent",
-  },
-  confirmButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
+    backgroundColor: '#B0C4DE',
   },
 });
 

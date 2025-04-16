@@ -29,7 +29,7 @@ const VerificationSuccessScreen = () => {
       {/* Bouton en bas */}
       <TouchableOpacity
           style={styles.continueButton}
-          onPress={() => router.push("/(tabs)")}
+          onPress={() => router.push("/(auth)/BankInfoScreen")}
         >
           <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>

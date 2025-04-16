@@ -52,7 +52,7 @@ const SelfieVerificationScreen = () => {
       <View style={styles.footer}>
       <TouchableOpacity
           style={styles.cameraButton}
-          onPress={() => router.push("/(auth)/face-camera")}
+          onPress={() => router.push("/(auth)/facecamera")}
         >
           <Text style={styles.cameraButtonText}>Open Camera</Text>
       </TouchableOpacity>

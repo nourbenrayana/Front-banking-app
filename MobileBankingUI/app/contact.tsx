@@ -2,17 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Alert } from 'react-native';
+import { useUser } from '../context/UserContext';
 
 export default function ContactUsScreen() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const { userData } = useUser(); // Récupération des données utilisateur
   const [message, setMessage] = useState('');
 
   const handleSubmit = () => {
-    // Here you would add your form submission logic
+    // Ici vous ajouteriez votre logique d'envoi de formulaire
     Alert.alert('Message sent', 'We will contact you soon!');
-    setName('');
-    setEmail('');
     setMessage('');
   };
 
@@ -29,29 +27,23 @@ export default function ContactUsScreen() {
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>Send us a message</Text>
         
+        {/* Champ Nom (non modifiable) */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Full Name</Text>
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="Your name"
-            placeholderTextColor="#95a5a6"
-          />
+          <View style={[styles.input, styles.disabledInput]}>
+            <Text style={styles.disabledText}>{userData.fullName}</Text>
+          </View>
         </View>
         
+        {/* Champ Email (non modifiable) */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            placeholder="your@email.com"
-            placeholderTextColor="#95a5a6"
-          />
+          <View style={[styles.input, styles.disabledInput]}>
+            <Text style={styles.disabledText}>{userData.email}</Text>
+          </View>
         </View>
         
+        {/* Champ Message (seul champ modifiable) */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Message</Text>
           <TextInput
@@ -66,9 +58,9 @@ export default function ContactUsScreen() {
         </View>
 
         <TouchableOpacity 
-          style={styles.submitButton}
+          style={[styles.submitButton, !message && styles.disabledButton]}
           onPress={handleSubmit}
-          disabled={!name || !email || !message}
+          disabled={!message}
         >
           <Text style={styles.submitButtonText}>Send Message</Text>
           <Ionicons name="send" size={20} color="#FFF" />
@@ -144,26 +136,6 @@ export default function ContactUsScreen() {
           <Text style={styles.mapButtonText}>View on Map</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Opening Hours */}
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Opening Hours</Text>
-        
-        <View style={styles.scheduleItem}>
-          <Text style={styles.day}>Monday - Friday</Text>
-          <Text style={styles.hours}>9:00 AM - 6:00 PM</Text>
-        </View>
-        
-        <View style={styles.scheduleItem}>
-          <Text style={styles.day}>Saturday</Text>
-          <Text style={styles.hours}>9:00 AM - 1:00 PM</Text>
-        </View>
-        
-        <View style={styles.scheduleItem}>
-          <Text style={styles.day}>Sunday</Text>
-          <Text style={styles.hours}>Closed</Text>
-        </View>
-      </View>
     </ScrollView>
   );
 }
@@ -227,6 +199,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#2C3E50',
   },
+  disabledInput: {
+    backgroundColor: '#F0F4F9',
+    borderColor: '#E1ECFF',
+  },
+  disabledText: {
+    color: '#2C3E50',
+    fontSize: 16,
+  },
   multilineInput: {
     minHeight: 120,
     textAlignVertical: 'top',
@@ -239,6 +219,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
+  },
+  disabledButton: {
+    opacity: 0.7,
   },
   submitButtonText: {
     color: '#FFF',
@@ -284,21 +267,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginLeft: 10,
     textDecorationLine: 'underline',
-  },
-  scheduleItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E1ECFF',
-  },
-  day: {
-    fontSize: 16,
-    color: '#2C3E50',
-  },
-  hours: {
-    fontSize: 16,
-    color: '#2E86DE',
-    fontWeight: '500',
   },
 });

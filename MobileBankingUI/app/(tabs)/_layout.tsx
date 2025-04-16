@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons,FontAwesome } from "@expo/vector-icons";
+
 import { useColorScheme } from "react-native";
 import Colors from "../../constants/Colors";
 
@@ -33,6 +34,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <Ionicons name="person-outline" size={size} color={color} />
           ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -42,6 +44,17 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <MaterialIcons name="currency-exchange" size={size} color={color} />
           ),
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="card"
+        options={{
+          title: "Cards",
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+            <FontAwesome name="credit-card-alt" size={size} color={color} />
+          ),
+          headerShown: false,
         }}
       />
     </Tabs>

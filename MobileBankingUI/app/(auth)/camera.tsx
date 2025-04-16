@@ -1,12 +1,10 @@
 import { AntDesign } from '@expo/vector-icons';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
 import { useRef, useState } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { Button, StyleSheet, Text, TouchableOpacity, View, Image, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-
+import axios from 'axios';
 import { useRouter } from "expo-router";
-const router = useRouter();
-
 
 export default function Camera() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -14,7 +12,10 @@ export default function Camera() {
   const [photo, setPhoto] = useState<any>(null);
   const [isPhotoAccepted, setIsPhotoAccepted] = useState<boolean | null>(null);
   const cameraRef = useRef<CameraView | null>(null);
-  const [cameraMode, setCameraMode] = useState<'normal' | 'selfie'>('normal'); // Nouvel état pour le mode caméra
+  const [cameraMode, setCameraMode] = useState<'normal' | 'selfie'>('normal');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingResult, setProcessingResult] = useState<any>(null);
+  const router = useRouter();
 
   if (!permission) {
     return <View />;
@@ -52,6 +53,7 @@ export default function Camera() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
+      base64: true,
     });
 
     if (!result.canceled) {
@@ -63,15 +65,42 @@ export default function Camera() {
   const handleRetakePhoto = () => {
     setPhoto(null);
     setIsPhotoAccepted(null);
+    setProcessingResult(null);
   };
 
-  const handleAcceptPhoto = () => {
-    setIsPhotoAccepted(true);
+  const handleAcceptPhoto = async () => {
+    setIsProcessing(true);
+    try {
+      const formData = new FormData();
+      
+      // Utilisation directe de l'URI comme vous l'avez demandé
+      formData.append('image', {
+        uri: photo.uri,
+        type: 'image/jpeg',
+        name: 'passport.jpg',
+      } as any);
+      
+      // Envoi au backend Flask
+      const result = await axios.post('http://192.168.1.21:5000/process', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      setProcessingResult(result.data);
+      setIsPhotoAccepted(true);
+    } catch (error) {
+      console.error('Error processing image:', error);
+      setProcessingResult({ error: "Failed to process image" });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleRejectPhoto = () => {
     setIsPhotoAccepted(false);
     setPhoto(null);
+    setProcessingResult(null);
   };
 
   const switchCameraMode = (mode: 'normal' | 'selfie') => {
@@ -90,15 +119,46 @@ export default function Camera() {
               source={{ uri: photo.uri }}
             />
           </View>
+          
+          {isProcessing ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#007AFF" />
+              <Text style={styles.loadingText}>Processing image...</Text>
+            </View>
+          ) : processingResult ? (
+            <View style={styles.resultContainer}>
+              {processingResult.error ? (
+                <Text style={styles.errorText}>{processingResult.error}</Text>
+              ) : (
+                <>
+                  <Text style={styles.successText}>Image processed successfully!</Text>
+                  <Text style={styles.resultText}>Faces detected: {processingResult.faces_saved?.length || 0}</Text>
+                </>
+              )}
+            </View>
+          ) : null}
+          
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.retakeButton} onPress={handleRetakePhoto}>
               <Text style={styles.buttonText}>Retake</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.acceptButton} onPress={handleAcceptPhoto}>
-              <Text style={styles.buttonText}
-               onPress={() => router.push("/(auth)/detectface")}>Accept</Text>
+            <TouchableOpacity 
+              style={styles.acceptButton} 
+              onPress={handleAcceptPhoto}
+              disabled={isProcessing}
+            >
+              <Text style={styles.buttonText}>Process Image</Text>
             </TouchableOpacity>
           </View>
+          
+          {processingResult && !processingResult.error && (
+            <TouchableOpacity 
+              style={styles.nextButton}
+              onPress={() => router.push("/(auth)/detectface")}
+            >
+              <Text style={styles.nextButtonText}>Continue to Face Detection</Text>
+            </TouchableOpacity>
+          )}
         </View>
       ) : (
         <View style={styles.cameraContainer}>
@@ -140,8 +200,6 @@ export default function Camera() {
           </TouchableOpacity>
         </View>
       )}
-
-     
     </View>
   );
 }
@@ -286,10 +344,45 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  statusText: {
-    fontSize: 18,
-    color: 'green',
+  loadingContainer: {
+    marginVertical: 20,
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#007AFF',
+  },
+  resultContainer: {
+    marginVertical: 20,
+    padding: 15,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
+    width: '90%',
+  },
+  successText: {
+    color: '#34C759',
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  errorText: {
+    color: '#ff3b30',
+    fontWeight: 'bold',
+  },
+  resultText: {
+    color: '#333',
+  },
+  nextButton: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 30,
     marginTop: 20,
-    textAlign: 'center',
+    width: '90%',
+    alignItems: 'center',
+  },
+  nextButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

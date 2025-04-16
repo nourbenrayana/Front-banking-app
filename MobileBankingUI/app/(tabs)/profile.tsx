@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Alert, Tex
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router"; // ✅ Import router
+import { useUser } from '../../context/UserContext';
 
 const options = [
   { icon: "person-outline", text: "My account" },
@@ -18,6 +19,7 @@ export default function Profile() {
   const [image, setImage] = useState<string>("https://randomuser.me/api/portraits/men/1.jpg");
   const [userName, setUserName] = useState<string>("");
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
+  const { userData } = useUser();
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -59,26 +61,7 @@ export default function Profile() {
           <Image source={{ uri: image }} style={styles.avatar} />
         </TouchableOpacity>
 
-        {isEditingName ? (
-          <TextInput
-            style={styles.nameInput}
-            value={userName}
-            onChangeText={setUserName}
-            onSubmitEditing={handleNameSubmit}
-            onBlur={handleNameSubmit}
-            autoFocus
-            placeholder="Enter your name"
-            placeholderTextColor="#95a5a6"
-          />
-        ) : (
-          <TouchableOpacity onPress={handleNamePress}>
-            {userName ? (
-              <Text style={styles.name}>{userName}</Text>
-            ) : (
-              <Text style={styles.placeholderName}>Tap to add your name</Text>
-            )}
-          </TouchableOpacity>
-        )}
+        <Text style={styles.nameInput}>{userData.fullName}</Text>
       </View>
 
       {/* Options de menu */}
@@ -89,13 +72,13 @@ export default function Profile() {
             style={styles.menuItem}
             onPress={() => {
               if (item.text === "Settings") {
-                router.push("/(tabs)/settings"); // ✅ Redirection
+                router.push("/settings"); // ✅ Redirection
               } if (item.text === "Privacy policy") {
-                router.push("/(tabs)/privacy"); // ✅ Redirection
+                router.push("/privacy"); // ✅ Redirection
               } if (item.text === "My account") {
-                router.push("/(tabs)/myaccount"); // ✅ Redirection
+                router.push("/myaccount"); // ✅ Redirection
               } if (item.text === "Contact Us") {
-                router.push("/(tabs)/contact"); // ✅ Redirection pour Contact Us
+                router.push("/contact"); // ✅ Redirection pour Contact Us
               } 
               else {
                 console.log(`${item.text} pressed`);
@@ -175,8 +158,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     color: "#2C3E50",
-    borderBottomWidth: 1,
-    borderBottomColor: "#1E90FF",
     padding: 5,
     textAlign: 'center',
     width: '80%',
