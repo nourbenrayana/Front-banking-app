@@ -9,7 +9,7 @@ export default function Index() {
   useEffect(() => {
     if (!rootNavigationState?.key) return; // attendre que la navigation soit prête
 
-    router.replace('/(auth)/welcome' as never);
+    router.replace('/(auth)/welcome1' as never);
   }, [rootNavigationState]);
 
   return (

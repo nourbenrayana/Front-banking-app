@@ -35,9 +35,9 @@ const BillPaymentScreen = () => {
       icon: 'flash', 
       color: '#FFD700',
       companies: [
-        { id: '1', name: 'Light S.A.', logo: require('../../assets/images/light-logo.png') },
-        { id: '2', name: 'Enel Distribuição', logo: require('../../assets/images/enel-logo.png') },
-        { id: '3', name: 'Cemig', logo: require('../../assets/images/cemig-logo.png') },
+        { id: '1', name: 'Light S.A.', logo: require('../assets/images/logo.png') },
+        { id: '2', name: 'Enel Distribuição', logo: require('../assets/images/enel-logo.png') },
+        { id: '3', name: 'Cemig', logo: require('../assets/images/logo.png') },
       ]
     },
     { 
@@ -46,9 +46,9 @@ const BillPaymentScreen = () => {
       icon: 'water', 
       color: '#1E90FF',
       companies: [
-        { id: '4', name: 'CEDAE', logo: require('../../assets/images/cedae-logo.png') },
-        { id: '5', name: 'Sabesp', logo: require('../../assets/images/sabesp-logo.png') },
-        { id: '6', name: 'Copasa', logo: require('../../assets/images/copasa-logo.png') },
+        { id: '4', name: 'CEDAE', logo: require('../assets/images/cedae-logo.png') },
+        { id: '5', name: 'Sabesp', logo: require('../assets/images/logo.png') },
+        { id: '6', name: 'Copasa', logo: require('../assets/images/logo.png') },
       ]
     },
     { 
@@ -57,9 +57,9 @@ const BillPaymentScreen = () => {
       icon: 'fire', 
       color: '#FF6347',
       companies: [
-        { id: '7', name: 'Comgás', logo: require('../../assets/images/comgas-logo.png') },
-        { id: '8', name: 'Bahiagás', logo: require('../../assets/images/bahiagas-logo.png') },
-        { id: '9', name: 'SCGás', logo: require('../../assets/images/scgas-logo.png') },
+        { id: '7', name: 'Comgás', logo: require('../assets/images/comgas-logo.png') },
+        { id: '8', name: 'Bahiagás', logo: require('../assets/images/bahiagas-logo.png') },
+        { id: '9', name: 'SCGás', logo: require('../assets/images/scgas-logo.png') },
       ]
     },
   ];
@@ -129,7 +129,7 @@ const BillPaymentScreen = () => {
       {paymentSuccess ? (
         <View style={styles.successContainer}>
           <LottieView
-            source={require('../../assets/animations/validation.json')}
+            source={require('../assets/animations/verification.json')}
             autoPlay
             loop={true}
             style={styles.successAnimation}

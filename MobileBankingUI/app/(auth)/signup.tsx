@@ -112,7 +112,7 @@ export default function SignUpScreen() {
     }
   
     try {
-      const response = await fetch('http://192.168.1.21:3000/api/users/register', {
+      const response = await fetch('http://192.168.1.29:3000/api/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

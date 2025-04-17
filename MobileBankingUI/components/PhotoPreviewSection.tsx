@@ -60,7 +60,7 @@ const PhotoPreviewSection = ({
                 name: 'photo.jpg',
             } as any);
 
-            const backendResponse = await axios.post('http://192.168.1.21:5000/api/detect_face', formData, {
+            const backendResponse = await axios.post('http://192.168.1.29:5000/api/detect_face', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
 
             });

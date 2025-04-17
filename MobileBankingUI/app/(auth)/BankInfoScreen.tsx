@@ -23,7 +23,7 @@ export default function BankInfoScreen() {
   React.useEffect(() => {
     if (!userData?.userId) {
       Alert.alert('Error', 'Please login first');
-      router.replace('/(auth)/welcome');
+      router.replace('/(auth)/welcome1');
     }
   }, [userData]);
 
@@ -51,7 +51,7 @@ export default function BankInfoScreen() {
         ? userData.userId 
         : `users/${userData.userId}`;
   
-      const response = await fetch('http://192.168.1.21:3000/api/comptes', {
+      const response = await fetch('http://192.168.1.29:3000/api/comptes', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -78,8 +78,13 @@ export default function BankInfoScreen() {
         creditLimit: data.creditLimit || 0,
         accountNumber: bankAccount.numeroCompte,
         accountType: bankAccount.typeCompte,
-        currency: bankAccount.devise
+        currency: bankAccount.devise,
+        cardNumber: data.cardNumber || '',         // Valeur par défaut
+        expiryDate: data.expiryDate || '',         // Valeur par défaut
+        cardType: data.cardType || 'Visa',         // Ex : 'Visa' ou 'MasterCard'
+        status: data.status || 'active',           // Ex : 'active', 'inactive', etc.
       });
+      
       
       
       router.replace("/(tabs)");

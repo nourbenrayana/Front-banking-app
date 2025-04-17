@@ -1,11 +1,14 @@
-import { View, Text, Image, StyleSheet, SafeAreaView, Animated, Easing } from 'react-native';
+import { View, Text, Image, StyleSheet, SafeAreaView, Animated, Easing,TouchableOpacity  } from 'react-native';
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'expo-router';
+
 
 export default function WelcomeScreen() {
   // Animations
   const logoScale = useRef(new Animated.Value(0.8)).current;
   const textOpacity = useRef(new Animated.Value(0)).current;
   const textPosition = useRef(new Animated.Value(20)).current;
+  const router = useRouter();
 
   useEffect(() => {
     // Animation séquentielle
@@ -56,6 +59,14 @@ export default function WelcomeScreen() {
           Welcome to <Text style={styles.bankName}>CaixaBank</Text>
         </Text>
       </Animated.View>
+      <TouchableOpacity 
+        onPress={() => router.push('/started1')}
+        style={styles.button}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.buttonText}>Get Started</Text>
+      </TouchableOpacity>
+
     </SafeAreaView>
   );
 }
@@ -85,4 +96,23 @@ const styles = StyleSheet.create({
     fontSize: 34,
     letterSpacing: 1,
   },
+  button: {
+    marginTop: 40,
+    backgroundColor: '#2E86DE',
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: 'Inter_600SemiBold',
+  },
+  
 });

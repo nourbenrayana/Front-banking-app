@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Animated, Easing, Image } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useRouter } from 'expo-router';
 
 type RootStackParamList = {
   Started3: undefined;
@@ -15,6 +16,8 @@ const Started3Screen = ({ navigation }: Props) => {
   const imageSlide = new Animated.Value(-100);
   const contentSlide = new Animated.Value(50);
   const buttonScale = new Animated.Value(0.9);
+
+  const router = useRouter(); // Expo Router
 
   useEffect(() => {
     // Lancement des animations en parallèle
@@ -58,7 +61,9 @@ const Started3Screen = ({ navigation }: Props) => {
         duration: 400,
         useNativeDriver: true,
       })
-    ]).start(() => navigation.navigate('NextScreen'));
+    ]).start(() => {
+      router.push('/started4'); // Redirection après animation
+    });
   };
 
   return (
@@ -73,7 +78,7 @@ const Started3Screen = ({ navigation }: Props) => {
           }
         ]}>
           <Image
-            source={require('../../assets/images/started3.png')}
+            source={require('../assets/images/started4.png')}
             style={styles.image}
             resizeMode="contain"
           />

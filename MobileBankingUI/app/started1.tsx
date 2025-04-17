@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect ,useRef,} from 'react';
+import { useRouter } from 'expo-router';
 import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, Dimensions, Animated, Easing } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -10,6 +11,8 @@ type RootStackParamList = {
 type Props = NativeStackScreenProps<RootStackParamList, 'Started1'>;
 
 const { width } = Dimensions.get('window');
+const router = useRouter(); // Expo Router
+
 
 const Started1Screen = ({ navigation }: Props) => {
   // Animations
@@ -52,7 +55,9 @@ const Started1Screen = ({ navigation }: Props) => {
         duration: 300,
         useNativeDriver: true,
       })
-    ]).start(() => navigation.navigate('NextScreen'));
+    ]).start(() => {
+      router.push('/started2'); // Redirection après animation
+    });
   };
 
   return (
@@ -67,7 +72,7 @@ const Started1Screen = ({ navigation }: Props) => {
           }
         ]}>
           <Image
-            source={require('../../assets/images/started1.png')}
+            source={require('../assets/images/started1.png')}
             style={styles.illustration}
             resizeMode="contain"
           />
