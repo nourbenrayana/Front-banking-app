@@ -291,7 +291,8 @@ const ModernCardUI = () => {
       </ScrollView>
 
       {/* Action Button */}
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity style={styles.addButton}
+      onPress={() => router.push("/ajoutcart")}>
         <MaterialIcons name="add" size={28} color="white" />
         <Text style={styles.addButtonText}>Add a Card</Text>
       </TouchableOpacity>

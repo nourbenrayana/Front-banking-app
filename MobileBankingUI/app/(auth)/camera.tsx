@@ -5,6 +5,7 @@ import { Button, StyleSheet, Text, TouchableOpacity, View, Image, ActivityIndica
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { useRouter } from "expo-router";
+import config from '../../utils/config'
 
 export default function Camera() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -81,7 +82,7 @@ export default function Camera() {
       } as any);
       
       // Envoi au backend Flask
-      const result = await axios.post('http://192.168.1.21:5000/process', formData, {
+      const result = await axios.post(`${config.URL}/process`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -133,6 +134,16 @@ export default function Camera() {
                 <>
                   <Text style={styles.successText}>Image processed successfully!</Text>
                   <Text style={styles.resultText}>Faces detected: {processingResult.faces_saved?.length || 0}</Text>
+                  {processingResult.faces_saved?.map((base64Face: string, index: number) => (
+                  <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
+                    <Text>Face {index + 1}</Text>
+                    <Image
+                      source={{ uri: `data:image/png;base64,${base64Face}` }}
+                      style={{ width: 150, height: 150, borderRadius: 10 }}
+                      resizeMode="cover"
+                    />
+                  </View>
+                ))}
                 </>
               )}
             </View>

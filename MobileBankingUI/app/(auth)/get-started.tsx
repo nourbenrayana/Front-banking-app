@@ -27,8 +27,6 @@ const OnboardingScreen = () => {
           <Image source={passportImage} style={styles.stepImage} />
           <View style={styles.verticalDottedLine} />
           <Image source={selfieImage} style={styles.stepImage} />
-          <View style={styles.verticalDottedLine} />
-          <Entypo name="dots-three-horizontal" size={28} color="#FFA500" style={styles.passwordIcon} />
         </View>
 
         {/* Colonne des textes */}
@@ -37,7 +35,7 @@ const OnboardingScreen = () => {
           <View style={styles.textSpacer} />
           <Text style={styles.stepText}>Take Selfie</Text>
           <View style={styles.textSpacer} />
-          <Text style={styles.stepText}>Set Password</Text>
+
         </View>
       </View>
 

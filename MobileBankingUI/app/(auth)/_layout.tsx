@@ -5,9 +5,11 @@ export default function AuthLayout() {
     <Stack initialRouteName="welcome1" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="signup" />
       <Stack.Screen name="welcome1" />
+      <Stack.Screen name="LoginPinScreen" />
+      <Stack.Screen name="loginorsignup" />
+      <Stack.Screen name="SignupSuccessScreen" />
       <Stack.Screen name="BankInfoScreen" />
       <Stack.Screen name="get-started" />
-      <Stack.Screen name="pincode" />
       <Stack.Screen name="camera" />
       <Stack.Screen name="facecamera" />
       <Stack.Screen name="choixdedocument" />

@@ -7,6 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { useUser } from '../../context/UserContext';
+import config from '../../utils/config';
 
 export default function BankInfoScreen() {
   const router = useRouter();
@@ -15,7 +16,6 @@ export default function BankInfoScreen() {
   const [bankAccount, setBankAccount] = React.useState({
     typeCompte: 'Current',
     solde: '',
-    numeroCompte: '',
     devise: 'USD'
   });
 
@@ -29,11 +29,6 @@ export default function BankInfoScreen() {
 
   const handleSubmit = async () => {
     // Validation des champs
-    if (!bankAccount.solde || !bankAccount.numeroCompte) {
-      Alert.alert('Error', 'Please fill all required fields');
-      return;
-    }
-  
     const solde = parseFloat(bankAccount.solde);
     if (isNaN(solde)) {
       Alert.alert('Error', 'Please enter a valid amount');
@@ -51,7 +46,7 @@ export default function BankInfoScreen() {
         ? userData.userId 
         : `users/${userData.userId}`;
   
-      const response = await fetch('http://192.168.1.29:3000/api/comptes', {
+      const response = await fetch(`${config.BASE_URL}/api/comptes`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -59,8 +54,7 @@ export default function BankInfoScreen() {
         body: JSON.stringify({
           typeCompte: bankAccount.typeCompte,
           solde: solde,
-          userId: formattedUserId, // Use the properly formatted ID
-          numeroCompte: bankAccount.numeroCompte,
+          userId: formattedUserId,
           devise: bankAccount.devise
         })
       });
@@ -73,21 +67,18 @@ export default function BankInfoScreen() {
   
       Alert.alert('Success', 'Account created successfully!');
       setAccountData({
-        accountId: data.accountId || '',
-        balance: data.solde || solde,
+        accountId: data.compte?.id || '',
+        balance: data.compte?.solde || solde,
         creditLimit: data.creditLimit || 0,
-        accountNumber: bankAccount.numeroCompte,
-        accountType: bankAccount.typeCompte,
-        currency: bankAccount.devise,
-        cardNumber: data.cardNumber || '',         // Valeur par défaut
-        expiryDate: data.expiryDate || '',         // Valeur par défaut
-        cardType: data.cardType || 'Visa',         // Ex : 'Visa' ou 'MasterCard'
-        status: data.status || 'active',           // Ex : 'active', 'inactive', etc.
+        accountNumber: data.compte?.numeroCompte || '',  // récupéré du backend
+        accountType: data.compte?.typeCompte || bankAccount.typeCompte,
+        currency: data.compte?.devise || bankAccount.devise,
+        cardNumber: data.cardNumber || '',
+        expiryDate: data.expiryDate || '',
+        cardType: data.cardType || 'Visa',
+        status: data.compte?.statutCompte || 'active',
       });
-      
-      
-      
-      router.replace("/(tabs)");
+      router.replace("/(auth)/SignupSuccessScreen");
     } catch (error) {
       console.error('Account creation error:', error);
       Alert.alert('Error', (error as Error).message || 'An error occurred');
@@ -111,7 +102,7 @@ export default function BankInfoScreen() {
 
         <View style={styles.userInfoContainer}>
           <Text style={styles.userInfoText}>Welcome, {userData?.fullName || 'User'}</Text>
-          <Text style={styles.userInfoSubText}>Complete your banking information</Text>
+          <Text style={styles.userInfoSubText}>Complete your banking informations</Text>
         </View>
 
         <View style={styles.card}>
@@ -151,17 +142,6 @@ export default function BankInfoScreen() {
             />
           </View>
 
-          <Text style={styles.sectionTitle}>Account number *</Text>
-          <View style={styles.inputContainer}>
-            <Ionicons name="key-outline" size={22} color="#2E86DE" style={styles.icon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter account number"
-              placeholderTextColor="#94A3B8"
-              value={bankAccount.numeroCompte}
-              onChangeText={(text) => setBankAccount(prev => ({ ...prev, numeroCompte: text }))}
-            />
-          </View>
 
           <Text style={styles.sectionTitle}>Currency *</Text>
           <View style={styles.inputContainer}>
@@ -191,6 +171,12 @@ export default function BankInfoScreen() {
           <Text style={styles.submitButtonText}>Complete registration</Text>
           <Ionicons name="arrow-forward" size={22} color="white" />
         </TouchableOpacity>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 12 }}>
+        <Text style={{ color: '#475569', fontSize: 14 }}>Already have a bank account? </Text>
+        <TouchableOpacity >
+          <Text style={{ color: '#2E86DE', fontSize: 14, fontWeight: '600' }}>Log in</Text>
+        </TouchableOpacity>
+      </View>
       </ScrollView>
     </SafeAreaView>
   );

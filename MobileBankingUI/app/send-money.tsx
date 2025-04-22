@@ -14,6 +14,12 @@ import {
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native"; 
 import animationSource from "../assets/lotties/send-money.json";
+import { useUser } from "../context/UserContext"; 
+import config from '../utils/config';
+import { useRouter } from "expo-router";
+
+
+
 const currencyList = ["TND", "BRL", "EUR", "USD", "GBP", "CHF", "SAR", "CAD", "AED", "SEK"];
 
 const SendMoney = () => {
@@ -21,17 +27,68 @@ const SendMoney = () => {
   const [amount, setAmount] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState("TND");
   const [modalVisible, setModalVisible] = useState(false);
+  const { accountData ,userData } = useUser();
+  const router = useRouter();
 
-  const handleConfirm = () => {
+
+
+  const handleConfirm = async () => {
     if (!amount) {
       Alert.alert("Error", "Please enter an amount");
       return;
     }
-    Alert.alert(
-      "Transfer Confirmed",
-      `You've sent ${amount} ${selectedCurrency} to ${nomComplet}`,
-      [{ text: "OK", onPress: () => setAmount("") }]
-    );
+  
+    // Validation supplémentaire
+    if (isNaN(parseFloat(amount))) {
+      Alert.alert("Error", "Please enter a valid amount");
+      return;
+    }
+  
+    try {
+      const response = await fetch(`${config.BASE_URL}/api/transactions/virement`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          montant: parseFloat(amount),
+          compteExpediteur: accountData.accountId,
+          numeroCompteDestinataire: rib,
+        }),
+      });
+      console.log("Sending:", {
+        montant: parseFloat(amount),
+        compteExpediteur: accountData.accountId,
+        compteDestinataire: rib,
+        utilisateurId: userData.userId,
+      });
+      
+
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        Alert.alert("Error", data.message || "An error occurred");
+        return;
+      }
+  
+      // Succès - afficher un message et rediriger
+      Alert.alert("Success", "Transfer completed successfully!", [
+        {
+          text: "OK",
+          onPress: () => {
+            router.replace({
+              pathname: "/(tabs)",
+              params: { userId: userData.userId },
+            });
+          }
+        }
+      ]);
+      
+    } catch (error) {
+      console.error("Transfer error:", error);
+      Alert.alert("Error", "Failed to complete transfer. Please try again later.");
+    }
   };
 
   return (

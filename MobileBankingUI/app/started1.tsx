@@ -1,109 +1,186 @@
-import React, { useEffect ,useRef,} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+  Image,
+  Dimensions,
+  FlatList,
+  Animated,
+  Easing
+} from 'react-native';
 import { useRouter } from 'expo-router';
-import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, Dimensions, Animated, Easing } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-type RootStackParamList = {
-  Started1: undefined;
-  NextScreen: undefined;
-};
+const { width, height } = Dimensions.get('window');
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Started1'>;
+const onboardingSlides = [
+  {
+    id: '1',
+    image: require('../assets/images/started1.png'),
+    title: 'Free Transactions',
+    description: 'Provides the quality of the financial system with free money transactions without any fees.',
+  },
+  {
+    id: '2',
+    image: require('../assets/images/started2.png'),
+    title: 'Bills Payment',
+    subtitle: 'Made Easy',
+    description: 'Pay monthly or daily bills at home\nin a site of TransferMe.',
+  },
+  {
+    id: '3',
+    image: require('../assets/images/started3.jpg'),
+    title: 'Easy, Fast & Trusted',
+    description: 'Fast money transfer and guaranteed safe\ntransactions with others.',
+  },
+  {
+    id: '4',
+    image: require('../assets/images/started4.png'),
+    title: 'Secure Face Recognition',
+    subtitle: 'Your Identity, Your Key',
+    description: 'Our advanced facial recognition ensures the highest level of security\nfor all your transactions and account access.',
+  },
+];
 
-const { width } = Dimensions.get('window');
-const router = useRouter(); // Expo Router
+const OnboardingSwipeScreen = () => {
+  const router = useRouter();
+  const flatListRef = useRef<FlatList>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const imageAnimations = useRef(onboardingSlides.map(() => new Animated.Value(0))).current;
 
-
-const Started1Screen = ({ navigation }: Props) => {
-  // Animations
-  const fadeAnim = new Animated.Value(0);
-  const slideUpAnim = new Animated.Value(30);
-  const scaleAnim = new Animated.Value(0.8);
-
-  useEffect(() => {
-    // Animation en séquence
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
+  const handleScrollEnd = (e: any) => {
+    const newIndex = Math.round(e.nativeEvent.contentOffset.x / width);
+    setCurrentIndex(newIndex);
+    
+    // Trigger animation for the current slide
+    Animated.sequence([
+      Animated.delay(100),
+      Animated.spring(imageAnimations[newIndex], {
         toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideUpAnim, {
-        toValue: 0,
-        duration: 800,
-        easing: Easing.out(Easing.exp),
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        friction: 4,
+        friction: 5,
         useNativeDriver: true,
       })
     ]).start();
-  }, []);
-
-  const handleContinue = () => {
-    // Animation de sortie avant la navigation
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideUpAnim, {
-        toValue: -30,
-        duration: 300,
-        useNativeDriver: true,
-      })
-    ]).start(() => {
-      router.push('/started2'); // Redirection après animation
+    
+    // Reset other animations
+    imageAnimations.forEach((anim, index) => {
+      if (index !== newIndex) {
+        anim.setValue(0);
+      }
     });
   };
 
+  const renderItem = ({ item, index }: any) => {
+    const scale = imageAnimations[index].interpolate({
+      inputRange: [0, 1],
+      outputRange: [0.8, 1],
+    });
+    
+    const opacity = imageAnimations[index].interpolate({
+      inputRange: [0, 1],
+      outputRange: [0.5, 1],
+    });
+    
+    const translateY = imageAnimations[index].interpolate({
+      inputRange: [0, 1],
+      outputRange: [50, 0],
+    });
+
+    return (
+      <View style={styles.slide}>
+        <Animated.Image 
+          source={item.image} 
+          style={[
+            styles.slideImage, 
+            {
+              transform: [{ scale }, { translateY }],
+              opacity
+            }
+          ]} 
+          resizeMode="contain" 
+        />
+        <View style={styles.textContainer}>
+          <Text style={styles.slideTitle}>{item.title}</Text>
+          {item.subtitle && <Text style={styles.slideSubtitle}>{item.subtitle}</Text>}
+          <Text style={styles.slideDescription}>{item.description}</Text>
+        </View>
+        {index === onboardingSlides.length - 1 && (
+          <TouchableOpacity style={styles.continueButton} onPress={() => router.push('/(auth)/loginorsignup')}>
+            <Text style={styles.continueButtonText}>Continue</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
+
+  const renderPagination = () => (
+    <View style={styles.pagination}>
+      {onboardingSlides.map((_, i) => {
+        const inputRange = [(i - 1) * width, i * width, (i + 1) * width];
+        const dotWidth = scrollX.interpolate({
+          inputRange,
+          outputRange: [8, 16, 8],
+          extrapolate: 'clamp',
+        });
+        const opacity = scrollX.interpolate({
+          inputRange,
+          outputRange: [0.3, 1, 0.3],
+          extrapolate: 'clamp',
+        });
+
+        return (
+          <Animated.View
+            key={i}
+            style={[
+              styles.dot,
+              { width: dotWidth, opacity },
+              i === currentIndex && styles.activeDot,
+            ]}
+          />
+        );
+      })}
+    </View>
+  );
+
+  // Animate first slide on initial render
+  useEffect(() => {
+    Animated.spring(imageAnimations[0], {
+      toValue: 1,
+      friction: 5,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* Illustration avec animation */}
-        <Animated.View style={[
-          styles.illustrationContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideUpAnim }, { scale: scaleAnim }]
-          }
-        ]}>
-          <Image
-            source={require('../assets/images/started1.png')}
-            style={styles.illustration}
-            resizeMode="contain"
-          />
-        </Animated.View>
+      {currentIndex < onboardingSlides.length - 1 && (
+        <TouchableOpacity
+          style={styles.skipButton}
+          onPress={() => router.push('/(auth)/loginorsignup')}
+        >
+          <Text style={styles.skipText}>Skip</Text>
+        </TouchableOpacity>
+      )}
 
-        {/* Contenu avec animation décalée */}
-        <Animated.View style={[
-          styles.content,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideUpAnim }]
-          }
-        ]}>
-          <Text style={styles.title}>Free Transactions</Text>
-          <Text style={styles.description}>
-            Provides the quality of the financial system with free money
-            transactions without any fees.
-          </Text>
-        </Animated.View>
+      <Animated.FlatList
+        ref={flatListRef}
+        data={onboardingSlides}
+        renderItem={renderItem}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: false }
+        )}
+        onMomentumScrollEnd={handleScrollEnd}
+        keyExtractor={(item) => item.id}
+      />
 
-        {/* Bouton avec animation */}
-        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideUpAnim }] }}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleContinue}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.buttonText}>Continue</Text>
-          </TouchableOpacity>
-        </Animated.View>
-      </View>
+      {currentIndex < onboardingSlides.length - 1 && renderPagination()}
     </SafeAreaView>
   );
 };
@@ -111,62 +188,92 @@ const Started1Screen = ({ navigation }: Props) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
   },
-  container: {
-    flex: 1,
+  skipButton: {
+    position: 'absolute',
+    top: 16,
+    right: 24,
+    zIndex: 1,
+    padding: 8,
+  },
+  skipText: {
+    color: '#2E86DE',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  slide: {
+    width,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
-    backgroundColor: 'white',
+    paddingHorizontal: 24,
   },
-  illustrationContainer: {
-    marginBottom: 40,
-  },
-  illustration: {
+  slideImage: {
     width: width * 0.8,
     height: width * 0.6,
-  },
-  content: {
-    alignItems: 'center',
     marginBottom: 40,
   },
-  title: {
+  textContainer: {
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  slideTitle: {
     fontSize: 28,
-    fontWeight: '700',
-    color: '#2d3748',
+    fontWeight: '800',
+    color: '#2E86DE',
+    textAlign: 'center',
+    marginBottom: 8,
+    fontFamily: 'Inter-ExtraBold',
+  },
+  slideSubtitle: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#2E86DE',
     textAlign: 'center',
     marginBottom: 16,
-    fontFamily: 'Inter-Bold',
+    fontFamily: 'Inter-SemiBold',
   },
-  description: {
+  slideDescription: {
     fontSize: 16,
-    color: '#4a5568',
+    color: '#4A5568',
     textAlign: 'center',
     lineHeight: 24,
-    paddingHorizontal: 20,
     fontFamily: 'Inter-Regular',
   },
-  button: {
-    backgroundColor: '#4361ee',
+  pagination: {
+    position: 'absolute',
+    bottom: height * 0.15,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dot: {
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#ccc',
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: '#2E86DE',
+  },
+  continueButton: {
+    backgroundColor: '#2E86DE',
     paddingVertical: 16,
     paddingHorizontal: 48,
     borderRadius: 30,
-    width: '100%',
-    maxWidth: 300,
-    shadowColor: '#4361ee',
-    shadowOffset: { width: 0, height: 4 },
+    marginTop: 40,
+    shadowColor: '#2E86DE',
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowRadius: 16,
   },
-  buttonText: {
-    color: 'white',
+  continueButtonText: {
+    color: '#fff',
     fontSize: 18,
     fontWeight: '600',
-    textAlign: 'center',
-    fontFamily: 'Inter-SemiBold',
   },
 });
 
-export default Started1Screen;
+export default OnboardingSwipeScreen;

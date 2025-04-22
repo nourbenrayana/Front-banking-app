@@ -1,161 +1,304 @@
-import React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+// app/(tabs)/ajoutduncarte.tsx
+import React, { useState } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TextInput, 
+  TouchableOpacity, 
+  ScrollView, 
+  Alert 
+} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
-const AddCardScreen = () => {
+type FormData = {
+  cardType: string;
+  firstName: string;
+  lastName: string;
+  cpf: string;
+  birthDate: string;
+  address: string;
+  city: string;
+  zipCode: string;
+  phone: string;
+  email: string;
+  reasonForCard: string; // Changed from monthlyIncome
+};
+
+type CardOption = {
+  label: string;
+  value: string;
+};
+
+const CardApplication = () => {
+  const [formData, setFormData] = useState<FormData>({
+    cardType: 'ELO_CREDIT',
+    firstName: '',
+    lastName: '',
+    cpf: '',
+    birthDate: '',
+    address: '',
+    city: '',
+    zipCode: '',
+    phone: '',
+    email: '',
+    reasonForCard: '' // Changed from monthlyIncome
+  });
+
+  // Caixa Bank Brazil card types
+  const cardOptions: CardOption[] = [
+    { label: 'ELO Credit Card', value: 'ELO_CREDIT' },
+    { label: 'ELO Debit Card', value: 'ELO_DEBIT' },
+    { label: 'Visa Infinite', value: 'VISA_INFINITE' },
+    { label: 'Visa Platinum', value: 'VISA_PLATINUM' },
+    { label: 'Visa Gold', value: 'VISA_GOLD' },
+    { label: 'Mastercard Black', value: 'MASTERCARD_BLACK' },
+    { label: 'Caixa Fácil Card', value: 'CAIXA_FACIL' }
+  ];
+
+  const handleChange = (field: keyof FormData, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const validateForm = (): boolean => {
+    if (!formData.firstName.trim()) {
+      Alert.alert('Error', 'First name is required');
+      return false;
+    }
+    if (!formData.lastName.trim()) {
+      Alert.alert('Error', 'Last name is required');
+      return false;
+    }
+    if (!formData.cpf.trim()) {
+      Alert.alert('Error', 'CPF is required');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = () => {
+    if (!validateForm()) return;
+
+    console.log('Application submitted:', formData);
+    Alert.alert(
+      'Success', 
+      'Card application submitted successfully',
+      [{ text: 'OK', onPress: resetForm }]
+    );
+  };
+
+  const resetForm = () => {
+    setFormData({
+      cardType: 'ELO_CREDIT',
+      firstName: '',
+      lastName: '',
+      cpf: '',
+      birthDate: '',
+      address: '',
+      city: '',
+      zipCode: '',
+      phone: '',
+      email: '',
+      reasonForCard: ''
+    });
+  };
+
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Add Card</Text>
-          <Text style={styles.headerSubtitle}>
-            To add a new card, please fill out the fields below carefully in order to add card successfully.
-          </Text>
-        </View>
-
-        {/* Form */}
-        <View style={styles.formContainer}>
-          {/* Card Number */}
-          <Text style={styles.label}>Card Number</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="0931-5131-5321-6477"
-              placeholderTextColor="#999"
-              keyboardType="numeric"
+    <ScrollView 
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      <Text style={styles.header}>Caixa Bank Card Application</Text>
+      
+      <Text style={styles.sectionTitle}>Card Type</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={formData.cardType}
+          onValueChange={(itemValue) => handleChange('cardType', itemValue)}
+          style={styles.picker}
+          dropdownIconColor="#2E86DE"
+        >
+          {cardOptions.map((option) => (
+            <Picker.Item 
+              key={option.value} 
+              label={option.label} 
+              value={option.value} 
             />
-          </View>
+          ))}
+        </Picker>
+      </View>
 
-          {/* Holder's Name */}
-          <Text style={styles.label}>Holder's Name</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="William Smith"
-              placeholderTextColor="#999"
-            />
-          </View>
+      <Text style={styles.sectionTitle}>Personal Information</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="First Name *"
+        value={formData.firstName}
+        onChangeText={(text) => handleChange('firstName', text)}
+        returnKeyType="next"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Last Name *"
+        value={formData.lastName}
+        onChangeText={(text) => handleChange('lastName', text)}
+        returnKeyType="next"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="CPF *"
+        value={formData.cpf}
+        onChangeText={(text) => handleChange('cpf', text)}
+        returnKeyType="next"
+        keyboardType="number-pad"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Birth Date (DD/MM/YYYY)"
+        value={formData.birthDate}
+        onChangeText={(text) => handleChange('birthDate', text)}
+        keyboardType="numbers-and-punctuation"
+        returnKeyType="next"
+      />
 
-          {/* Expiry Date and CVV */}
-          <View style={styles.row}>
-            <View style={styles.halfInputContainer}>
-              <Text style={styles.label}>Expiry Date</Text>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="11/25"
-                  placeholderTextColor="#999"
-                  keyboardType="numeric"
-                />
-              </View>
-            </View>
+      <Text style={styles.sectionTitle}>Address</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Street Address"
+        value={formData.address}
+        onChangeText={(text) => handleChange('address', text)}
+        returnKeyType="next"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="City"
+        value={formData.city}
+        onChangeText={(text) => handleChange('city', text)}
+        returnKeyType="next"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="ZIP Code"
+        value={formData.zipCode}
+        onChangeText={(text) => handleChange('zipCode', text)}
+        keyboardType="number-pad"
+        returnKeyType="next"
+      />
 
-            <View style={styles.halfInputContainer}>
-              <Text style={styles.label}>CVV</Text>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="8824"
-                  placeholderTextColor="#999"
-                  keyboardType="numeric"
-                  secureTextEntry
-                />
-              </View>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
+      <Text style={styles.sectionTitle}>Contact Information</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Phone Number"
+        value={formData.phone}
+        onChangeText={(text) => handleChange('phone', text)}
+        keyboardType="phone-pad"
+        returnKeyType="next"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={formData.email}
+        onChangeText={(text) => handleChange('email', text)}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        returnKeyType="next"
+      />
 
-      {/* Confirm Button avec le nouveau style */}
-      <TouchableOpacity style={styles.nextButton}>
-        <Text style={styles.confirmButtonText}>Confirm</Text>
+      <Text style={styles.sectionTitle}>Reason for Additional Card</Text>
+      <TextInput
+        style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
+        placeholder="Please explain why you need an additional card"
+        value={formData.reasonForCard}
+        onChangeText={(text) => handleChange('reasonForCard', text)}
+        multiline={true}
+        numberOfLines={4}
+        returnKeyType="done"
+      />
+
+      <TouchableOpacity 
+        style={styles.submitButton} 
+        onPress={handleSubmit}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.submitButtonText}>Submit Application</Text>
       </TouchableOpacity>
-    </View>
+
+      <Text style={styles.note}>* Required fields</Text>
+    </ScrollView>
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#F8FAFF',
-  },
-  scrollContainer: {
-    padding: 24,
-    paddingBottom: 100,
+    flexGrow: 1,
+    padding: 20,
+    paddingBottom: 40,
+    backgroundColor: '#f5f9ff',
   },
   header: {
-    marginBottom: 32,
-  },
-  headerTitle: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: 'bold',
+    marginBottom: 25,
+    textAlign: 'center',
     color: '#2E86DE',
-    marginBottom: 8,
   },
-  headerSubtitle: {
-    fontSize: 14,
-    color: '#6E7B8F',
-    lineHeight: 20,
-  },
-  formContainer: {
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 14,
-    color: '#6E7B8F',
-    marginBottom: 8,
-    fontWeight: '500',
-  },
-  inputContainer: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: '#E8EBF0',
-    shadowColor: '#0066FF',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginTop: 15,
+    marginBottom: 10,
+    color: '#2E86DE',
   },
   input: {
+    height: 50,
+    borderColor: '#d3e3ff',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    marginBottom: 15,
     fontSize: 16,
-    color: '#0A0F24',
-    padding: 0,
+    backgroundColor: '#fff',
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  pickerContainer: {
+    borderColor: '#d3e3ff',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 15,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
   },
-  halfInputContainer: {
-    width: '48%',
+  picker: {
+    height: 50,
+    width: '100%',
+    color: '#2E86DE',
   },
-  // Nouveau style du bouton
-  nextButton: {
+  submitButton: {
     backgroundColor: '#2E86DE',
-    padding: 15,
-    borderRadius: 30,
+    padding: 16,
+    borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    marginTop: 25,
+    marginBottom: 10,
     elevation: 3,
     shadowColor: '#2E86DE',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
-    position: 'absolute',
-    bottom: 30,
-    left: 24,
-    right: 24,
   },
-  confirmButtonText: {
-    color: 'white',
+  submitButtonText: {
+    color: '#fff',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 'bold',
+  },
+  note: {
+    fontSize: 12,
+    color: '#7f8c8d',
+    textAlign: 'center',
+    marginTop: 5,
   },
 });
 
-export default AddCardScreen;
+export default CardApplication;

@@ -20,11 +20,7 @@ const Payment = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const handleAdd = () => {
-    if (!bankAccount) {
-      Alert.alert('Error', 'Bank account (RIB) is required.');
-      return;
-    }
-
+  
     router.push({
       pathname: "/send-money",
       params: {
@@ -32,7 +28,7 @@ const Payment = () => {
         rib: bankAccount,
         telephone: phoneNumber,
       },
-    } as any);
+    });
   };
 
   return (
@@ -69,7 +65,6 @@ const Payment = () => {
             <TextInput
               style={styles.input}
               placeholder="Bank Account (RIB) *"
-              keyboardType="numeric"
               value={bankAccount}
               onChangeText={setBankAccount}
               placeholderTextColor="#999"

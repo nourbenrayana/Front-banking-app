@@ -9,6 +9,7 @@ import LottieView from 'lottie-react-native';
 import { useRouter } from "expo-router";
 import { useUser } from '../../context/UserContext';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import config from '@/utils/config';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -19,16 +20,19 @@ export default function SignUpScreen() {
     email: '',
     phone: '',
     birthDate: '',
-    idNumber: ''
+    idNumber: '',
+    pin: ''  // 
   });
-
+  
   const [errors, setErrors] = React.useState({
     fullName: '',
     email: '',
     birthDate: '',
     phone: '',
-    idNumber: ''
+    idNumber: '',
+    pin: ''  
   });
+  
 
   const [date, setDate] = React.useState(new Date());
   const [showDatePicker, setShowDatePicker] = React.useState(false);
@@ -57,6 +61,8 @@ export default function SignUpScreen() {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
+  const validatePin = (pin: string) => /^\d{6}$/.test(pin);
+
 
   const handleEmailChange = (value: string) => {
     setFormData(prev => ({ ...prev, email: value }));
@@ -73,8 +79,10 @@ export default function SignUpScreen() {
       email: '',
       birthDate: '',
       phone: '',
-      idNumber: ''
+      idNumber: '',
+      pin: ''
     };
+    
 
     if (!formData.fullName.trim()) {
       newErrors.fullName = 'Full name required';
@@ -100,6 +108,11 @@ export default function SignUpScreen() {
       newErrors.idNumber = 'Numéro invalide (min. 5 chiffres)';
       isValid = false;
     }
+    if (!validatePin(formData.pin)) {
+      newErrors.pin = 'PIN doit contenir exactement 6 chiffres';
+      isValid = false;
+    }
+    
 
     setErrors(newErrors);
     return isValid;
@@ -112,7 +125,7 @@ export default function SignUpScreen() {
     }
   
     try {
-      const response = await fetch('http://192.168.1.29:3000/api/users/register', {
+      const response = await fetch(`${config.BASE_URL}/api/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -234,6 +247,19 @@ export default function SignUpScreen() {
         </View>
         {errors.idNumber && <Text style={styles.errorText}>{errors.idNumber}</Text>}
       </View>
+      <View style={styles.inputContainer}>
+        <Ionicons name="keypad-outline" size={20} color="#2E86DE" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="PIN (6 digits)"
+          keyboardType="numeric"
+          secureTextEntry
+          value={formData.pin}
+          onChangeText={(text) => handleNumberInput('pin', text)}
+          maxLength={6}
+        />
+      </View>
+      {errors.pin && <Text style={styles.errorText}>{errors.pin}</Text>}
 
       <TouchableOpacity style={styles.nextButton} onPress={handleSignUp}>
         <Text style={styles.nextButtonText}>Next</Text>

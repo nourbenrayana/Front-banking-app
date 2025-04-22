@@ -1,27 +1,22 @@
-import { View, Text, Image, StyleSheet, SafeAreaView, Animated, Easing,TouchableOpacity  } from 'react-native';
+import { View, Text, Image, StyleSheet, SafeAreaView, Animated, Easing } from 'react-native';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'expo-router';
 
-
 export default function WelcomeScreen() {
-  // Animations
   const logoScale = useRef(new Animated.Value(0.8)).current;
   const textOpacity = useRef(new Animated.Value(0)).current;
   const textPosition = useRef(new Animated.Value(20)).current;
   const router = useRouter();
 
   useEffect(() => {
-    // Animation séquentielle
+    // Lancer les animations
     Animated.sequence([
-      // Logo qui "apparaît" avec un léger rebond
       Animated.spring(logoScale, {
         toValue: 1,
         friction: 6,
         tension: 40,
         useNativeDriver: true,
       }),
-      
-      // Texte qui fade in et monte légèrement
       Animated.parallel([
         Animated.timing(textOpacity, {
           toValue: 1,
@@ -37,11 +32,17 @@ export default function WelcomeScreen() {
         }),
       ]),
     ]).start();
+
+    // Redirection automatique après 5 secondes
+    const timeout = setTimeout(() => {
+      router.push('/started1');
+    }, 5000);
+
+    return () => clearTimeout(timeout); // Nettoyage
   }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Logo avec animation de scale */}
       <Animated.View style={{ transform: [{ scale: logoScale }] }}>
         <Image 
           source={require('@/assets/images/pngegg.png')} 
@@ -50,7 +51,6 @@ export default function WelcomeScreen() {
         />
       </Animated.View>
 
-      {/* Texte avec animation de fade et position */}
       <Animated.View style={{ 
         opacity: textOpacity,
         transform: [{ translateY: textPosition }],
@@ -59,14 +59,6 @@ export default function WelcomeScreen() {
           Welcome to <Text style={styles.bankName}>CaixaBank</Text>
         </Text>
       </Animated.View>
-      <TouchableOpacity 
-        onPress={() => router.push('/started1')}
-        style={styles.button}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.buttonText}>Get Started</Text>
-      </TouchableOpacity>
-
     </SafeAreaView>
   );
 }
@@ -96,23 +88,4 @@ const styles = StyleSheet.create({
     fontSize: 34,
     letterSpacing: 1,
   },
-  button: {
-    marginTop: 40,
-    backgroundColor: '#2E86DE',
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: '600',
-    fontFamily: 'Inter_600SemiBold',
-  },
-  
 });

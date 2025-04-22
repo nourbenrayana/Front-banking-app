@@ -1,15 +1,18 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useLocalSearchParams } from 'expo-router';
+import config from '../utils/config';
 
-// Définir uniquement les noms d'icônes autorisés
-type MaterialIconName =
-  | 'shopping-cart'
-  | 'account-balance'
-  | 'restaurant'
-  | 'directions-car'
-  | 'work'
-  | 'receipt';
+type Transaction = {
+  _id: string;
+  date: string;
+  typeTransaction: string;
+  compteExpediteur?: string;
+  compteDestinataire?: string;
+  montant: number;
+  destinataireNom?: string;
+};
 
 type TransactionItem = {
   type: string;
@@ -17,88 +20,105 @@ type TransactionItem = {
   description: string;
   time: string;
   amount: number;
-  icon: MaterialIconName;
-};
-
-type TransactionGroup = {
-  id: string;
-  date: string;
-  items: TransactionItem[];
+  icon: keyof typeof MaterialIcons.glyphMap;
 };
 
 const TransactionHistoryScreen = () => {
-  const transactions: TransactionGroup[] = [
-    {
-      id: '1',
-      date: 'Aujourd\'hui',
-      items: [
-        {
-          type: 'shopping',
-          title: 'Amazon Market',
-          description: 'Achat en ligne',
-          time: '14:45',
-          amount: -42.99,
-          icon: 'shopping-cart',
-        },
-        {
-          type: 'transfer',
-          title: 'Virement reçu',
-          description: 'De: Marie Dupont',
-          time: '09:30',
-          amount: 150.0,
-          icon: 'account-balance',
-        },
-      ],
-    },
-    {
-      id: '2',
-      date: 'Hier',
-      items: [
-        {
-          type: 'food',
-          title: 'Restaurant Chez Paul',
-          description: 'Déjeuner',
-          time: '12:30',
-          amount: -28.5,
-          icon: 'restaurant',
-        },
-        {
-          type: 'transport',
-          title: 'Uber',
-          description: 'Trajet travail',
-          time: '08:15',
-          amount: -12.75,
-          icon: 'directions-car',
-        },
-      ],
-    },
-    {
-      id: '3',
-      date: '12 Mai 2023',
-      items: [
-        {
-          type: 'salary',
-          title: 'Salaire',
-          description: 'Compagnie XYZ',
-          time: '00:00',
-          amount: 2450.0,
-          icon: 'work',
-        },
-        {
-          type: 'bill',
-          title: 'Facture EDF',
-          description: 'Paiement mensuel',
-          time: '00:00',
-          amount: -85.3,
-          icon: 'receipt',
-        },
-      ],
-    },
-  ];
+  const params = useLocalSearchParams();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const compteId = params.compteId as string || 'default-compte-id';
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const id = typeof compteId === 'string' ? compteId : '';
+        console.log('🔍 compteId utilisé dans la requête :', id);
+        if (!id) {
+          console.warn('ID du compte non fourni');
+          return;
+        }
+  
+        const cleanId = id.replace('comptes/', ''); // Enlève "comptes/" s'il est là
+        const response = await fetch(`${config.BASE_URL}/api/transactions/compte/${cleanId}`);
+
+        console.log('📥 Réponse brute :', response);
+        const text = await response.text();
+        console.log('📄 Contenu brut :', text);
+
+        let data;
+          try {
+            data = JSON.parse(text);
+          } catch (e) {
+            console.error('❌ Erreur de parsing JSON:', e);
+            return;
+          }
+
+  
+        if (Array.isArray(data)) {
+          setTransactions(data);
+        } else {
+          console.warn('Réponse inattendue :', data);
+          setTransactions([]);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération des transactions :', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchTransactions();
+  }, [compteId]);
+  
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString();
+  };
+
+  const groupTransactions = () => {
+    const grouped: { [date: string]: TransactionItem[] } = {};
+  
+    transactions.forEach((tx) => {
+      const date = formatDate(tx.date);
+      if (!grouped[date]) grouped[date] = [];
+  
+      const isReceived =
+        tx.compteDestinataire === `comptes/${compteId}` ||
+        tx.compteDestinataire === compteId;
+  
+      grouped[date].push({
+        type: tx.typeTransaction,
+        title:
+          tx.typeTransaction === 'Virement'
+            ? isReceived
+              ? 'Virement reçu'
+              : 'Virement envoyé'
+            : 'Transaction',
+        description:
+          tx.typeTransaction === 'Virement'
+            ? `${isReceived ? '←' : '→'} ${tx.destinataireNom || tx.compteDestinataire}`
+            : 'Transaction',
+        time: new Date(tx.date).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        amount: isReceived ? tx.montant : -tx.montant,
+        icon: 'account-balance',
+      });
+    });
+  
+    return Object.entries(grouped).map(([date, items], index) => ({
+      id: index.toString(),
+      date,
+      items,
+    }));
+  };
+  
+  const groupedTransactions = groupTransactions();
 
   return (
     <View style={styles.container}>
-      {/* En-tête */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Historique des transactions</Text>
         <TouchableOpacity>
@@ -106,38 +126,38 @@ const TransactionHistoryScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Liste des transactions */}
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {transactions.map((group) => (
-          <View key={group.id} style={styles.section}>
-            <Text style={styles.sectionTitle}>{group.date}</Text>
-
-            {group.items.map((item, index) => (
-              <TouchableOpacity key={index} style={styles.transactionCard}>
-                <View style={styles.transactionIcon}>
-                  <MaterialIcons name={item.icon} size={24} color="#2E86DE" />
-                </View>
-
-                <View style={styles.transactionInfo}>
-                  <Text style={styles.transactionTitle}>{item.title}</Text>
-                  <Text style={styles.transactionDesc}>{item.description}</Text>
-                  <Text style={styles.transactionTime}>{item.time}</Text>
-                </View>
-
-                <Text
-                  style={[
-                    styles.transactionAmount,
-                    item.amount > 0 ? styles.positiveAmount : styles.negativeAmount,
-                  ]}
-                >
-                  {item.amount > 0 ? '+' : ''}
-                  {item.amount.toFixed(2)}€
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ))}
-      </ScrollView>
+      {loading ? (
+        <ActivityIndicator size="large" color="#2E86DE" style={{ marginTop: 50 }} />
+      ) : (
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          {groupedTransactions.map((group) => (
+            <View key={group.id} style={styles.section}>
+              <Text style={styles.sectionTitle}>{group.date}</Text>
+              {group.items.map((item, index) => (
+                <TouchableOpacity key={index} style={styles.transactionCard}>
+                  <View style={styles.transactionIcon}>
+                    <MaterialIcons name={item.icon} size={24} color="#2E86DE" />
+                  </View>
+                  <View style={styles.transactionInfo}>
+                    <Text style={styles.transactionTitle}>{item.title}</Text>
+                    <Text style={styles.transactionDesc}>{item.description}</Text>
+                    <Text style={styles.transactionTime}>{item.time}</Text>
+                  </View>
+                  <Text
+                    style={[
+                      styles.transactionAmount,
+                      item.amount > 0 ? styles.positiveAmount : styles.negativeAmount,
+                    ]}
+                  >
+                    {item.amount > 0 ? '+' : ''}
+                    {item.amount.toFixed(2)}€
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 };

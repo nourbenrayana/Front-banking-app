@@ -4,15 +4,33 @@ import { useRouter } from "expo-router";
 import { useUser } from "../../context/UserContext";
 import AnimatedCard from "../../components/AnimatedCard";
 
+interface Transaction {
+  id: string;
+  image: any; 
+  name: string;
+  date: string;
+  amount: number;
+}
+
 export default function Dashboard() {
   const router = useRouter();
   const { userData, accountData } = useUser();
 
   const { fullName } = userData || {};
   const { cardNumber, expiryDate, cardType, status } = accountData || {};
+  
+  // Added transactions data - you should replace this with your actual data source
+  const transactions: Transaction[] = []; // Add your transactions data here
+  
+  const recentTransactions = transactions
+    ?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 2);
 
   const handleTransfer = () => {
     router.push("/Payment");
+  };
+  const handlePaymentChoice = () => {
+    router.push("/choixdepaiment");
   };
 
   return (
@@ -20,13 +38,15 @@ export default function Dashboard() {
       {/* HEADER */}
       <View style={styles.header}>
         <View>
-          <TouchableOpacity onPress={() => router.replace("/(auth)/welcome")}>
+          <TouchableOpacity onPress={() => router.replace("/(auth)/welcome1")}>
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
           <Text style={styles.greeting}>Hello,</Text>
           <Text style={styles.username}>{fullName || "User"}!</Text>
         </View>
-        <Ionicons name="notifications-outline" size={24} color="black" />
+        <TouchableOpacity onPress={() => router.push("/notification")}>
+          <Ionicons name="notifications-outline" size={24} color="black" />
+        </TouchableOpacity>
       </View>
 
       {/* CARD */}
@@ -43,7 +63,7 @@ export default function Dashboard() {
       <View style={styles.creditLimitContainer}>
         <Text style={styles.creditLimit}>Our Services</Text>
         <View style={styles.actions}>
-          <Action icon="add-circle-outline" label="Top Up" />
+          <Action icon="add-circle-outline" label="Payment" onPress={handlePaymentChoice} />
           <Action icon="swap-horizontal-outline" label="Swap" />
           <Action icon="arrow-forward-circle-outline" label="Transfer" onPress={handleTransfer} />
           <Action icon="chatbubble-outline" label="Request" />
@@ -52,28 +72,40 @@ export default function Dashboard() {
 
       {/* TRANSACTIONS */}
       <View style={styles.transactions}>
-        <Text style={styles.sectionTitle}>Transactions</Text>
+        <View style={styles.transactionHeader}>
+          <Text style={styles.sectionTitle}>Transactions</Text>
+          <TouchableOpacity
+            onPress={() =>
+              router.push({ pathname: "/historique", params: { compteId: accountData?.accountId } })
+            }
+          >
+            <Text style={styles.viewAll}>Voir tout</Text>
+          </TouchableOpacity>
+        </View>
 
-        <TransactionItem
-          image={require("../../assets/images/avatar1.jpg")}
-          name="Dinda Anggita"
-          date="26 Feb 2023"
-          amount={"+$114.08"}
-          positive
-        />
-        <TransactionItem
-          image={require("../../assets/images/avatar2.jpg")}
-          name="Arni Hanifah"
-          date="17 Jan 2023"
-          amount={"-$76.02"}
-          positive={false}
-        />
+        {/* Display last 2 transactions */}
+        {recentTransactions?.map((tx) => (
+          <TransactionItem
+            key={tx.id}
+            image={tx.image}
+            name={tx.name}
+            date={tx.date}
+            amount={`${tx.amount > 0 ? "+" : ""}$${Math.abs(tx.amount).toFixed(2)}`}
+            positive={tx.amount > 0}
+          />
+        ))}
       </View>
     </View>
   );
 }
 
-function Action({ icon, label, onPress }: { icon: any; label: string; onPress?: () => void }) {
+interface ActionProps {
+  icon: React.ComponentProps<typeof Ionicons>["name"];
+  label: string;
+  onPress?: () => void;
+}
+
+function Action({ icon, label, onPress }: ActionProps) {
   return (
     <TouchableOpacity style={styles.actionButton} onPress={onPress}>
       <Ionicons name={icon} size={20} color="white" />
@@ -82,19 +114,21 @@ function Action({ icon, label, onPress }: { icon: any; label: string; onPress?: 
   );
 }
 
+interface TransactionItemProps {
+  image: any;
+  name: string;
+  date: string;
+  amount: string;
+  positive?: boolean;
+}
+
 function TransactionItem({
   image,
   name,
   date,
   amount,
   positive = true,
-}: {
-  image: any;
-  name: string;
-  date: string;
-  amount: string;
-  positive?: boolean;
-}) {
+}: TransactionItemProps) {
   return (
     <View style={styles.transactionItem}>
       <Image source={image} style={styles.avatar} />
@@ -112,7 +146,6 @@ const styles = StyleSheet.create({
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
   greeting: { fontSize: 14, color: "gray" },
   username: { fontSize: 18, fontWeight: "bold" },
-
   creditLimitContainer: {
     backgroundColor: 'white',
     borderRadius: 15,
@@ -167,4 +200,14 @@ const styles = StyleSheet.create({
   transactionDate: { fontSize: 12, color: "gray" },
   income: { color: "green", fontSize: 16, fontWeight: "bold" },
   expense: { color: "red", fontSize: 16, fontWeight: "bold" },
+  transactionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  viewAll: {
+    color: "#3498db",
+    fontSize: 14,
+  },
 });

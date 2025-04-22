@@ -10,6 +10,14 @@ interface UserData {
   userId: string;
 }
 
+interface Transaction {
+  id: string;
+  name: string;
+  date: string;
+  amount: number;
+  image?: any; // optionnel pour les avatars
+}
+
 interface AccountData {
   accountId: string;
   creditLimit: number;
@@ -19,9 +27,11 @@ interface AccountData {
   balance: number;
   cardNumber: string;
   expiryDate: string;
-  cardType: string; // exemple : 'Visa', 'Mastercard'
+  cardType: string;
   status: 'active' | 'blocked' | 'expired';
+  transactions?: Transaction[]; // 👈 ajout des transactions
 }
+
 
 interface UserContextType {
   userData: UserData;
