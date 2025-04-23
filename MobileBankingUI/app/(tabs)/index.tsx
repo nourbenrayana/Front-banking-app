@@ -2,7 +2,9 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useUser } from "../../context/UserContext";
+import { useEffect, useState } from "react";
 import AnimatedCard from "../../components/AnimatedCard";
+import config from "@/utils/config";
 
 interface Transaction {
   id: string;
@@ -17,14 +19,44 @@ export default function Dashboard() {
   const { userData, accountData } = useUser();
 
   const { fullName } = userData || {};
-  const { cardNumber, expiryDate, cardType, status } = accountData || {};
-  
-  // Added transactions data - you should replace this with your actual data source
-  const transactions: Transaction[] = []; // Add your transactions data here
-  
+  const { cardNumber, expiryDate, cardType, status, accountId } = accountData || {};
+
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      if (!accountId) return;
+      try {
+        
+        const res = await fetch(`${config.BASE_URL}/api/transactions/compte/${accountId}`);
+        console.log("Raw response:", res); // Check the response status and headers
+        const text = await res.text();
+        console.log("Response text:", text); // See what's actually being returned
+        const data = JSON.parse(text); // Now try to parse it
+        const formatted = data.map((tx: any) => {
+          const isIncoming = tx.compteDestinataire?.includes(accountId);
+          return {
+            id: tx._id,
+            image: require("../../assets/images/avatar1.jpg"),
+            name: tx.destinataireNom || "Transaction",
+            date: tx.date,
+            amount: isIncoming ? tx.montant : -tx.montant,
+          };
+        });
+        
+        setTransactions(formatted);
+      } catch (err) {
+        console.error("Error details:", err);
+      }
+    };
+
+    fetchTransactions();
+  }, [accountId]);
+
   const recentTransactions = transactions
-    ?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 2);
+
 
   const handleTransfer = () => {
     router.push("/Payment");
@@ -84,16 +116,23 @@ export default function Dashboard() {
         </View>
 
         {/* Display last 2 transactions */}
-        {recentTransactions?.map((tx) => (
-          <TransactionItem
-            key={tx.id}
-            image={tx.image}
-            name={tx.name}
-            date={tx.date}
-            amount={`${tx.amount > 0 ? "+" : ""}$${Math.abs(tx.amount).toFixed(2)}`}
-            positive={tx.amount > 0}
-          />
-        ))}
+        {recentTransactions.length > 0 ? (
+          recentTransactions.map((tx) => (
+            <TransactionItem
+              key={tx.id}
+              image={tx.image}
+              name={tx.name}
+              date={new Date(tx.date).toLocaleDateString()}
+              amount={`${tx.amount > 0 ? "+" : ""}€${Math.abs(tx.amount).toFixed(2)}`}
+              positive={tx.amount > 0}
+            />
+          ))
+        ) : (
+          <Text style={{ textAlign: "center", color: "gray" }}>
+            Aucune transaction récente.
+          </Text>
+        )}
+
       </View>
     </View>
   );

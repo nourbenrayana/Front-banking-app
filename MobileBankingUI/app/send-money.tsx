@@ -27,7 +27,7 @@ const SendMoney = () => {
   const [amount, setAmount] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState("TND");
   const [modalVisible, setModalVisible] = useState(false);
-  const { accountData ,userData } = useUser();
+  const { accountData, setAccountData, userData } = useUser();
   const router = useRouter();
 
 
@@ -38,32 +38,25 @@ const SendMoney = () => {
       return;
     }
   
-    // Validation supplémentaire
     if (isNaN(parseFloat(amount))) {
       Alert.alert("Error", "Please enter a valid amount");
       return;
     }
   
     try {
+      const montant = parseFloat(amount);
+  
       const response = await fetch(`${config.BASE_URL}/api/transactions/virement`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          montant: parseFloat(amount),
+          montant,
           compteExpediteur: accountData.accountId,
           numeroCompteDestinataire: rib,
         }),
       });
-      console.log("Sending:", {
-        montant: parseFloat(amount),
-        compteExpediteur: accountData.accountId,
-        compteDestinataire: rib,
-        utilisateurId: userData.userId,
-      });
-      
-
   
       const data = await response.json();
   
@@ -72,7 +65,12 @@ const SendMoney = () => {
         return;
       }
   
-      // Succès - afficher un message et rediriger
+      // ✅ Mettre à jour le solde localement
+      setAccountData({
+        ...accountData,
+        balance: accountData.balance - montant,
+      });
+  
       Alert.alert("Success", "Transfer completed successfully!", [
         {
           text: "OK",
@@ -81,15 +79,15 @@ const SendMoney = () => {
               pathname: "/(tabs)",
               params: { userId: userData.userId },
             });
-          }
-        }
+          },
+        },
       ]);
-      
     } catch (error) {
       console.error("Transfer error:", error);
       Alert.alert("Error", "Failed to complete transfer. Please try again later.");
     }
   };
+  
 
   return (
     <SafeAreaView style={styles.container}>

@@ -1,8 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image, Modal, ActivityIndicator, FlatList } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import config from '@/utils/config';
+import { useUser } from '@/context/UserContext'; 
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+
+// Configurez les notifications
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
+// Fonction pour demander les permissions
+async function registerForPushNotificationsAsync() {
+  if (!Device.isDevice) {
+    console.warn('Must use physical device for Push Notifications');
+    return;
+  }
+
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+
+  if (finalStatus !== 'granted') {
+    console.warn('Failed to get push token for push notification!');
+    return;
+  }
+}
+
 
 
 type BillId = 'electricity' | 'water' | 'gas';
@@ -23,10 +57,11 @@ type Bill = {
 };
 
 const BillPaymentScreen = () => {
+  const { accountData } = useUser();
   const [selectedBill, setSelectedBill] = useState<BillId | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [billNumber, setBillNumber] = useState('');
-  const [accountNumber, setAccountNumber] = useState('');
+  const [accountNumber, setAccountNumber] = useState(accountData.accountNumber || '');
   const [amount, setAmount] = useState('');
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [receiptData, setReceiptData] = useState<any>(null);
@@ -35,6 +70,14 @@ const BillPaymentScreen = () => {
   const [otp, setOtp] = useState('');
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const formatAccountNumber = (account: string) => {
+    if (!account || account.length < 6) return account;
+    const start = account.slice(0, 2);
+    const end = account.slice(-3);
+    return `${start}.....${end}`;
+  };
+  
 
   const bills: Bill[] = [
     { 
@@ -101,63 +144,81 @@ const BillPaymentScreen = () => {
     setShowAllCompanies(false);
   };
 
-  const handlePayment = async () => {
-    if (!selectedBill || !selectedCompany || !billNumber || !accountNumber || !amount) {
-      alert('Veuillez remplir tous les champs');
-      return;
-    }
-    if (billNumber.length < 6 || billNumber.length > 15) {
-      alert('Le numéro de facture doit contenir entre 6 et 15 chiffres');
-      return;
-    }
-    if (accountNumber.length < 5 || accountNumber.length > 20) {
-      alert('Le numéro de compte doit contenir entre 5 et 20 caractères');
-      return;
-    }
-  
-    setIsLoading(true);
-  
-    try {
-      // Créer la facture
-      const response = await fetch(`${config.BASE_URL}/api/factures/`, {
+ // Ajoutez ce useEffect au début du composant pour demander les permissions
+useEffect(() => {
+  registerForPushNotificationsAsync();
+}, []);
+
+// Modifiez la fonction handlePayment comme suit :
+const handlePayment = async () => {
+  if (!selectedBill || !selectedCompany || !billNumber || !accountNumber || !amount) {
+    alert('Veuillez remplir tous les champs');
+    return;
+  }
+  if (billNumber.length < 6 || billNumber.length > 15) {
+    alert('Le numéro de facture doit contenir entre 6 et 15 chiffres');
+    return;
+  }
+  if (accountNumber.length < 5) {
+    alert('Le numéro de compte doit contenir entre 5 et 20 caractères');
+    return;
+  }
+
+  setIsLoading(true);
+
+  try {
+    // Créer la facture
+    const response = await fetch(`${config.BASE_URL}/api/factures/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        numeroFacture: billNumber,
+        montant: amount,
+        dateEcheance: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        utilisateurId: "user123", // Remplacer dynamiquement plus tard
+        typeFacture: selectedBill,
+        societe: selectedCompany,
+        compteClient: accountNumber,
+      }),
+    });
+
+    if (response.ok) {
+      const otpResponse = await fetch(`${config.BASE_URL}/api/factures/factures/${billNumber}/otp`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          numeroFacture: billNumber,
-          montant: amount,
-          dateEcheance: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          utilisateurId: "user123", // Remplacer dynamiquement plus tard
-          typeFacture: selectedBill,
-          societe: selectedCompany,
-          compteClient: accountNumber,
-        }),
       });
-  
-      if (response.ok) {
-        const otpResponse = await fetch(`${config.BASE_URL}/api/factures/factures/${billNumber}/otp`, {
-          method: 'POST',
+
+      if (otpResponse.ok) {
+        const otpData = await otpResponse.json();
+        const otpCode = otpData.otp;
+
+        // Envoyer la notification avec l'OTP
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Code OTP pour paiement",
+            body: `Votre code OTP est: ${otpCode}`,
+            data: { otp: otpCode },
+          },
+          trigger: null, // Envoi immédiat
         });
-  
-        if (otpResponse.ok) {
-          setShowOtpModal(true);
-        } else {
-          const errorData = await otpResponse.json();
-          alert(errorData.message || "Erreur lors de la demande d'OTP");
-        }
+
+        setShowOtpModal(true);
       } else {
-        const errorData = await response.json();
-        alert(errorData.message || "Erreur lors de la création de la facture");
+        const errorData = await otpResponse.json();
+        alert(errorData.message || "Erreur lors de la demande d'OTP");
       }
-    } catch (error) {
-      console.error('Erreur:', error);
-      alert("Une erreur s'est produite");
-    } finally {
-      setIsLoading(false);
+    } else {
+      const errorData = await response.json();
+      alert(errorData.message || "Erreur lors de la création de la facture");
     }
-  };
-  
+  } catch (error) {
+    console.error('Erreur:', error);
+    alert("Une erreur s'est produite");
+  } finally {
+    setIsLoading(false);
+  }
+};
   const handleOtpVerification = async () => {
     if (!otp) {
       alert('Veuillez entrer le code OTP');
@@ -267,8 +328,10 @@ const BillPaymentScreen = () => {
             </View>
             <View style={styles.receiptRow}>
               <Text style={styles.receiptLabel}>Numéro de compte:</Text>
-              <Text style={styles.receiptValue}>{receiptData.accountNumber}</Text>
+              <Text style={styles.receiptValue}>{formatAccountNumber(receiptData.accountNumber)}</Text>
+
             </View>
+
             <View style={styles.receiptRow}>
               <Text style={styles.receiptLabel}>Montant:</Text>
               <Text style={styles.receiptValue}>R$ {receiptData.amount}</Text>
@@ -374,7 +437,7 @@ const BillPaymentScreen = () => {
           </View>
 
           {/* Account Number Input */}
-          <Text style={styles.sectionTitle}>Numéro de compte (5-20 caractères)</Text>
+          <Text style={styles.sectionTitle}>Numéro de compte</Text>
           <View style={styles.inputContainer}>
             <MaterialCommunityIcons name="credit-card" size={24} color="#666" />
             <TextInput
@@ -676,7 +739,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     fontWeight: 'bold',
-  },
+    flex: 1,
+    textAlign: 'left',
+    flexWrap: 'wrap', // ✅ Ajoute cette ligne
+  },  
   printButton: {
     flexDirection: 'row',
     backgroundColor: '#2E86DE',

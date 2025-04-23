@@ -23,54 +23,71 @@ type TransactionItem = {
   icon: keyof typeof MaterialIcons.glyphMap;
 };
 
+const useDestinataires = (transactions: Transaction[]) => {
+  const [destinataires, setDestinataires] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const fetchNames = async () => {
+      const ids = Array.from(
+        new Set(transactions.map(t => t.compteDestinataire?.replace('comptes/', '') || '').filter(Boolean))
+      );
+
+      const namesMap: Record<string, string> = {};
+
+      for (const id of ids) {
+        try {
+          const res = await fetch(`${config.BASE_URL}/api/comptes/${id}`);
+          const data = await res.json();
+          const userId = data.userId?.replace('users/', '');
+
+          if (userId) {
+            const userRes = await fetch(`${config.BASE_URL}/api/users/${userId}`);
+            const userData = await userRes.json();
+            namesMap[`comptes/${id}`] = userData.nom || userData.fullName || 'Utilisateur';
+          } else {
+            namesMap[`comptes/${id}`] = 'Inconnu';
+          }
+        } catch (e) {
+          console.error(`Erreur fetch destinataire ${id}`, e);
+          namesMap[`comptes/${id}`] = 'Erreur';
+        }
+      }
+
+      setDestinataires(namesMap);
+    };
+
+    if (transactions.length > 0) fetchNames();
+  }, [transactions]);
+
+  return destinataires;
+};
+
 const TransactionHistoryScreen = () => {
   const params = useLocalSearchParams();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const compteId = params.compteId as string || 'default-compte-id';
+  const destinataires = useDestinataires(transactions);
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const id = typeof compteId === 'string' ? compteId : '';
-        console.log('🔍 compteId utilisé dans la requête :', id);
-        if (!id) {
-          console.warn('ID du compte non fourni');
-          return;
-        }
-  
-        const cleanId = id.replace('comptes/', ''); // Enlève "comptes/" s'il est là
-        const response = await fetch(`${config.BASE_URL}/api/transactions/compte/${cleanId}`);
+        const cleanId = compteId.replace('comptes/', '');
+        const res = await fetch(`${config.BASE_URL}/api/transactions/compte/${cleanId}`);
+        if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
 
-        console.log('📥 Réponse brute :', response);
-        const text = await response.text();
-        console.log('📄 Contenu brut :', text);
-
-        let data;
-          try {
-            data = JSON.parse(text);
-          } catch (e) {
-            console.error('❌ Erreur de parsing JSON:', e);
-            return;
-          }
-
-  
-        if (Array.isArray(data)) {
-          setTransactions(data);
-        } else {
-          console.warn('Réponse inattendue :', data);
-          setTransactions([]);
-        }
+        const data = await res.json();
+        setTransactions(data);
       } catch (error) {
-        console.error('Erreur lors de la récupération des transactions :', error);
+        console.error('Erreur lors du fetch des transactions:', error);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchTransactions();
   }, [compteId]);
-  
+
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString();
@@ -78,26 +95,25 @@ const TransactionHistoryScreen = () => {
 
   const groupTransactions = () => {
     const grouped: { [date: string]: TransactionItem[] } = {};
-  
+    const normalizeCompteId = (id: string = '') => id.replace('comptes/', '');
+
     transactions.forEach((tx) => {
       const date = formatDate(tx.date);
       if (!grouped[date]) grouped[date] = [];
-  
-      const isReceived =
-        tx.compteDestinataire === `comptes/${compteId}` ||
-        tx.compteDestinataire === compteId;
-  
+
+      const isReceived = normalizeCompteId(tx.compteDestinataire) === normalizeCompteId(compteId);
+      const keyDest = tx.compteDestinataire || '';
+      const recipientName = destinataires[keyDest] || tx.destinataireNom || 'Destinataire inconnu';
+
       grouped[date].push({
         type: tx.typeTransaction,
         title:
           tx.typeTransaction === 'Virement'
-            ? isReceived
-              ? 'Virement reçu'
-              : 'Virement envoyé'
+            ? isReceived ? 'Virement reçu' : 'Virement envoyé'
             : 'Transaction',
         description:
           tx.typeTransaction === 'Virement'
-            ? `${isReceived ? '←' : '→'} ${tx.destinataireNom || tx.compteDestinataire}`
+            ? `${isReceived ? 'De: ' : 'À: '}${recipientName}`
             : 'Transaction',
         time: new Date(tx.date).toLocaleTimeString([], {
           hour: '2-digit',
@@ -107,14 +123,14 @@ const TransactionHistoryScreen = () => {
         icon: 'account-balance',
       });
     });
-  
+
     return Object.entries(grouped).map(([date, items], index) => ({
       id: index.toString(),
       date,
       items,
     }));
   };
-  
+
   const groupedTransactions = groupTransactions();
 
   return (
