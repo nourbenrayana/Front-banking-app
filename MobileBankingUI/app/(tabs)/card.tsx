@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Animated, Easing, StyleSheet, ScrollView,
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useUser } from '../../context/UserContext';
 
 // Primary color
 const PRIMARY_COLOR = '#1E90FF';
@@ -12,6 +13,15 @@ const PRIMARY_LIGHT = '#B3E0FF';
 // Types definitions
 type MaterialIconName = React.ComponentProps<typeof MaterialIcons>['name'];
 type CardStatus = 'active' | 'blocked' | 'expired';
+
+// Default values
+const DEFAULT_CARD_DATA = {
+  fullName: 'John Doe',
+  cardNumber: '978894430',
+  expiryDate: '05/32',
+  cardType: 'VISA',
+  status: 'active' as CardStatus
+};
 
 interface DetailRowProps {
   icon: MaterialIconName;
@@ -23,26 +33,24 @@ interface DetailRowProps {
   children?: React.ReactNode;
 }
 
-interface CardData {
-  holderName: string;
-  cardNumber: string;
-  expiryDate: string;
-  cardType: string;
-  status: CardStatus;
-}
-
 const ModernCardUI = () => {
   const router = useRouter();
+  const { userData, accountData, setAccountData } = useUser();
   const [activeTab, setActiveTab] = useState<'details' | 'management'>('details');
   const cardTilt = useRef(new Animated.Value(0)).current;
   const cardScale = useRef(new Animated.Value(1)).current;
-  const [cardData, setCardData] = useState<CardData>({
-    holderName: 'John Doe',
-    cardNumber: '978894430',
-    expiryDate: '05/32',
-    cardType: 'VISA',
-    status: 'active'
-  });
+
+  // Merge context data with defaults
+  const mergedUserData = {
+    fullName: userData.fullName || DEFAULT_CARD_DATA.fullName,
+  };
+
+  const mergedAccountData = {
+    cardNumber: accountData.cardNumber || DEFAULT_CARD_DATA.cardNumber,
+    expiryDate: accountData.expiryDate || DEFAULT_CARD_DATA.expiryDate,
+    cardType: accountData.cardType || DEFAULT_CARD_DATA.cardType,
+    status: accountData.status || DEFAULT_CARD_DATA.status,
+  };
 
   // Animation handlers
   const handleCardPressIn = () => {
@@ -82,7 +90,7 @@ const ModernCardUI = () => {
   });
 
   // Helper functions
-  const maskedCardNumber = `•••• •••• •••• ${cardData.cardNumber.slice(-4)}`;
+  const maskedCardNumber = `•••• •••• •••• ${mergedAccountData.cardNumber.slice(-4)}`;
 
   const getStatusLabel = (status: CardStatus): string => {
     switch(status) {
@@ -94,9 +102,9 @@ const ModernCardUI = () => {
   };
 
   const toggleCardStatus = () => {
-    setCardData({
-      ...cardData,
-      status: cardData.status === 'active' ? 'blocked' : 'active'
+    setAccountData({
+      ...accountData,
+      status: mergedAccountData.status === 'active' ? 'blocked' : 'active'
     });
   };
 
@@ -104,11 +112,6 @@ const ModernCardUI = () => {
     console.log('Card deletion');
   };
 
-  const handleRenewCard = () => {
-    console.log('Card renewal');
-  };
-
-  // Components
   const DetailRow: React.FC<DetailRowProps> = ({ 
     icon, 
     title, 
@@ -164,7 +167,7 @@ const ModernCardUI = () => {
             style={styles.card}
           >
             <View style={styles.cardHeader}>
-              <Text style={styles.cardBank}>{getStatusLabel(cardData.status)}</Text>
+              <Text style={styles.cardBank}>{getStatusLabel(mergedAccountData.status)}</Text>
               <MaterialIcons name="contactless" size={24} color="white" />
             </View>
 
@@ -177,13 +180,13 @@ const ModernCardUI = () => {
             <View style={styles.cardFooter}>
               <View>
                 <Text style={styles.cardLabel}>CARDHOLDER</Text>
-                <Text style={styles.cardValue}>{cardData.holderName}</Text>
+                <Text style={styles.cardValue}>{mergedUserData.fullName}</Text>
               </View>
               <View>
                 <Text style={styles.cardLabel}>EXPIRATION</Text>
-                <Text style={styles.cardValue}>{cardData.expiryDate}</Text>
+                <Text style={styles.cardValue}>{mergedAccountData.expiryDate}</Text>
               </View>
-              <Text style={styles.cardType}>{cardData.cardType}</Text>
+              <Text style={styles.cardType}>{mergedAccountData.cardType}</Text>
             </View>
           </LinearGradient>
         </Animated.View>
@@ -226,7 +229,7 @@ const ModernCardUI = () => {
               <DetailRow 
                 icon="person"
                 title="Cardholder" 
-                value={cardData.holderName}
+                value={mergedUserData.fullName}
               />
               <DetailRow 
                 icon="credit-card"
@@ -236,17 +239,17 @@ const ModernCardUI = () => {
               <DetailRow 
                 icon="calendar-today"
                 title="Expiration Date" 
-                value={cardData.expiryDate}
+                value={mergedAccountData.expiryDate}
               />
               <DetailRow 
                 icon="payment"
                 title="Card Type" 
-                value={cardData.cardType}
+                value={mergedAccountData.cardType}
               />
               <DetailRow 
                 icon="lock"
                 title="Status" 
-                value={getStatusLabel(cardData.status)}
+                value={getStatusLabel(mergedAccountData.status)}
                 isLast
               />
             </View>
@@ -259,23 +262,18 @@ const ModernCardUI = () => {
               >
                 <View style={styles.switchContainer}>
                   <Text style={styles.switchLabel}>
-                    {cardData.status === 'active' ? 'Enabled' : 'Disabled'}
+                    {mergedAccountData.status === 'active' ? 'Enabled' : 'Disabled'}
                   </Text>
                   <Switch
-                    value={cardData.status === 'active'}
+                    value={mergedAccountData.status === 'active'}
                     onValueChange={toggleCardStatus}
                     trackColor={{ false: '#E5E7EB', true: PRIMARY_LIGHT }}
-                    thumbColor={cardData.status === 'active' ? PRIMARY_COLOR : '#9CA3AF'}
+                    thumbColor={mergedAccountData.status === 'active' ? PRIMARY_COLOR : '#9CA3AF'}
                   />
                 </View>
               </DetailRow>
 
-              <DetailRow 
-                icon="vpn-key"
-                title="Change PIN Code"
-                isEditable={true}
-                action={() => router.push("/change_pin_de_cart")}
-              />
+           
 
               <DetailRow 
                 icon="delete"

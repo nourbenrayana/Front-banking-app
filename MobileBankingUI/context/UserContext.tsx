@@ -18,7 +18,7 @@ interface Transaction {
   image?: any; // optionnel pour les avatars
 }
 
-interface AccountData {
+export interface AccountData {
   accountId: string;
   creditLimit: number;
   accountNumber: string;

@@ -1,6 +1,6 @@
 // config.ts
-const BASE_URL = 'http://192.168.1.16:3000';
-const URL  = 'http://192.168.1.16:5000';
+const BASE_URL = 'http://192.168.1.18:3000';
+const URL  = 'http://192.168.1.18:5000';
 
 
 export default {

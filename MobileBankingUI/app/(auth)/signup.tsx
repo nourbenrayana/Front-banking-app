@@ -239,7 +239,6 @@ export default function SignUpScreen() {
           <TextInput
             style={styles.input}
             placeholder="ID Number (CPF/RG)"
-            keyboardType="numeric"
             value={formData.idNumber}
             onChangeText={(text) => handleNumberInput('idNumber', text)}
             maxLength={11}

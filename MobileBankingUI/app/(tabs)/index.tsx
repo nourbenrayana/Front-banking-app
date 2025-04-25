@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useUser } from "../../context/UserContext";
@@ -8,10 +8,25 @@ import config from "@/utils/config";
 
 interface Transaction {
   id: string;
-  image: any; 
+  image: any;
   name: string;
   date: string;
   amount: number;
+}
+
+interface ActionProps {
+  icon: React.ComponentProps<typeof Ionicons>["name"];
+  label: string;
+  color?: string;
+  onPress?: () => void;
+}
+
+interface TransactionItemProps {
+  image: any;
+  name: string;
+  date: string;
+  amount: string;
+  positive?: boolean;
 }
 
 export default function Dashboard() {
@@ -24,60 +39,94 @@ export default function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
+    const fetchUserName = async (compteId: string): Promise<string> => {
+      try {
+        const cleanedId = compteId.replace(/^comptes\//, '');
+  
+        // Étape 1 : récupérer le compte pour obtenir l'userId
+        const resCompte = await fetch(`${config.BASE_URL}/api/comptes/${cleanedId}`);
+        if (!resCompte.ok) return "Unknown";
+        const compteData = await resCompte.json();
+        const userId = (compteData.userId || compteData.ownerId || "").replace(/^users\//, '');
+  
+        // Étape 2 : récupérer l'utilisateur pour obtenir son nom
+        const resUser = await fetch(`${config.BASE_URL}/api/users/${userId}`);
+        if (!resUser.ok) return "Unknown";
+        const userData = await resUser.json();
+  
+        return userData.fullName || userData.nom || "Unknown";
+      } catch (error) {
+        console.error("Error fetching user name:", error);
+        return "Unknown";
+      }
+    };
+  
     const fetchTransactions = async () => {
       if (!accountId) return;
+  
       try {
-        
-        const res = await fetch(`${config.BASE_URL}/api/transactions/compte/${accountId}`);
-        console.log("Raw response:", res); // Check the response status and headers
-        const text = await res.text();
-        console.log("Response text:", text); // See what's actually being returned
-        const data = JSON.parse(text); // Now try to parse it
-        const formatted = data.map((tx: any) => {
-          const isIncoming = tx.compteDestinataire?.includes(accountId);
-          return {
-            id: tx._id,
-            image: require("../../assets/images/avatar1.jpg"),
-            name: tx.destinataireNom || "Transaction",
-            date: tx.date,
-            amount: isIncoming ? tx.montant : -tx.montant,
-          };
-        });
-        
+        const cleanedAccountId = accountId.replace(/^comptes\//, '');
+        const res = await fetch(`${config.BASE_URL}/api/transactions/compte/${cleanedAccountId}`);
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`HTTP ${res.status}: ${errorText}`);
+        }
+  
+        const data = await res.json();
+  
+        const formatted = await Promise.all(
+          data.map(async (tx: any) => {
+            const isIncoming = tx.compteDestinataire?.includes(cleanedAccountId);
+            const otherCompteId = isIncoming ? tx.compteExpediteur : tx.compteDestinataire;
+            const name = await fetchUserName(otherCompteId);
+  
+            return {
+              id: tx._id,
+              image: require("../../assets/images/avatar1.jpg"),
+              name,
+              date: tx.date,
+              amount: isIncoming ? tx.montant : -tx.montant,
+            };
+          })
+        );
+  
         setTransactions(formatted);
       } catch (err) {
         console.error("Error details:", err);
       }
     };
-
+  
     fetchTransactions();
   }, [accountId]);
+  
 
   const recentTransactions = transactions
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 2);
 
-
   const handleTransfer = () => {
     router.push("/Payment");
   };
+  
   const handlePaymentChoice = () => {
     router.push("/choixdepaiment");
   };
+  
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* HEADER */}
       <View style={styles.header}>
-        <View>
-          <TouchableOpacity onPress={() => router.replace("/(auth)/welcome1")}>
-            <Ionicons name="arrow-back" size={24} color="black" />
-          </TouchableOpacity>
-          <Text style={styles.greeting}>Hello,</Text>
-          <Text style={styles.username}>{fullName || "User"}!</Text>
+        <View style={styles.headerTextContainer}>
+          <Text style={styles.greeting}>Hello, {fullName || "User"}!</Text>
+          <Text style={styles.subtitle}>Welcome back to your dashboard</Text>
         </View>
-        <TouchableOpacity onPress={() => router.push("/notification")}>
-          <Ionicons name="notifications-outline" size={24} color="black" />
+        <TouchableOpacity 
+          style={styles.notificationButton}
+          onPress={() => router.push("/notification")}
+        >
+          <Ionicons name="notifications-outline" size={24} color="#333" />
+          <View style={styles.notificationBadge} />
         </TouchableOpacity>
       </View>
 
@@ -91,31 +140,30 @@ export default function Dashboard() {
         onTransfer={handleTransfer}
       />
 
-      {/* SERVICES */}
-      <View style={styles.creditLimitContainer}>
-        <Text style={styles.creditLimit}>Our Services</Text>
-        <View style={styles.actions}>
-          <Action icon="add-circle-outline" label="Payment" onPress={handlePaymentChoice} />
-          <Action icon="swap-horizontal-outline" label="Swap" />
-          <Action icon="arrow-forward-circle-outline" label="Transfer" onPress={handleTransfer} />
-          <Action icon="chatbubble-outline" label="Request" />
+      {/* QUICK ACTIONS */}
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionTitle}>Quick Actions</Text>
+        <View style={styles.actionsContainer}>
+          <Action icon="arrow-up-outline" label="Send" color="#6C5CE7" onPress={handleTransfer} />
+          <Action icon="arrow-down-outline" label="Request" color="#00B894" />
+          <Action icon="wallet-outline" label="Pay" color="#FD79A8" onPress={handlePaymentChoice} />
+          <Action icon="swap-horizontal-outline" label="Swap" color="#0984E3" />
         </View>
       </View>
 
       {/* TRANSACTIONS */}
-      <View style={styles.transactions}>
-        <View style={styles.transactionHeader}>
-          <Text style={styles.sectionTitle}>Transactions</Text>
+      <View style={styles.sectionContainer}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Recent Transactions</Text>
           <TouchableOpacity
             onPress={() =>
               router.push({ pathname: "/historique", params: { compteId: accountData?.accountId } })
             }
           >
-            <Text style={styles.viewAll}>Voir tout</Text>
+            <Text style={styles.viewAll}>View All</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Display last 2 transactions */}
         {recentTransactions.length > 0 ? (
           recentTransactions.map((tx) => (
             <TransactionItem
@@ -128,39 +176,29 @@ export default function Dashboard() {
             />
           ))
         ) : (
-          <Text style={{ textAlign: "center", color: "gray" }}>
-            Aucune transaction récente.
-          </Text>
+          <View style={styles.noTransactions}>
+            <Ionicons name="receipt-outline" size={40} color="#DFE6E9" />
+            <Text style={styles.noTransactionsText}>No recent transactions</Text>
+          </View>
         )}
-
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
-interface ActionProps {
-  icon: React.ComponentProps<typeof Ionicons>["name"];
-  label: string;
-  onPress?: () => void;
-}
-
-function Action({ icon, label, onPress }: ActionProps) {
+// Updated Action component with better styling
+function Action({ icon, label, color = "#3498db", onPress }: ActionProps) {
   return (
     <TouchableOpacity style={styles.actionButton} onPress={onPress}>
-      <Ionicons name={icon} size={20} color="white" />
-      <Text style={styles.actionText}>{label}</Text>
+      <View style={[styles.actionIcon, { backgroundColor: color }]}>
+        <Ionicons name={icon} size={20} color="white" />
+      </View>
+      <Text style={styles.actionLabel}>{label}</Text>
     </TouchableOpacity>
   );
 }
 
-interface TransactionItemProps {
-  image: any;
-  name: string;
-  date: string;
-  amount: string;
-  positive?: boolean;
-}
-
+// Updated TransactionItem with better styling
 function TransactionItem({
   image,
   name,
@@ -175,78 +213,168 @@ function TransactionItem({
         <Text style={styles.transactionName}>{name}</Text>
         <Text style={styles.transactionDate}>{date}</Text>
       </View>
-      <Text style={positive ? styles.income : styles.expense}>{amount}</Text>
+      <Text style={[
+        styles.transactionAmount,
+        positive ? styles.income : styles.expense
+      ]}>
+        {amount}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#F8F9FA" },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
-  greeting: { fontSize: 14, color: "gray" },
-  username: { fontSize: 18, fontWeight: "bold" },
-  creditLimitContainer: {
-    backgroundColor: 'white',
-    borderRadius: 15,
+  container: {
+    flex: 1,
     padding: 20,
-    marginTop: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    backgroundColor: "#F8FAFD",
   },
-  creditLimit: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  actionButton: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#3498db",
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    margin: 8,
-  },
-  actionText: {
-    color: "#fff",
-    fontSize: 10,
-    textAlign: "center",
-    marginTop: 4,
-  },
-  actions: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  transactions: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 15,
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
-  transactionItem: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 15 },
-  avatar: { width: 40, height: 40, borderRadius: 20, marginRight: 10 },
-  transactionDetails: { flex: 1 },
-  transactionName: { fontSize: 16, fontWeight: "bold" },
-  transactionDate: { fontSize: 12, color: "gray" },
-  income: { color: "green", fontSize: 16, fontWeight: "bold" },
-  expense: { color: "red", fontSize: 16, fontWeight: "bold" },
-  transactionHeader: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 25,
+  },
+  headerTextContainer: {
+    flex: 1,
+  },
+  greeting: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#2D3436",
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#636E72",
+    marginTop: 4,
+  },
+  notificationButton: {
+    padding: 8,
+    position: 'relative',
+  },
+  notificationBadge: {
+    position: 'absolute',
+    right: 6,
+    top: 6,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#E74C3C',
+  },
+  sectionContainer: {
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#2D3436",
   },
   viewAll: {
-    color: "#3498db",
+    color: "#0984E3",
     fontSize: 14,
+    fontWeight: "500",
+  },
+  actionsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
+  actionButton: {
+    alignItems: "center",
+    width: 70,
+  },
+  actionIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  actionLabel: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: "#636E72",
+    textAlign: "center",
+  },
+  transactionItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EDF2F7",
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    marginRight: 12,
+  },
+  transactionDetails: {
+    flex: 1,
+  },
+  transactionName: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#2D3436",
+    marginBottom: 4,
+  },
+  transactionDate: {
+    fontSize: 12,
+    color: "#636E72",
+  },
+  transactionAmount: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  income: {
+    color: "#00B894",
+  },
+  expense: {
+    color: "#D63031",
+  },
+  noTransactions: {
+    alignItems: "center",
+    paddingVertical: 30,
+  },
+  noTransactionsText: {
+    color: "#636E72",
+    marginTop: 10,
+  },
+  statsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
+  statItem: {
+    backgroundColor: "#F8F9FA",
+    borderRadius: 12,
+    padding: 16,
+    width: '30%',
+    alignItems: "center",
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#2D3436",
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: "#636E72",
   },
 });

@@ -10,7 +10,7 @@ export default function PaymentChoiceScreen() {
     <View style={styles.container}>
       {/* Titre avec style */}
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Options de Paiement</Text>
+        <Text style={styles.title}>Payment Options</Text>
         <View style={styles.titleUnderline} />
       </View>
 
@@ -24,8 +24,8 @@ export default function PaymentChoiceScreen() {
             <Ionicons name="document-text" size={28} color="white" />
           </View>
           <View style={styles.textContainer}>
-            <Text style={styles.cardTitle}>Payer une Facture</Text>
-            <Text style={styles.cardSubtitle}>Factures d'électricité, eau, etc.</Text>
+            <Text style={styles.cardTitle}>Pay a Bill</Text>
+            <Text style={styles.cardSubtitle}>Electricity bills, water, etc.</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color="#a0aec0" />
         </View>
@@ -40,8 +40,8 @@ export default function PaymentChoiceScreen() {
             <Ionicons name="qr-code" size={28} color="white" />
           </View>
           <View style={styles.textContainer}>
-            <Text style={styles.cardTitle}>Scanner QR Code</Text>
-            <Text style={styles.cardSubtitle}>Paiement rapide via QR</Text>
+            <Text style={styles.cardTitle}>QR Code Scanner</Text>
+            <Text style={styles.cardSubtitle}>Fast payment via QR</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color="#a0aec0" />
         </View>

@@ -1,5 +1,5 @@
 // app/(tabs)/ajoutduncarte.tsx
-import React, { useState } from 'react';
+import React, { useState ,useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -10,6 +10,9 @@ import {
   Alert 
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { useUser } from '@/context/UserContext'; 
+
+
 
 type FormData = {
   cardType: string;
@@ -31,6 +34,17 @@ type CardOption = {
 };
 
 const CardApplication = () => {
+  const { userData } = useUser();
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      firstName: userData.fullName,
+      birthDate: userData.birthDate,
+      phone: userData.phone,
+      email: userData.email,
+    }));
+  }, [userData]);
+
   const [formData, setFormData] = useState<FormData>({
     cardType: 'ELO_CREDIT',
     firstName: '',
@@ -65,11 +79,7 @@ const CardApplication = () => {
 
   const validateForm = (): boolean => {
     if (!formData.firstName.trim()) {
-      Alert.alert('Error', 'First name is required');
-      return false;
-    }
-    if (!formData.lastName.trim()) {
-      Alert.alert('Error', 'Last name is required');
+      Alert.alert('Error', 'Full name is required');
       return false;
     }
     if (!formData.cpf.trim()) {
@@ -134,17 +144,11 @@ const CardApplication = () => {
       <Text style={styles.sectionTitle}>Personal Information</Text>
       <TextInput
         style={styles.input}
-        placeholder="First Name *"
+        placeholder="Full Name *"
         value={formData.firstName}
         onChangeText={(text) => handleChange('firstName', text)}
         returnKeyType="next"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Last Name *"
-        value={formData.lastName}
-        onChangeText={(text) => handleChange('lastName', text)}
-        returnKeyType="next"
+        editable={false}
       />
       <TextInput
         style={styles.input}
@@ -161,6 +165,7 @@ const CardApplication = () => {
         onChangeText={(text) => handleChange('birthDate', text)}
         keyboardType="numbers-and-punctuation"
         returnKeyType="next"
+        editable={false}
       />
 
       <Text style={styles.sectionTitle}>Address</Text>
@@ -195,6 +200,7 @@ const CardApplication = () => {
         onChangeText={(text) => handleChange('phone', text)}
         keyboardType="phone-pad"
         returnKeyType="next"
+        editable={false}
       />
       <TextInput
         style={styles.input}
@@ -204,6 +210,7 @@ const CardApplication = () => {
         keyboardType="email-address"
         autoCapitalize="none"
         returnKeyType="next"
+        editable={false}
       />
 
       <Text style={styles.sectionTitle}>Reason for Additional Card</Text>

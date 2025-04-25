@@ -122,30 +122,30 @@ const PhotoPreviewSection = ({
                 </View>
             )}
 
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={handleRetakePhoto}>
-                    <Ionicons name="reload-circle" size={36} color="black" />
-                </TouchableOpacity>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.button} onPress={handleRetakePhoto}>
+                        <Ionicons name="reload-circle" size={36} color="black" />
+                    </TouchableOpacity>
 
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={sendImageToBackend}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <ActivityIndicator size="small" color="black" />
-                    ) : (
-                        <Fontisto name="cloud-up" size={36} color="black" />
-                    )}
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={
+                            comparisonResult
+                                ? () => router.push('/(auth)/verification')
+                                : sendImageToBackend
+                        }
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <ActivityIndicator size="small" color="black" />
+                        ) : comparisonResult ? (
+                            <Ionicons name="checkmark-circle-outline" size={36} color="black" />
+                        ) : (
+                            <Fontisto name="cloud-up" size={36} color="black" />
+                        )}
+                    </TouchableOpacity>
+                </View>
 
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => router.push('/(auth)/verification')}
-                >
-                    <Ionicons name="checkmark-circle-outline" size={36} color="black" />
-                </TouchableOpacity>
-            </View>
         </SafeAreaView>
     );
 };

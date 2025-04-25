@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 3,
-    marginTop: 20,
+    marginTop: 100,
     marginBottom: 20,
   },
   iconsColumn: {

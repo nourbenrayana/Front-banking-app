@@ -98,10 +98,13 @@ export default function Profile() {
       <View style={styles.separator} />
 
       {/* Bouton Déconnexion */}
-      <TouchableOpacity style={styles.logoutButton}>
-        <Text style={styles.logoutText}
-        onPress={() => router.push('/(auth)/loginorsignup')}>Logout</Text>
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={() => router.push('/(auth)/loginorsignup')} // 👉 Déplacé ici
+      >
+        <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
+
     </ScrollView>
   );
 }

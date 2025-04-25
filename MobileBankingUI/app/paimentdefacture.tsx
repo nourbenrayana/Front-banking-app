@@ -70,6 +70,8 @@ const BillPaymentScreen = () => {
   const [otp, setOtp] = useState('');
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const {  setAccountData ,userData} = useUser();
+
   
   const formatAccountNumber = (account: string) => {
     if (!account || account.length < 6) return account;
@@ -82,7 +84,7 @@ const BillPaymentScreen = () => {
   const bills: Bill[] = [
     { 
       id: 'electricity', 
-      name: 'Électricité', 
+      name: 'Electricity', 
       icon: 'flash', 
       color: '#FFD700',
       companies: [
@@ -100,7 +102,7 @@ const BillPaymentScreen = () => {
     },
     { 
       id: 'water', 
-      name: 'Eau', 
+      name: 'Water', 
       icon: 'water', 
       color: '#1E90FF',
       companies: [
@@ -116,7 +118,7 @@ const BillPaymentScreen = () => {
     },
     { 
       id: 'gas', 
-      name: 'Gaz', 
+      name: 'Gas', 
       icon: 'fire', 
       color: '#FF6347',
       companies: [
@@ -152,15 +154,15 @@ useEffect(() => {
 // Modifiez la fonction handlePayment comme suit :
 const handlePayment = async () => {
   if (!selectedBill || !selectedCompany || !billNumber || !accountNumber || !amount) {
-    alert('Veuillez remplir tous les champs');
+    alert('Please fill in all fields');
     return;
   }
   if (billNumber.length < 6 || billNumber.length > 15) {
-    alert('Le numéro de facture doit contenir entre 6 et 15 chiffres');
+    alert('The Bill number must contain between 6 and 15 characters');
     return;
   }
   if (accountNumber.length < 5) {
-    alert('Le numéro de compte doit contenir entre 5 et 20 caractères');
+    alert('The account number must contain between 5 and 20 characters');
     return;
   }
 
@@ -177,7 +179,7 @@ const handlePayment = async () => {
         numeroFacture: billNumber,
         montant: amount,
         dateEcheance: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        utilisateurId: "user123", // Remplacer dynamiquement plus tard
+        utilisateurId: userData.userId,
         typeFacture: selectedBill,
         societe: selectedCompany,
         compteClient: accountNumber,
@@ -196,8 +198,8 @@ const handlePayment = async () => {
         // Envoyer la notification avec l'OTP
         await Notifications.scheduleNotificationAsync({
           content: {
-            title: "Code OTP pour paiement",
-            body: `Votre code OTP est: ${otpCode}`,
+            title: "OTP code for payment",
+            body: `Your OTP code is: ${otpCode}`,
             data: { otp: otpCode },
           },
           trigger: null, // Envoi immédiat
@@ -206,82 +208,92 @@ const handlePayment = async () => {
         setShowOtpModal(true);
       } else {
         const errorData = await otpResponse.json();
-        alert(errorData.message || "Erreur lors de la demande d'OTP");
+        alert(errorData.message || "Error requesting OTP");
       }
     } else {
       const errorData = await response.json();
-      alert(errorData.message || "Erreur lors de la création de la facture");
+      alert(errorData.message || "Error creating Bill");
     }
   } catch (error) {
-    console.error('Erreur:', error);
-    alert("Une erreur s'est produite");
+    console.error('Error:', error);
+    alert("An error has occurred");
   } finally {
     setIsLoading(false);
   }
 };
-  const handleOtpVerification = async () => {
-    if (!otp) {
-      alert('Veuillez entrer le code OTP');
-      return;
-    }
-  
-    setIsLoading(true);
-  
-    try {
-      const response = await fetch(`${config.BASE_URL}/api/factures/factures/${billNumber}/payer`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ otp }),
+const handleOtpVerification = async () => {
+  if (!otp) {
+    alert('Please enter the OTP code');
+    return;
+  }
+
+  setIsLoading(true);
+
+  try {
+    const response = await fetch(`${config.BASE_URL}/api/factures/factures/${billNumber}/payer`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ otp }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const bill = bills.find(b => b.id === selectedBill);
+      const company = bill?.companies.find(c => c.id === selectedCompany);
+
+      // ✅ Mettre à jour les données du reçu
+      setReceiptData({
+        companyName: company?.name || '',
+        billType: bill?.name || '',
+        billNumber,
+        accountNumber,
+        amount,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        transactionId: Math.random().toString(36).substring(2, 10).toUpperCase(),
+        newBalance: data.compteMisAJour?.soldeActuel ?? null,
       });
-  
-      if (response.ok) {
-        const data = await response.json();
-        const bill = bills.find(b => b.id === selectedBill);
-        const company = bill?.companies.find(c => c.id === selectedCompany);
-  
-        setReceiptData({
-          companyName: company?.name || '',
-          billType: bill?.name || '',
-          billNumber,
-          accountNumber,
-          amount,
-          date: new Date().toLocaleDateString(),
-          time: new Date().toLocaleTimeString(),
-          transactionId: Math.random().toString(36).substring(2, 10).toUpperCase()
+
+      if (data.compteMisAJour) {
+        setAccountData({
+          ...accountData, 
+          balance: data.compteMisAJour.soldeActuel,
         });
-  
-        setPaymentSuccess(true);
-        setShowOtpModal(false);
-      } else {
-        const errorData = await response.json();
-        alert(errorData.message || "OTP invalide ou expiré");
       }
-    } catch (error) {
-      console.error('Erreur:', error);
-      alert("Une erreur s'est produite");
-    } finally {
-      setIsLoading(false);
+      
+
+      setPaymentSuccess(true);
+      setShowOtpModal(false);
+    } else {
+      const errorData = await response.json();
+      alert(errorData.message || "Invalid or expired OTP");
     }
-  };
+  } catch (error) {
+    console.error('Error:', error);
+    alert("An error has occurred");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const printReceipt = () => {
     const receiptText = `
-      Reçu de paiement
+      Payment receipt
       -------------------------
-      Société: ${receiptData.companyName}
+      Company: ${receiptData.companyName}
       Type: ${receiptData.billType}
-      Numéro de facture: ${receiptData.billNumber}
-      Numéro de compte: ${receiptData.accountNumber}
-      Montant: R$ ${receiptData.amount}
-      Date: ${receiptData.date} à ${receiptData.time}
+      Bill number: ${receiptData.billNumber}
+      Account number: ${receiptData.accountNumber}
+      Amount: R$ ${receiptData.amount}
+      Date: ${receiptData.date} at ${receiptData.time}
       Transaction: ${receiptData.transactionId}
       
-      Merci pour votre paiement!
+      Thank you for your payment!
     `;
     
-    alert("Fonction d'impression:\n" + receiptText);
+    alert("Print function:\n" + receiptText);
   };
 
   const resetForm = () => {
@@ -299,7 +311,7 @@ const handlePayment = async () => {
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Paiement de Factures</Text>
+        <Text style={styles.headerTitle}>Bill Payment</Text>
       </View>
 
       {paymentSuccess ? (
@@ -313,9 +325,9 @@ const handlePayment = async () => {
           <Text style={styles.successTitle}>Paiement Réussi!</Text>
           
           <View style={styles.receiptContainer}>
-            <Text style={styles.receiptTitle}>Reçu de Paiement</Text>
+            <Text style={styles.receiptTitle}>Payment Receipt</Text>
             <View style={styles.receiptRow}>
-              <Text style={styles.receiptLabel}>Société:</Text>
+              <Text style={styles.receiptLabel}>Company:</Text>
               <Text style={styles.receiptValue}>{receiptData.companyName}</Text>
             </View>
             <View style={styles.receiptRow}>
@@ -323,17 +335,20 @@ const handlePayment = async () => {
               <Text style={styles.receiptValue}>{receiptData.billType}</Text>
             </View>
             <View style={styles.receiptRow}>
-              <Text style={styles.receiptLabel}>Numéro de facture:</Text>
+              <Text style={styles.receiptLabel}>Bill number:</Text>
               <Text style={styles.receiptValue}>{receiptData.billNumber}</Text>
             </View>
             <View style={styles.receiptRow}>
-              <Text style={styles.receiptLabel}>Numéro de compte:</Text>
-              <Text style={styles.receiptValue}>{formatAccountNumber(receiptData.accountNumber)}</Text>
-
+              <Text style={styles.receiptLabel}>Account number:</Text>
+              <TextInput
+                style={styles.input}
+                value={formatAccountNumber(receiptData.accountNumber)}
+                editable={false}
+              />
             </View>
 
             <View style={styles.receiptRow}>
-              <Text style={styles.receiptLabel}>Montant:</Text>
+              <Text style={styles.receiptLabel}>Amount:</Text>
               <Text style={styles.receiptValue}>R$ {receiptData.amount}</Text>
             </View>
             <View style={styles.receiptRow}>
@@ -351,20 +366,20 @@ const handlePayment = async () => {
             onPress={printReceipt}
           >
             <MaterialCommunityIcons name="printer" size={24} color="#FFF" />
-            <Text style={styles.printButtonText}>Imprimer le reçu</Text>
+            <Text style={styles.printButtonText}>Print receipt</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
             style={styles.newPaymentButton}
             onPress={resetForm}
           >
-            <Text style={styles.newPaymentButtonText}>Nouveau paiement</Text>
+            <Text style={styles.newPaymentButtonText}>New payment</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <>
           {/* Bill Selection */}
-          <Text style={styles.sectionTitle}>Sélectionnez le type de facture</Text>
+          <Text style={styles.sectionTitle}>Select the Bill type</Text>
           <View style={styles.billTypes}>
             {bills.map((bill) => (
               <TouchableOpacity
@@ -392,7 +407,7 @@ const handlePayment = async () => {
           {/* Company Selection */}
           {selectedBill && (
             <>
-              <Text style={styles.sectionTitle}>Sélectionnez la société</Text>
+              <Text style={styles.sectionTitle}>Select the company</Text>
               <View style={styles.companyContainer}>
                 {bills.find(b => b.id === selectedBill)?.companies.slice(0, 3).map((company) => (
                   <TouchableOpacity
@@ -415,7 +430,7 @@ const handlePayment = async () => {
                   onPress={() => handleShowAllCompanies(bills.find(b => b.id === selectedBill)?.companies || [])}
                 >
                   <Text style={styles.moreCompaniesText}>
-                    Voir plus ({(bills.find(b => b.id === selectedBill)?.companies.length || 0) - 3})
+                    View more ({(bills.find(b => b.id === selectedBill)?.companies.length || 0) - 3})
                   </Text>
                 </TouchableOpacity>
               )}
@@ -423,12 +438,12 @@ const handlePayment = async () => {
           )}
 
           {/* Bill Number Input */}
-          <Text style={styles.sectionTitle}>Numéro de facture (6-15 chiffres)</Text>
+          <Text style={styles.sectionTitle}>Bill number (6-15 digits)</Text>
           <View style={styles.inputContainer}>
             <MaterialCommunityIcons name="barcode" size={24} color="#666" />
             <TextInput
               style={styles.input}
-              placeholder="Entrez le numéro de facture"
+              placeholder="Enter the Bill number"
               keyboardType="numeric"
               maxLength={15}
               value={billNumber}
@@ -437,21 +452,21 @@ const handlePayment = async () => {
           </View>
 
           {/* Account Number Input */}
-          <Text style={styles.sectionTitle}>Numéro de compte</Text>
+          <Text style={styles.sectionTitle}>Account number</Text>
           <View style={styles.inputContainer}>
             <MaterialCommunityIcons name="credit-card" size={24} color="#666" />
             <TextInput
               style={styles.input}
-              placeholder="Entrez le numéro de compte"
               keyboardType="default"
               maxLength={20}
               value={accountNumber}
               onChangeText={setAccountNumber}
+              editable={false}
             />
           </View>
 
           {/* Amount Input */}
-          <Text style={styles.sectionTitle}>Montant à payer (R$)</Text>
+          <Text style={styles.sectionTitle}>Amount to pay (R$)</Text>
           <View style={styles.inputContainer}>
             <Text style={styles.currencySymbol}>R$</Text>
             <TextInput
@@ -472,7 +487,7 @@ const handlePayment = async () => {
             {isLoading ? (
               <ActivityIndicator color="#FFF" />
             ) : (
-              <Text style={styles.paymentButtonText}>Payer maintenant</Text>
+              <Text style={styles.paymentButtonText}>Pay now</Text>
             )}
           </TouchableOpacity>
         </>
@@ -487,7 +502,7 @@ const handlePayment = async () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Sélectionnez une société</Text>
+            <Text style={styles.modalTitle}>Select a company</Text>
             
             <FlatList
               data={currentCompanies}
@@ -512,7 +527,7 @@ const handlePayment = async () => {
               style={styles.closeModalButton}
               onPress={() => setShowAllCompanies(false)}
             >
-              <Text style={styles.closeModalButtonText}>Fermer</Text>
+              <Text style={styles.closeModalButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -527,8 +542,8 @@ const handlePayment = async () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Vérification OTP</Text>
-            <Text style={styles.modalSubtitle}>Entrez le code OTP envoyé pour confirmer le paiement</Text>
+            <Text style={styles.modalTitle}>OTP Verification</Text>
+            <Text style={styles.modalSubtitle}>Enter the OTP code sent to confirm the payment.</Text>
             
             <TextInput
               style={styles.otpInput}
@@ -547,7 +562,7 @@ const handlePayment = async () => {
               {isLoading ? (
                 <ActivityIndicator color="#FFF" />
               ) : (
-                <Text style={styles.verifyButtonText}>Vérifier et Payer</Text>
+                <Text style={styles.verifyButtonText}>Check and Pay</Text>
               )}
             </TouchableOpacity>
 
@@ -555,7 +570,7 @@ const handlePayment = async () => {
               style={styles.cancelButton}
               onPress={() => setShowOtpModal(false)}
             >
-              <Text style={styles.cancelButtonText}>Annuler</Text>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
