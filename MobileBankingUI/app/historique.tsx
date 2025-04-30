@@ -1,9 +1,9 @@
-// TransactionHistoryScreen.tsx
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import config from '../utils/config';
+import { useTranslation } from 'react-i18next';
 
 type Transaction = {
   _id: string;
@@ -27,6 +27,7 @@ type TransactionItem = {
 
 const useDestinataires = (transactions: Transaction[]) => {
   const [destinataires, setDestinataires] = useState<Record<string, string>>({});
+  const { t } = useTranslation('transactionHistory');
 
   useEffect(() => {
     const fetchNames = async () => {
@@ -48,11 +49,11 @@ const useDestinataires = (transactions: Transaction[]) => {
             const userId = compteData.userId.replace('users/', '');
             const userRes = await fetch(`${config.BASE_URL}/api/users/${userId}`);
             const userData = await userRes.json();
-            namesMap[`comptes/${id}`] = userData.fullName || userData.nom || 'Unknown';
+            namesMap[`comptes/${id}`] = userData.fullName || userData.nom || t('transactions.unknown');
           }
         } catch (e) {
           console.error(`Error fetching user for account ${id}`, e);
-          namesMap[`comptes/${id}`] = 'Unknown';
+          namesMap[`comptes/${id}`] = t('transactions.unknown');
         }
       }));
 
@@ -60,12 +61,13 @@ const useDestinataires = (transactions: Transaction[]) => {
     };
 
     if (transactions.length > 0) fetchNames();
-  }, [transactions]);
+  }, [transactions, t]);
 
   return destinataires;
 };
 
 const TransactionHistoryScreen = () => {
+  const { t } = useTranslation('transactionHistory');
   const params = useLocalSearchParams();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -96,10 +98,10 @@ const TransactionHistoryScreen = () => {
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    if (date.toDateString() === today.toDateString()) return 'Today';
-    if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    if (date.toDateString() === today.toDateString()) return t('transactions.today');
+    if (date.toDateString() === yesterday.toDateString()) return t('transactions.yesterday');
 
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString(undefined, {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -109,71 +111,52 @@ const TransactionHistoryScreen = () => {
   const groupTransactions = () => {
     const grouped: { [date: string]: TransactionItem[] } = {};
     const normalizeCompteId = (id: string = '') => id.replace('comptes/', '');
-  
+
     transactions.forEach((tx) => {
       if (selectedFilter !== 'all') {
         const isReceived = normalizeCompteId(tx.compteDestinataire) === normalizeCompteId(compteId);
-        if (
-          (selectedFilter === 'incoming' && !isReceived) ||
-          (selectedFilter === 'outgoing' && isReceived)
-        ) {
+        if ((selectedFilter === 'incoming' && !isReceived) ||
+            (selectedFilter === 'outgoing' && isReceived)) {
           return;
         }
       }
-  
+
       const date = formatDate(tx.date);
       if (!grouped[date]) grouped[date] = [];
-  
+
       const isReceived = normalizeCompteId(tx.compteDestinataire) === normalizeCompteId(compteId);
-  
+
       const sender = tx.compteExpediteur || '';
       const recipient = tx.compteDestinataire || '';
-  
-      const senderName = destinataires[sender] || 'Unknown';
-      const recipientName = destinataires[recipient] || 'Unknown';
-  
+
+      const senderName = destinataires[sender] || t('transactions.unknown');
+      const recipientName = destinataires[recipient] || t('transactions.unknown');
+
       let icon: keyof typeof MaterialIcons.glyphMap = 'account-balance';
-      let title = 'Transfer';
+      let title = t('header.title');
       let description = '';
-  
-      switch (tx.typeTransaction) {
-        case 'Payment':
-          title = isReceived ? 'Payment Received' : 'Payment Sent';
-          icon = isReceived ? 'call-received' : 'call-made';
-          description = isReceived
-            ? `From ${senderName}`
-            : `To ${recipientName}`;
-          break;
-        case 'Deposit':
-          title = 'Deposit';
-          icon = 'account-balance-wallet';
-          description = `From ${senderName}`;
-          break;
-        case 'Withdrawal':
-          title = 'Withdrawal';
-          icon = 'money-off';
-          description = `To ${recipientName}`;
-          break;
-        case 'Virement':
-          title = 'Transfer';
-          icon = isReceived ? 'call-received' : 'call-made';
-          description = isReceived
-            ? `From ${senderName}`
-            : `To ${recipientName}`;
-          break;
-        default:
-          title = tx.typeTransaction;
-          description = isReceived
-            ? `From ${senderName}`
-            : `To ${recipientName}`;
-          break;
+
+      if (tx.typeTransaction === 'Payment') {
+        title = isReceived ? t('transactions.paymentReceived') : t('transactions.paymentSent');
+        icon = isReceived ? 'call-received' : 'call-made';
+        description = isReceived
+          ? `${t('transactions.from')} ${senderName}`
+          : `${t('transactions.to')} ${recipientName}`;
+      } else if (tx.typeTransaction === 'Deposit') {
+        title = t('transactions.deposit');
+        icon = 'account-balance-wallet';
+        description = `${t('transactions.from')} ${senderName}`;
+      } else if (tx.typeTransaction === 'Withdrawal') {
+        title = t('transactions.withdrawal');
+        icon = 'money-off';
+        description = `${t('transactions.to')} ${recipientName}`;
       }
-  
+
       const time = new Date(tx.date).toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
       });
-  
+
       grouped[date].push({
         type: tx.typeTransaction,
         title,
@@ -184,14 +167,13 @@ const TransactionHistoryScreen = () => {
         isReceived,
       });
     });
-  
+
     return Object.entries(grouped).map(([date, items]) => ({
       id: date,
       date,
       items,
     }));
   };
-  
 
   const groupedTransactions = groupTransactions();
 
@@ -200,7 +182,7 @@ const TransactionHistoryScreen = () => {
       <View style={styles.header}>
         <View style={styles.titleContainer}>
           <FontAwesome name="history" size={24} color="#fff" style={{ marginRight: 12 }} />
-          <Text style={styles.headerTitle}>Transaction History</Text>
+          <Text style={styles.headerTitle}>{t('header.title')}</Text>
         </View>
       </View>
 
@@ -213,7 +195,7 @@ const TransactionHistoryScreen = () => {
             onPress={() => setSelectedFilter(filter)}
           >
             <Text style={[styles.filterText, selectedFilter === filter && styles.activeFilterText]}>
-              {filter[0].toUpperCase() + filter.slice(1)}
+              {t(`header.filters.${filter}`)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -222,13 +204,13 @@ const TransactionHistoryScreen = () => {
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#6C63FF" />
-          <Text style={styles.loadingText}>Loading transactions...</Text>
+          <Text style={styles.loadingText}>{t('loading')}</Text>
         </View>
       ) : transactions.length === 0 ? (
         <View style={styles.emptyContainer}>
           <MaterialIcons name="account-balance-wallet" size={48} color="#D1D5DB" />
-          <Text style={styles.emptyText}>No transactions found</Text>
-          <Text style={styles.emptySubtext}>Your transactions will appear here</Text>
+          <Text style={styles.emptyText}>{t('empty.title')}</Text>
+          <Text style={styles.emptySubtext}>{t('empty.subtitle')}</Text>
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.scrollContainer}>

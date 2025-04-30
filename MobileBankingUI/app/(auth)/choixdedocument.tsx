@@ -2,16 +2,18 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next'; // ➔ On importe useTranslation
 
 const { width } = Dimensions.get('window');
 
 const ScanSelectionScreen = () => {
   const router = useRouter();
+  const { t } = useTranslation('documentSelection'); // ➔ Initialisation de i18n
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Choose Scan Type</Text>
-      <Text style={styles.subtitle}>Select the document you want to scan</Text>
+      <Text style={styles.title}>{t('scanSelection.title')}</Text>
+      <Text style={styles.subtitle}>{t('scanSelection.subtitle')}</Text>
 
       <View style={styles.cardsContainer}>
         {/* Passport Card */}
@@ -22,8 +24,8 @@ const ScanSelectionScreen = () => {
           <View style={styles.cardIconContainer}>
             <Ionicons name="document" size={40} color="#1E90FF" />
           </View>
-          <Text style={styles.cardTitle}>Passport</Text>
-          <Text style={styles.cardDescription}>Scan the identity page of your passport</Text>
+          <Text style={styles.cardTitle}>{t('scanSelection.passportTitle')}</Text>
+          <Text style={styles.cardDescription}>{t('scanSelection.passportDescription')}</Text>
         </TouchableOpacity>
 
         {/* ID Card */}
@@ -34,8 +36,8 @@ const ScanSelectionScreen = () => {
           <View style={styles.cardIconContainer}>
             <Ionicons name="card" size={40} color="#1E90FF" />
           </View>
-          <Text style={styles.cardTitle}>ID Card</Text>
-          <Text style={styles.cardDescription}>Scan the front side of your ID card</Text>
+          <Text style={styles.cardTitle}>{t('scanSelection.idCardTitle')}</Text>
+          <Text style={styles.cardDescription}>{t('scanSelection.idCardDescription')}</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -1,0 +1,12 @@
+{
+  "greeting": "Olá, {{name}}!",
+  "welcome_back": "Bem-vindo ao seu painel",
+  "quick_actions": "Ações Rápidas",
+  "send": "Enviar",
+  "request": "Solicitar",
+  "pay": "Pagar",
+  "swap": "Trocar",
+  "recent_transactions": "Transações Recentes",
+  "view_all": "Ver Tudo",
+  "no_transactions": "Nenhuma transação recente"
+}

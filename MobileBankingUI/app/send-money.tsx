@@ -17,6 +17,7 @@ import animationSource from "../assets/lotties/send-money.json";
 import { useUser } from "../context/UserContext"; 
 import config from '../utils/config';
 import { useRouter } from "expo-router";
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -29,17 +30,18 @@ const SendMoney = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const { accountData, setAccountData, userData } = useUser();
   const router = useRouter();
+   const { t } = useTranslation('sendMoney');
 
 
 
   const handleConfirm = async () => {
     if (!amount) {
-      Alert.alert("Error", "Please enter an amount");
+      Alert.alert("Error", ("errors.amountRequired"));
       return;
     }
   
     if (isNaN(parseFloat(amount))) {
-      Alert.alert("Error", "Please enter a valid amount");
+      Alert.alert("Error", t("errors.invalidAmount"));
       return;
     }
   
@@ -71,7 +73,7 @@ const SendMoney = () => {
         balance: accountData.balance - montant,
       });
   
-      Alert.alert("Success", "Transfer completed successfully!", [
+      Alert.alert("Success", t('success'), [
         {
           text: "OK",
           onPress: () => {
@@ -97,8 +99,8 @@ const SendMoney = () => {
         loop
         style={styles.lottie}
       />
-      <Text style={styles.title}>SEND MONEY</Text>
-      <Text style={styles.subtitle}>Transfer details</Text>
+      <Text style={styles.title}> {t('title')}</Text>
+      <Text style={styles.subtitle}>{t('subtitle')}</Text>
 
       <ScrollView keyboardShouldPersistTaps="handled">
         {/* Recipient Card */}
@@ -117,7 +119,7 @@ const SendMoney = () => {
           <MaterialCommunityIcons name="cash" size={20} color="#2E86DE" style={styles.icon} />
           <TextInput
             style={styles.input}
-            placeholder="Amount"
+            placeholder={t('inputs.amount')}
             keyboardType="decimal-pad"
             value={amount}
             onChangeText={setAmount}
@@ -143,7 +145,7 @@ const SendMoney = () => {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Select Currency</Text>
+              <Text style={styles.modalTitle}>{t('inputs.currency')}</Text>
               <ScrollView>
                 {currencyList.map((currency) => (
                   <TouchableOpacity
@@ -175,7 +177,7 @@ const SendMoney = () => {
                 style={styles.modalCloseButton}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={styles.modalCloseText}>Close</Text>
+                <Text style={styles.modalCloseText}>{t('modal.close')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -187,7 +189,7 @@ const SendMoney = () => {
           onPress={handleConfirm}
           disabled={!amount}
         >
-          <Text style={styles.confirmButtonText}>Confirm Transfer</Text>
+          <Text style={styles.confirmButtonText}>{t('button')}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

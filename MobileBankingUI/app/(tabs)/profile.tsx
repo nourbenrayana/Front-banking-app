@@ -4,15 +4,9 @@ import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router"; // ✅ Import router
 import { useUser } from '../../context/UserContext';
+import { useTranslation } from 'react-i18next';
 
-const options = [
-  { icon: "person-outline", text: "My account" },
- 
-  { icon: "lock-closed-outline", text: "Privacy policy" },
-  { icon: "settings-outline", text: "Settings" }, // ✅ Settings ici
-  { icon: "help-circle-outline", text: "Help and Support" },
-  { icon: "mail-outline", text: "Contact Us" }, // ✅ Remplacer par Contact Us
-];
+
 
 export default function Profile() {
   const router = useRouter(); // ✅ Initialiser le router
@@ -20,11 +14,21 @@ export default function Profile() {
   const [userName, setUserName] = useState<string>("");
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
   const { userData } = useUser();
+  const { t } = useTranslation('profile');
+
+  const options = [
+    { icon: "person-outline", text: t('options.myAccount') },
+   
+    { icon: "lock-closed-outline", text: t('options.privacyPolicy') },
+    { icon: "settings-outline", text: t('options.settings') }, // ✅ Settings ici
+    { icon: "help-circle-outline", text: t('options.helpSupport') },
+    { icon: "mail-outline", text: t('options.contactUs')}, // ✅ Remplacer par Contact Us
+  ];
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("Permission refusée", "Vous devez autoriser l'accès à la galerie.");
+      Alert.alert(t('imagePermission.title'), ('imagePermission.message'));
       return;
     }
 
@@ -52,7 +56,7 @@ export default function Profile() {
       {/* Titre Profile avec icône */}
       <View style={styles.header}>
         <Ionicons name="person-circle-outline" size={28} color="#1E90FF" />
-        <Text style={styles.title}> Profile</Text>
+        <Text style={styles.title}>{t('title')}</Text>
       </View>
 
       {/* Section Utilisateur */}
@@ -71,13 +75,13 @@ export default function Profile() {
             key={index}
             style={styles.menuItem}
             onPress={() => {
-              if (item.text === "Settings") {
+              if (item.text === t('options.settings')) {
                 router.push("/settings"); // ✅ Redirection
-              } if (item.text === "Privacy policy") {
+              } if (item.text ===  t('options.privacyPolicy') ) {
                 router.push("/privacy"); // ✅ Redirection
-              } if (item.text === "My account") {
+              } if (item.text === t('options.myAccount')) {
                 router.push("/myaccount"); // ✅ Redirection
-              } if (item.text === "Contact Us") {
+              } if (item.text === t('options.contactUs')) {
                 router.push("/contact"); // ✅ Redirection pour Contact Us
               } 
               else {
@@ -98,13 +102,10 @@ export default function Profile() {
       <View style={styles.separator} />
 
       {/* Bouton Déconnexion */}
-      <TouchableOpacity
-        style={styles.logoutButton}
-        onPress={() => router.push('/(auth)/loginorsignup')} // 👉 Déplacé ici
-      >
-        <Text style={styles.logoutText}>Logout</Text>
+      <TouchableOpacity style={styles.logoutButton}>
+        <Text style={styles.logoutText}
+        onPress={() => router.push('/(auth)/loginorsignup')}>{t('logout')}</Text>
       </TouchableOpacity>
-
     </ScrollView>
   );
 }

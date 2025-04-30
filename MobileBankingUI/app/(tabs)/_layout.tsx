@@ -6,9 +6,12 @@ import Colors from "../../constants/Colors";
 
 
 export default function TabLayout() {
+
+ 
   const colorScheme = useColorScheme();
 
   return (
+   
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tabBarActiveTint,
@@ -59,5 +62,6 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+   
   );
 }

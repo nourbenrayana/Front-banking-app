@@ -1,0 +1,15 @@
+{
+    "title": "Currency Converter",
+    "labels": {
+      "from": "From",
+      "to": "To"
+    },
+    "button": "Convert",
+    "buttonLoading": "Converting...",
+    "result": "1 {{base}} = {{result}} {{target}}",
+    "info": "Enter currency codes (ex: USD, EUR, JPY)",
+    "errors": {
+      "noCurrencies": "Please select currencies",
+      "conversionFailed": "Conversion failed"
+    }
+  }

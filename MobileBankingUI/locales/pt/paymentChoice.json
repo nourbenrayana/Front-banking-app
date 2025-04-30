@@ -1,0 +1,11 @@
+{
+    "title": "Opções de Pagamento",
+    "payBill": {
+      "title": "Pagar uma Conta",
+      "subtitle": "Contas de luz, água, etc."
+    },
+    "scanQR": {
+      "title": "Escanear QR Code",
+      "subtitle": "Pagamento rápido via QR"
+    }
+  }

@@ -1,0 +1,25 @@
+{
+    "title": "CADASTRO",
+    "subtitle": "PARA SUA CONTA",
+    "inputs": {
+      "fullName": "Nome completo",
+      "email": "Email",
+      "phone": "Número de telefone",
+      "birthDate": "Data de nascimento (DD/MM/AAAA)",
+      "idNumber": "Número de identificação (CPF/RG)",
+      "pin": "PIN (6 dígitos)"
+    },
+    "errors": {
+      "fullName": "Nome completo obrigatório",
+      "email": "Email inválido",
+      "birthDate": "Data de nascimento obrigatória",
+      "phone": "Número inválido: 8 a 15 dígitos necessários",
+      "idNumber": "Número inválido (mín. 5 dígitos)",
+      "pin": "O PIN deve conter exatamente 6 dígitos"
+    },
+    "nextButton": "Próximo",
+    "alerts": {
+      "error": "Por favor preencha todos os campos corretamente.",
+      "success": "Cadastro realizado com sucesso!"
+    }
+  }

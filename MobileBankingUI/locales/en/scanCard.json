@@ -1,0 +1,7 @@
+{
+  "passportScan": {
+    "title": "Scan Card",
+    "instructions": "Now place your phone directly on top of your passport\nso we can connect securely",
+    "scanButton": "Scan Now"
+  }
+}

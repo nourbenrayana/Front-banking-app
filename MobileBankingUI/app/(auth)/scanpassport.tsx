@@ -2,19 +2,21 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from 'react-native';
 import { useRouter } from "expo-router";
 import LottieView from 'lottie-react-native';
+import { useTranslation } from 'react-i18next'; // Ajouter i18n
 
 const router = useRouter();
 const { width, height } = Dimensions.get('window');
 
 const PassportScanScreen = () => {
+  const { t } = useTranslation('scanPassport'); // Utiliser i18n
+
   return (
     <SafeAreaView style={styles.container}>
       {/* En-tête */}
       <View style={styles.header}>
-        <Text style={styles.title}>Scan Passport</Text>
+        <Text style={styles.title}>{t('passportScan.title1')}</Text>
         <Text style={styles.instructions}>
-          Now place your phone directly on top of your passport
-          {'\n'}so we can connect securely
+          {t('passportScan.instructions1')}
         </Text>
       </View>
 
@@ -29,9 +31,11 @@ const PassportScanScreen = () => {
       </View>
 
       {/* Bouton de scan */}
-      <TouchableOpacity style={styles.scanButton}
-       onPress={() => router.push("/(auth)/camera")}>
-        <Text style={styles.scanButtonText}>Scan Now</Text>
+      <TouchableOpacity 
+        style={styles.scanButton}
+        onPress={() => router.push("/(auth)/camera")}
+      >
+        <Text style={styles.scanButtonText}>{t('passportScan.scanButton1')}</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

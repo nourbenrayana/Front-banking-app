@@ -1,0 +1,11 @@
+{
+  "signupLogin": {
+    "title": "Bem-vindo ao Caixa Bank",
+    "subtitle": "Sua liberdade financeira começa aqui",
+    "instruction": "Use suas credenciais para se conectar",
+    "loginFaceId": "Entrar com Face ID",
+    "loginPasscode": "Entrar com código PIN",
+    "noAccount": "Ainda não tem uma conta?",
+    "signup": "Cadastre-se"
+  }
+}

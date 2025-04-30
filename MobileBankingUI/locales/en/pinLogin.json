@@ -1,0 +1,13 @@
+{
+  "loginPin": {
+    "title": "Login with Email & PIN",
+    "emailPlaceholder": "Enter your email",
+    "missingInfo": "Missing Info",
+    "missingInfoMessage": "Please enter your email and 6-digit PIN.",
+    "loginFailed": "Login Failed",
+    "serverError": "Error",
+    "serverErrorMessage": "Unable to connect to server.",
+    "loginButton": "Login",
+    "backspace": "⌫"
+  }
+}

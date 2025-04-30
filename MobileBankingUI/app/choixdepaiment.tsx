@@ -2,15 +2,17 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 export default function PaymentChoiceScreen() {
   const router = useRouter();
+  const { t } = useTranslation('paymentChoice');
 
   return (
     <View style={styles.container}>
       {/* Titre avec style */}
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Payment Options</Text>
+        <Text style={styles.title}>{t('title')}</Text>
         <View style={styles.titleUnderline} />
       </View>
 
@@ -24,8 +26,8 @@ export default function PaymentChoiceScreen() {
             <Ionicons name="document-text" size={28} color="white" />
           </View>
           <View style={styles.textContainer}>
-            <Text style={styles.cardTitle}>Pay a Bill</Text>
-            <Text style={styles.cardSubtitle}>Electricity bills, water, etc.</Text>
+            <Text style={styles.cardTitle}>{t('payBill.title')}</Text>
+            <Text style={styles.cardSubtitle}>{t('payBill.subtitle')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color="#a0aec0" />
         </View>
@@ -40,8 +42,8 @@ export default function PaymentChoiceScreen() {
             <Ionicons name="qr-code" size={28} color="white" />
           </View>
           <View style={styles.textContainer}>
-            <Text style={styles.cardTitle}>QR Code Scanner</Text>
-            <Text style={styles.cardSubtitle}>Fast payment via QR</Text>
+            <Text style={styles.cardTitle}>{t('scanQR.title')}</Text>
+            <Text style={styles.cardSubtitle}>{t('scanQR.subtitle')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color="#a0aec0" />
         </View>

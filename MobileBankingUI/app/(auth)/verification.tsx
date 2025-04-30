@@ -2,10 +2,13 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 import { useRouter } from "expo-router";
+import { useTranslation } from 'react-i18next';
+
 const router = useRouter();
 
 
 const VerificationSuccessScreen = () => {
+    const { t } = useTranslation('verification');
   return (
     <View style={styles.container}>
       {/* Section haute avec checkmark et texte principal */}
@@ -13,8 +16,8 @@ const VerificationSuccessScreen = () => {
         <View style={styles.circleIcon}>
           <Text style={styles.checkmark}>✓</Text>
         </View>
-        <Text style={styles.successTitle}>Verification Success</Text>
-        <Text style={styles.successMessage}>Congrats your identity successfully verified</Text>
+        <Text style={styles.successTitle}>{t('verificationSuccess')}</Text>
+        <Text style={styles.successMessage}>{t('congratsMessage')}</Text>
       </View>
 
       {/* Section médiane avec l'image de vérification */}
@@ -31,7 +34,7 @@ const VerificationSuccessScreen = () => {
           style={styles.continueButton}
           onPress={() => router.push("/(auth)/BankInfoScreen")}
         >
-          <Text style={styles.continueButtonText}>Continue</Text>
+          <Text style={styles.continueButtonText}>{t('continue')}</Text>
       </TouchableOpacity>
     </View>
   );

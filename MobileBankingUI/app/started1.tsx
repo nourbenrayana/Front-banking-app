@@ -5,57 +5,61 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  Image,
   Dimensions,
   FlatList,
   Animated,
-  Easing
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 const { width, height } = Dimensions.get('window');
 
-const onboardingSlides = [
-  {
-    id: '1',
-    image: require('../assets/images/started1.png'),
-    title: 'Free Transactions',
-    description: 'Provides the quality of the financial system with free money transactions without any fees.',
-  },
-  {
-    id: '2',
-    image: require('../assets/images/started2.png'),
-    title: 'Bills Payment',
-    subtitle: 'Made Easy',
-    description: 'Pay monthly or daily bills at home\nin a site of TransferMe.',
-  },
-  {
-    id: '3',
-    image: require('../assets/images/started3.jpg'),
-    title: 'Easy, Fast & Trusted',
-    description: 'Fast money transfer and guaranteed safe\ntransactions with others.',
-  },
-  {
-    id: '4',
-    image: require('../assets/images/started4.png'),
-    title: 'Secure Face Recognition',
-    subtitle: 'Your Identity, Your Key',
-    description: 'Our advanced facial recognition ensures the highest level of security\nfor all your transactions and account access.',
-  },
-];
-
 const OnboardingSwipeScreen = () => {
+  const { t } = useTranslation("onboarding");
   const router = useRouter();
   const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
-  const imageAnimations = useRef(onboardingSlides.map(() => new Animated.Value(0))).current;
+  const imageAnimations = useRef([
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0)
+  ]).current;
+
+  const onboardingSlides = [
+    {
+      id: '1',
+      image: require('../assets/images/started1.png'),
+      title: t('slides.0.title'),
+      description: t('slides.0.description'),
+    },
+    {
+      id: '2',
+      image: require('../assets/images/started2.png'),
+      title: t('slides.1.title'),
+      subtitle: t('slides.1.subtitle'),
+      description: t('slides.1.description'),
+    },
+    {
+      id: '3',
+      image: require('../assets/images/started3.jpg'),
+      title: t('slides.2.title'),
+      description: t('slides.2.description'),
+    },
+    {
+      id: '4',
+      image: require('../assets/images/started4.png'),
+      title: t('slides.3.title'),
+      subtitle: t('slides.3.subtitle'),
+      description: t('slides.3.description'),
+    },
+  ];
 
   const handleScrollEnd = (e: any) => {
     const newIndex = Math.round(e.nativeEvent.contentOffset.x / width);
     setCurrentIndex(newIndex);
     
-    // Trigger animation for the current slide
     Animated.sequence([
       Animated.delay(100),
       Animated.spring(imageAnimations[newIndex], {
@@ -65,11 +69,8 @@ const OnboardingSwipeScreen = () => {
       })
     ]).start();
     
-    // Reset other animations
     imageAnimations.forEach((anim, index) => {
-      if (index !== newIndex) {
-        anim.setValue(0);
-      }
+      if (index !== newIndex) anim.setValue(0);
     });
   };
 
@@ -95,10 +96,7 @@ const OnboardingSwipeScreen = () => {
           source={item.image} 
           style={[
             styles.slideImage, 
-            {
-              transform: [{ scale }, { translateY }],
-              opacity
-            }
+            { transform: [{ scale }, { translateY }], opacity }
           ]} 
           resizeMode="contain" 
         />
@@ -108,8 +106,12 @@ const OnboardingSwipeScreen = () => {
           <Text style={styles.slideDescription}>{item.description}</Text>
         </View>
         {index === onboardingSlides.length - 1 && (
-          <TouchableOpacity style={styles.continueButton} onPress={() => router.push('/(auth)/loginorsignup')}>
-            <Text style={styles.continueButtonText}>Continue</Text>
+          <TouchableOpacity 
+            style={styles.continueButton} 
+            onPress={() => router.push('/(auth)/loginorsignup')}
+            accessibilityLabel={t('continue')}
+          >
+            <Text style={styles.continueButtonText}>{t('continue')}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -145,7 +147,6 @@ const OnboardingSwipeScreen = () => {
     </View>
   );
 
-  // Animate first slide on initial render
   useEffect(() => {
     Animated.spring(imageAnimations[0], {
       toValue: 1,
@@ -160,8 +161,9 @@ const OnboardingSwipeScreen = () => {
         <TouchableOpacity
           style={styles.skipButton}
           onPress={() => router.push('/(auth)/loginorsignup')}
+          accessibilityLabel={t('skip')}
         >
-          <Text style={styles.skipText}>Skip</Text>
+          <Text style={styles.skipText}>{t('skip')}</Text>
         </TouchableOpacity>
       )}
 
@@ -201,12 +203,14 @@ const styles = StyleSheet.create({
     color: '#2E86DE',
     fontSize: 16,
     fontWeight: '500',
+    fontFamily: 'Inter-Medium',
   },
   slide: {
     width,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
+    paddingTop: 60,
   },
   slideImage: {
     width: width * 0.8,
@@ -216,6 +220,7 @@ const styles = StyleSheet.create({
   textContainer: {
     alignItems: 'center',
     paddingHorizontal: 20,
+    marginBottom: 20,
   },
   slideTitle: {
     fontSize: 28,
@@ -252,7 +257,7 @@ const styles = StyleSheet.create({
   dot: {
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#ccc',
+    backgroundColor: '#CBD5E0',
     marginHorizontal: 4,
   },
   activeDot: {
@@ -268,11 +273,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.2,
     shadowRadius: 16,
+    elevation: 5,
   },
   continueButtonText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
   },
 });
 

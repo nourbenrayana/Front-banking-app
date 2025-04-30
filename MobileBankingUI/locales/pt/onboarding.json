@@ -1,0 +1,24 @@
+{
+    "skip": "Pular",
+    "slides": [
+      {
+        "title": "Transações Gratuitas",
+        "description": "Oferecemos um sistema financeiro de qualidade com transações gratuitas sem taxas."
+      },
+      {
+        "title": "Pagamento de Contas",
+        "subtitle": "Simplificado",
+        "description": "Pague suas contas mensais ou diárias em casa com o TransferMe."
+      },
+      {
+        "title": "Fácil, Rápido e Seguro",
+        "description": "Transferências rápidas e transações garantidas com seus contatos."
+      },
+      {
+        "title": "Reconhecimento Facial Seguro",
+        "subtitle": "Sua Identidade, Sua Chave",
+        "description": "Nossa tecnologia de reconhecimento facial garante o mais alto nível de segurança para todas as transações."
+      }
+    ],
+    "continue": "Continuar"
+  }

@@ -3,13 +3,14 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import config from '@/utils/config';
 import { useRouter } from 'expo-router';
 import { useUser } from '@/context/UserContext';
+import { useTranslation } from 'react-i18next';
 
 const LoginPinScreen = () => {
   const [email, setEmail] = useState('');
   const [pin, setPin] = useState<string[]>([]);
   const router = useRouter();
   const { setUserData, setAccountData } = useUser();
-
+  const { t } = useTranslation('pinLogin');
 
   const handleNumberPress = (num: string) => {
     if (pin.length < 6) {
@@ -19,7 +20,10 @@ const LoginPinScreen = () => {
 
   const handleLogin = async () => {
     if (email.trim() === '' || pin.length !== 6) {
-      Alert.alert('Missing Info', 'Please enter your email and 6-digit PIN.');
+      Alert.alert(
+        t('loginPin.missingInfo'),
+        t('loginPin.missingInfoMessage')
+      );
       return;
     }
 
@@ -43,22 +47,28 @@ const LoginPinScreen = () => {
         setTimeout(() => router.push('/(tabs)'), 50);
       }
       else {
-        Alert.alert('Login Failed', data.message || 'Invalid credentials.');
+        Alert.alert(
+          t('loginPin.loginFailed'),
+          data.message || t('loginPin.loginFailed')
+        );
         setPin([]);
       }
     } catch (error) {
       console.error('Login error:', error);
-      Alert.alert('Error', 'Unable to connect to server.');
+      Alert.alert(
+        t('loginPin.serverError'),
+        t('loginPin.serverErrorMessage')
+      );
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login with Email & PIN</Text>
+      <Text style={styles.title}>{t('loginPin.title')}</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Enter your email"
+        placeholder={t('loginPin.emailPlaceholder')}
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
@@ -95,7 +105,7 @@ const LoginPinScreen = () => {
             style={styles.numberButton}
             onPress={() => setPin(pin.slice(0, -1))}
             >
-            <Text style={styles.numberText}>⌫</Text>
+            <Text style={styles.numberText}>{t('loginPin.backspace')}</Text>
         </TouchableOpacity>
 
       </View>
@@ -105,7 +115,7 @@ const LoginPinScreen = () => {
         onPress={handleLogin}
         disabled={pin.length !== 6}
       >
-        <Text style={styles.continueButtonText}>Login</Text>
+        <Text style={styles.continueButtonText}>{t('loginPin.loginButton')}</Text>
       </TouchableOpacity>
     </View>
   );

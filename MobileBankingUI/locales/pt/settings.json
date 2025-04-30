@@ -1,0 +1,27 @@
+{
+    "header": "Configurações",
+    "sections": {
+      "security": {
+        "title": "Segurança",
+        "options": {
+          "changePin": "Alterar PIN",
+          "faceId": "Face ID"
+        }
+      },
+      "preferences": {
+        "title": "Preferências",
+        "options": {
+          "language": "Idioma",
+          "darkMode": "Modo escuro"
+        }
+      },
+      "notifications": {
+        "title": "Notificações",
+        "options": {
+          "appNotifications": "Notificações do app",
+          "locationServices": "Serviços de localização"
+        }
+      }
+    },
+    "languageValue": "Português"
+  }

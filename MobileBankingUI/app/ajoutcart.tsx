@@ -1,5 +1,4 @@
-// app/(tabs)/ajoutduncarte.tsx
-import React, { useState ,useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
@@ -10,9 +9,7 @@ import {
   Alert 
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { useUser } from '@/context/UserContext'; 
-
-
+import { useTranslation } from 'react-i18next';
 
 type FormData = {
   cardType: string;
@@ -25,7 +22,7 @@ type FormData = {
   zipCode: string;
   phone: string;
   email: string;
-  reasonForCard: string; // Changed from monthlyIncome
+  reasonForCard: string;
 };
 
 type CardOption = {
@@ -34,17 +31,7 @@ type CardOption = {
 };
 
 const CardApplication = () => {
-  const { userData } = useUser();
-  useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      firstName: userData.fullName,
-      birthDate: userData.birthDate,
-      phone: userData.phone,
-      email: userData.email,
-    }));
-  }, [userData]);
-
+  const { t } = useTranslation('cardApplication');
   const [formData, setFormData] = useState<FormData>({
     cardType: 'ELO_CREDIT',
     firstName: '',
@@ -56,18 +43,18 @@ const CardApplication = () => {
     zipCode: '',
     phone: '',
     email: '',
-    reasonForCard: '' // Changed from monthlyIncome
+    reasonForCard: ''
   });
 
   // Caixa Bank Brazil card types
   const cardOptions: CardOption[] = [
-    { label: 'ELO Credit Card', value: 'ELO_CREDIT' },
-    { label: 'ELO Debit Card', value: 'ELO_DEBIT' },
-    { label: 'Visa Infinite', value: 'VISA_INFINITE' },
-    { label: 'Visa Platinum', value: 'VISA_PLATINUM' },
-    { label: 'Visa Gold', value: 'VISA_GOLD' },
-    { label: 'Mastercard Black', value: 'MASTERCARD_BLACK' },
-    { label: 'Caixa Fácil Card', value: 'CAIXA_FACIL' }
+    { label: t('cardTypes.eloCredit'), value: 'ELO_CREDIT' },
+    { label: t('cardTypes.eloDebit'), value: 'ELO_DEBIT' },
+    { label: t('cardTypes.visaInfinite'), value: 'VISA_INFINITE' },
+    { label: t('cardTypes.visaPlatinum'), value: 'VISA_PLATINUM' },
+    { label: t('cardTypes.visaGold'), value: 'VISA_GOLD' },
+    { label: t('cardTypes.mastercardBlack'), value: 'MASTERCARD_BLACK' },
+    { label: t('cardTypes.caixaFacil'), value: 'CAIXA_FACIL' }
   ];
 
   const handleChange = (field: keyof FormData, value: string) => {
@@ -79,11 +66,15 @@ const CardApplication = () => {
 
   const validateForm = (): boolean => {
     if (!formData.firstName.trim()) {
-      Alert.alert('Error', 'Full name is required');
+      Alert.alert(t('alerts.error'), t('alerts.firstNameRequired'));
+      return false;
+    }
+    if (!formData.lastName.trim()) {
+      Alert.alert(t('alerts.error'), t('alerts.lastNameRequired'));
       return false;
     }
     if (!formData.cpf.trim()) {
-      Alert.alert('Error', 'CPF is required');
+      Alert.alert(t('alerts.error'), t('alerts.cpfRequired'));
       return false;
     }
     return true;
@@ -94,8 +85,8 @@ const CardApplication = () => {
 
     console.log('Application submitted:', formData);
     Alert.alert(
-      'Success', 
-      'Card application submitted successfully',
+      t('alerts.success'), 
+      t('alerts.submissionSuccess'),
       [{ text: 'OK', onPress: resetForm }]
     );
   };
@@ -121,9 +112,9 @@ const CardApplication = () => {
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
     >
-      <Text style={styles.header}>Caixa Bank Card Application</Text>
+      <Text style={styles.header}>{t('header')}</Text>
       
-      <Text style={styles.sectionTitle}>Card Type</Text>
+      <Text style={styles.sectionTitle}>{t('sections.cardType')}</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={formData.cardType}
@@ -141,18 +132,24 @@ const CardApplication = () => {
         </Picker>
       </View>
 
-      <Text style={styles.sectionTitle}>Personal Information</Text>
+      <Text style={styles.sectionTitle}>{t('sections.personalInfo')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Full Name *"
+        placeholder={t('placeholders.firstName')}
         value={formData.firstName}
         onChangeText={(text) => handleChange('firstName', text)}
         returnKeyType="next"
-        editable={false}
       />
       <TextInput
         style={styles.input}
-        placeholder="CPF *"
+        placeholder={t('placeholders.lastName')}
+        value={formData.lastName}
+        onChangeText={(text) => handleChange('lastName', text)}
+        returnKeyType="next"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t('placeholders.cpf')}
         value={formData.cpf}
         onChangeText={(text) => handleChange('cpf', text)}
         returnKeyType="next"
@@ -160,63 +157,60 @@ const CardApplication = () => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Birth Date (DD/MM/YYYY)"
+        placeholder={t('placeholders.birthDate')}
         value={formData.birthDate}
         onChangeText={(text) => handleChange('birthDate', text)}
         keyboardType="numbers-and-punctuation"
         returnKeyType="next"
-        editable={false}
       />
 
-      <Text style={styles.sectionTitle}>Address</Text>
+      <Text style={styles.sectionTitle}>{t('sections.address')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Street Address"
+        placeholder={t('placeholders.address')}
         value={formData.address}
         onChangeText={(text) => handleChange('address', text)}
         returnKeyType="next"
       />
       <TextInput
         style={styles.input}
-        placeholder="City"
+        placeholder={t('placeholders.city')}
         value={formData.city}
         onChangeText={(text) => handleChange('city', text)}
         returnKeyType="next"
       />
       <TextInput
         style={styles.input}
-        placeholder="ZIP Code"
+        placeholder={t('placeholders.zipCode')}
         value={formData.zipCode}
         onChangeText={(text) => handleChange('zipCode', text)}
         keyboardType="number-pad"
         returnKeyType="next"
       />
 
-      <Text style={styles.sectionTitle}>Contact Information</Text>
+      <Text style={styles.sectionTitle}>{t('sections.contactInfo')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Phone Number"
+        placeholder={t('placeholders.phone')}
         value={formData.phone}
         onChangeText={(text) => handleChange('phone', text)}
         keyboardType="phone-pad"
         returnKeyType="next"
-        editable={false}
       />
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder={t('placeholders.email')}
         value={formData.email}
         onChangeText={(text) => handleChange('email', text)}
         keyboardType="email-address"
         autoCapitalize="none"
         returnKeyType="next"
-        editable={false}
       />
 
-      <Text style={styles.sectionTitle}>Reason for Additional Card</Text>
+      <Text style={styles.sectionTitle}>{t('sections.reasonForCard')}</Text>
       <TextInput
         style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
-        placeholder="Please explain why you need an additional card"
+        placeholder={t('placeholders.reasonForCard')}
         value={formData.reasonForCard}
         onChangeText={(text) => handleChange('reasonForCard', text)}
         multiline={true}
@@ -229,10 +223,10 @@ const CardApplication = () => {
         onPress={handleSubmit}
         activeOpacity={0.8}
       >
-        <Text style={styles.submitButtonText}>Submit Application</Text>
+        <Text style={styles.submitButtonText}>{t('submitButton')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.note}>* Required fields</Text>
+      <Text style={styles.note}>{t('requiredFieldsNote')}</Text>
     </ScrollView>
   );
 };

@@ -1,0 +1,15 @@
+{
+    "header": {
+      "title": "AJOUTER UN BÉNÉFICIAIRE",
+      "subtitle": "Entrez les détails du paiement"
+    },
+    "inputs": {
+      "fullName": "Nom complet",
+      "bankAccount": "Compte bancaire (RIB) *",
+      "phoneNumber": "Numéro de téléphone (optionnel)"
+    },
+    "button": "Ajouter",
+    "errors": {
+      "ribRequired": "Le RIB est requis"
+    }
+  }

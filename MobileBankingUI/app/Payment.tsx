@@ -12,12 +12,14 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FontAwesome, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 const Payment = () => {
   const router = useRouter();
   const [fullName, setFullName] = useState('');
   const [bankAccount, setBankAccount] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const { t } = useTranslation('payment');
 
   const handleAdd = () => {
   
@@ -39,8 +41,8 @@ const Payment = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Text style={styles.title}>ADD RECIPIENT</Text>
-          <Text style={styles.subtitle}>Enter Payment Details</Text>
+          <Text style={styles.title}>{t('header.title')}</Text>
+          <Text style={styles.subtitle}>{t('header.subtitle')}</Text>
         </View>
 
         <View style={styles.formContainer}>
@@ -49,7 +51,7 @@ const Payment = () => {
             <FontAwesome name="user" size={20} color="#2E86DE" style={styles.icon} />
             <TextInput
               style={styles.input}
-              placeholder="Full Name"
+              placeholder={t('inputs.fullName')}
               value={fullName}
               onChangeText={setFullName}
               placeholderTextColor="#999"
@@ -64,7 +66,7 @@ const Payment = () => {
             <MaterialCommunityIcons name="bank" size={20} color="#2E86DE" style={styles.icon} />
             <TextInput
               style={styles.input}
-              placeholder="Bank Account (RIB) *"
+              placeholder={t('inputs.bankAccount')}
               value={bankAccount}
               onChangeText={setBankAccount}
               placeholderTextColor="#999"
@@ -79,7 +81,7 @@ const Payment = () => {
             <Ionicons name="call-outline" size={20} color="#2E86DE" style={styles.icon} />
             <TextInput
               style={styles.input}
-              placeholder="Phone Number (optional)"
+              placeholder={t('inputs.phoneNumber')}
               keyboardType="phone-pad"
               value={phoneNumber}
               onChangeText={setPhoneNumber}
@@ -94,7 +96,7 @@ const Payment = () => {
             onPress={handleAdd}
             disabled={!bankAccount}
           >
-            <Text style={styles.addButtonText}>Add</Text>
+            <Text style={styles.addButtonText}>{t('button')}</Text>
             <Ionicons name="arrow-forward" size={20} color="white" style={{ marginLeft: 8 }} />
           </TouchableOpacity>
         </View>

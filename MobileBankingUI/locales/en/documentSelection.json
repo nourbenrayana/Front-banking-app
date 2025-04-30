@@ -1,0 +1,10 @@
+{
+  "scanSelection": {
+    "title": "Choose Scan Type",
+    "subtitle": "Select the document you want to scan",
+    "passportTitle": "Passport",
+    "passportDescription": "Scan the identity page of your passport",
+    "idCardTitle": "ID Card",
+    "idCardDescription": "Scan the front side of your ID card"
+  }
+}

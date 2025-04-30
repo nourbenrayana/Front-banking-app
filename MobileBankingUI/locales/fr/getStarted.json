@@ -1,0 +1,9 @@
+{
+  "onboarding": {
+    "title": "Commençons",
+    "subtitle": "Pour créer votre pièce d'identité et vérifier votre identité, vous devez suivre ces 3 étapes simples",
+    "step1": "Scanner un document",
+    "step2": "Prendre un selfie",
+    "button": "Je suis prêt(e)"
+  }
+}

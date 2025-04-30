@@ -1,0 +1,30 @@
+{
+  "camera": {
+    "permissionRequest": {
+      "message": "We need your permission to show the camera",
+      "button": "Grant permission"
+    },
+    "instructions": {
+      "title": "Scan Passport",
+      "subtitle": "Now place your phone directly on top of your passport so we can connect securely"
+    },
+    "modes": {
+      "normal": "Normal",
+      "selfie": "Selfie"
+    },
+    "placeholder": "Passport image will appear here",
+    "actions": {
+      "scan": "Scan Now",
+      "upload": "Upload from gallery",
+      "retake": "Retake",
+      "process": "Process Image",
+      "continue": "Continue to Face Detection"
+    },
+    "processing": {
+      "loading": "Processing image...",
+      "success": "Image processed successfully!",
+      "error": "Failed to process image",
+      "faces": "Faces detected"
+    }
+  }
+}

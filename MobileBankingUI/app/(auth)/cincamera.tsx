@@ -3,6 +3,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRef, useState } from 'react';
 import { Button, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from "expo-router";
+import { useTranslation } from 'react-i18next';
 
 export default function CameraCard() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -13,13 +14,14 @@ export default function CameraCard() {
   const [backPhoto, setBackPhoto] = useState<any>(null);
   const cameraRef = useRef<CameraView | null>(null);
   const router = useRouter();
+  const { t } = useTranslation('camera1');
 
   if (!permission) return <View />;
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={{ textAlign: 'center' }}>We need your permission to use the camera</Text>
-        <Button onPress={requestPermission} title="Grant permission" />
+        <Text style={{ textAlign: 'center' }}>{t('cameraCard.permission.message')}</Text>
+        <Button onPress={requestPermission} title={t('cameraCard.permission.button')} />
       </View>
     );
   }
@@ -80,11 +82,12 @@ export default function CameraCard() {
       {step !== 'done' && (
         <View style={styles.cameraContainer}>
           <Text style={styles.instructionText}>
-            {step === 'front' ? 'Scan front side of the ID card' : 'Scan back side of the ID card'}
+            {step === 'front' 
+              ? t('cameraCard.instructions.front') 
+              : t('cameraCard.instructions.back')}
           </Text>
           <CameraView ref={cameraRef} facing={facing} style={styles.camera} />
 
-          {/* Switch camera button */}
           <TouchableOpacity
             style={styles.switchButton}
             onPress={() =>
@@ -92,42 +95,46 @@ export default function CameraCard() {
             }
           >
             <Text style={styles.switchButtonText}>
-              Switch to {cameraMode === 'normal' ? 'Selfie' : 'Back'} Camera
+              {t('cameraCard.buttons.switchCamera', { 
+                mode: cameraMode === 'normal' 
+                  ? t('cameraCard.labels.selfie') 
+                  : t('cameraCard.labels.normal') 
+              })}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.button} onPress={handleTakePhoto}>
-            <Text style={styles.buttonText}>Take a photo</Text>
+            <Text style={styles.buttonText}>{t('cameraCard.buttons.takePhoto')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.secondaryButton} onPress={handlePickFromGallery}>
-            <Text style={styles.secondaryButtonText}>Import from gallery</Text>
+            <Text style={styles.secondaryButtonText}>{t('cameraCard.buttons.importGallery')}</Text>
           </TouchableOpacity>
         </View>
       )}
 
       {step === 'done' && (
         <View style={styles.previewContainer}>
-          <Text style={styles.instructionText}>Captured Photos</Text>
+          <Text style={styles.instructionText}>{t('cameraCard.instructions.preview')}</Text>
           <View style={styles.imageRow}>
             <View style={styles.imageWrapper}>
               <Image source={{ uri: frontPhoto?.uri }} style={styles.previewImage} />
-              <Text style={styles.imageLabel}>Front</Text>
+              <Text style={styles.imageLabel}>{t('cameraCard.labels.front')}</Text>
               <TouchableOpacity onPress={() => handleRetake('front')}>
-                <Text style={styles.retakeText}>Retake</Text>
+                <Text style={styles.retakeText}>{t('cameraCard.buttons.retake')}</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.imageWrapper}>
               <Image source={{ uri: backPhoto?.uri }} style={styles.previewImage} />
-              <Text style={styles.imageLabel}>Back</Text>
+              <Text style={styles.imageLabel}>{t('cameraCard.labels.back')}</Text>
               <TouchableOpacity onPress={() => handleRetake('back')}>
-                <Text style={styles.retakeText}>Retake</Text>
+                <Text style={styles.retakeText}>{t('cameraCard.buttons.retake')}</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           <TouchableOpacity style={[styles.button, { marginTop: 30 }]} onPress={handleNext}>
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>{t('cameraCard.buttons.next')}</Text>
           </TouchableOpacity>
         </View>
       )}

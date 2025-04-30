@@ -12,6 +12,7 @@ import {
   Dimensions
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -23,6 +24,7 @@ export default function ChangePinScreen() {
   const [showNew, setShowNew] = useState(false);
   const [showReEnter, setShowReEnter] = useState(false);
   const [buttonScale] = useState(new Animated.Value(1));
+   const { t } = useTranslation('changePin');
 
   const handlePressIn = () => {
     Animated.spring(buttonScale, {
@@ -43,15 +45,15 @@ export default function ChangePinScreen() {
   const handleSubmit = () => {
     // Validation logic here
     if (newPin !== reEnterPin) {
-      alert("New PINs don't match!");
+      alert(t('errors.mismatch'));
       return;
     }
     if (newPin.length < 4) {
-      alert("PIN must be at least 4 digits");
+      alert(t('errors.length'));
       return;
     }
     // Submit logic
-    alert("PIN changed successfully!");
+    alert(t('success'));
   };
 
   return (
@@ -61,13 +63,13 @@ export default function ChangePinScreen() {
         style={styles.keyboardAvoid}
       >
         <View style={styles.header}>
-          <Text style={styles.title}>Change PIN</Text>
-          <Text style={styles.subtitle}>Secure your account with a new PIN</Text>
+          <Text style={styles.title}>{t('title')}</Text>
+          <Text style={styles.subtitle}>S{t('subtitle')}</Text>
         </View>
 
         {/* Old Pin */}
         <View style={styles.card}>
-          <Text style={styles.label}>Current PIN</Text>
+          <Text style={styles.label}>{t('currentPin')}</Text>
           <View style={styles.inputRow}>
             <TextInput
               style={styles.input}
@@ -94,7 +96,7 @@ export default function ChangePinScreen() {
 
         {/* New Pin */}
         <View style={styles.card}>
-          <Text style={styles.label}>New PIN</Text>
+          <Text style={styles.label}>{t('newPin')}</Text>
           <View style={styles.inputRow}>
             <TextInput
               style={styles.input}
@@ -121,7 +123,7 @@ export default function ChangePinScreen() {
 
         {/* Re-enter New Pin */}
         <View style={styles.card}>
-          <Text style={styles.label}>Confirm New PIN</Text>
+          <Text style={styles.label}>{t('confirmPin')}</Text>
           <View style={styles.inputRow}>
             <TextInput
               style={styles.input}
@@ -159,17 +161,15 @@ export default function ChangePinScreen() {
             disabled={!oldPin || !newPin || !reEnterPin}
             activeOpacity={0.8}
           >
-            <Text style={styles.buttonText}>Update PIN</Text>
+            <Text style={styles.buttonText}>{t('update')}</Text>
             <Ionicons name="arrow-forward" size={20} color="white" />
           </TouchableOpacity>
         </Animated.View>
 
         {/* PIN Requirements */}
         <View style={styles.requirements}>
-          <Text style={styles.requirementText}>
-            • PIN must be 6 digits{"\n"}
-            • Don't use sequential numbers{"\n"}
-            • Avoid obvious combinations
+          <Text style={styles.requirementText}>{t('items')}
+          
           </Text>
         </View>
       </KeyboardAvoidingView>

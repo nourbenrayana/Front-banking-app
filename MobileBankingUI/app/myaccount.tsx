@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../context/UserContext';
+import { useTranslation } from 'react-i18next';
 
 // Informations fixes de la banque
 const bankInfo = {
@@ -13,14 +14,20 @@ const bankInfo = {
 };
 
 export default function MyAccountScreen() {
-  const [loading, setLoading] = useState(false); // Maintenant inutile mais gardé pour structure
+  const [loading, setLoading] = useState(false);
   const { userData, accountData } = useUser();
+  const { t, i18n } = useTranslation('account');
+
+  useEffect(() => {
+    console.log('Current language:', i18n.language);
+    console.log('Available translations:', i18n.getResourceBundle(i18n.language, 'account'));
+  }, [i18n.language]);
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#1E90FF" />
-        <Text style={styles.loadingText}>Loading bank data...</Text>
+        <Text style={styles.loadingText}>{t('loading')}</Text>
       </View>
     );
   }
@@ -29,7 +36,7 @@ export default function MyAccountScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>My Account</Text>
+        <Text style={styles.title}>{t('header')}</Text>
       </View>
 
       {/* User Info */}
@@ -38,24 +45,24 @@ export default function MyAccountScreen() {
 
         <View style={styles.infoGrid}>
           <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>Account Number</Text>
+            <Text style={styles.infoLabel}>{t('accountInfo.accountNumber')}</Text>
             <Text style={styles.infoValue}>{accountData.accountNumber}</Text>
           </View>
 
           <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>Balance</Text>
+            <Text style={styles.infoLabel}>{t('accountInfo.balance')}</Text>
             <Text style={[styles.infoValue, styles.balance]}>
               {Number(accountData.balance).toFixed(2)} €
             </Text>
           </View>
 
           <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>Account Type</Text>
+            <Text style={styles.infoLabel}>{t('accountInfo.accountType')}</Text>
             <Text style={styles.infoValue}>{accountData.accountType}</Text>
           </View>
 
           <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>Currency</Text>
+            <Text style={styles.infoLabel}>{t('accountInfo.currency')}</Text>
             <Text style={styles.infoValue}>{accountData.currency}</Text>
           </View>
         </View>
@@ -63,12 +70,12 @@ export default function MyAccountScreen() {
 
       {/* Bank Information */}
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Bank Information</Text>
+        <Text style={styles.sectionTitle}>{t('bankInfo.title')}</Text>
 
         <View style={styles.detailItem}>
           <Ionicons name="business" size={18} color="#1E90FF" style={styles.detailIcon} />
           <View>
-            <Text style={styles.detailLabel}>Bank</Text>
+            <Text style={styles.detailLabel}>{t('bankInfo.bank')}</Text>
             <Text style={styles.detailValue}>{bankInfo.bankName}</Text>
           </View>
         </View>
@@ -76,7 +83,7 @@ export default function MyAccountScreen() {
         <View style={styles.detailItem}>
           <Ionicons name="location" size={18} color="#1E90FF" style={styles.detailIcon} />
           <View>
-            <Text style={styles.detailLabel}>Branch</Text>
+            <Text style={styles.detailLabel}>{t('bankInfo.branch')}</Text>
             <Text style={styles.detailValue}>{bankInfo.branch}</Text>
           </View>
         </View>
@@ -84,7 +91,7 @@ export default function MyAccountScreen() {
         <View style={styles.detailItem}>
           <Ionicons name="calendar" size={18} color="#1E90FF" style={styles.detailIcon} />
           <View>
-            <Text style={styles.detailLabel}>Client Since</Text>
+            <Text style={styles.detailLabel}>{t('bankInfo.clientSince')}</Text>
             <Text style={styles.detailValue}>{bankInfo.clientSince}</Text>
           </View>
         </View>
@@ -95,7 +102,7 @@ export default function MyAccountScreen() {
         >
           <Ionicons name="globe-outline" size={18} color="#1E90FF" style={styles.detailIcon} />
           <View>
-            <Text style={styles.detailLabel}>Website</Text>
+            <Text style={styles.detailLabel}>{t('bankInfo.website')}</Text>
             <Text style={[styles.detailValue, { color: '#1E90FF', textDecorationLine: 'underline' }]}>
               {bankInfo.website.replace('https://', '')}
             </Text>
@@ -107,9 +114,9 @@ export default function MyAccountScreen() {
       <View style={[styles.card, styles.statusCard]}>
         <View style={styles.statusBadge}>
           <Ionicons name="checkmark-circle" size={18} color="#FFF" />
-          <Text style={styles.statusText}>{bankInfo.status}</Text>
+          <Text style={styles.statusText}>{t('status.active')}</Text>
         </View>
-        <Text style={styles.statusMessage}>Your account is in good standing and active</Text>
+        <Text style={styles.statusMessage}>{t('status.message')}</Text>
       </View>
     </ScrollView>
   );

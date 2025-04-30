@@ -1,23 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image } from 'react-native';
-import { Entypo, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
+import { useTranslation } from 'react-i18next'; // Ajouté
 
-const router = useRouter();
 const { width } = Dimensions.get('window');
 
 const passportImage = require('../../assets/images/passport.png');
 const selfieImage = require('../../assets/images/selfie.png');
 
 const OnboardingScreen = () => {
+  const { t } = useTranslation('getStarted'); // Ajouté
+
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
       {/* Titre et sous-titre en haut */}
       <View style={styles.header}>
-        <Text style={styles.title}>Let's get started</Text>
-        <Text style={styles.subtitle}>
-          To create ID and verify your identity you need to do these 3 simple steps
-        </Text>
+        <Text style={styles.title}>{t('onboarding.title')}</Text>
+        <Text style={styles.subtitle}>{t('onboarding.subtitle')}</Text>
       </View>
 
       {/* Rectangle des étapes centré */}
@@ -31,11 +33,10 @@ const OnboardingScreen = () => {
 
         {/* Colonne des textes */}
         <View style={styles.textsColumn}>
-          <Text style={styles.stepText}>Scan document</Text>
+          <Text style={styles.stepText}>{t('onboarding.step1')}</Text>
           <View style={styles.textSpacer} />
-          <Text style={styles.stepText}>Take Selfie</Text>
+          <Text style={styles.stepText}>{t('onboarding.step2')}</Text>
           <View style={styles.textSpacer} />
-
         </View>
       </View>
 
@@ -45,7 +46,7 @@ const OnboardingScreen = () => {
           style={styles.nextButton}
           onPress={() => router.push("/(auth)/choixdedocument")}
         >
-          <Text style={styles.nextButtonText}>I'm ready</Text>
+          <Text style={styles.nextButtonText}>{t('onboarding.button')}</Text>
           <Ionicons name="arrow-forward" size={20} color="white" />
         </TouchableOpacity>
       </View>
@@ -102,10 +103,6 @@ const styles = StyleSheet.create({
     height: 32,
     resizeMode: 'contain',
   },
-  passwordIcon: {
-    height: 32,
-    textAlignVertical: 'center',
-  },
   verticalDottedLine: {
     borderLeftWidth: 2,
     borderLeftColor: '#ddd',
@@ -145,7 +142,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
-    width: width * 0.85, // Même largeur que la carte des étapes
+    width: width * 0.85,
   },
   nextButtonText: {
     color: 'white',

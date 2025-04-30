@@ -1,0 +1,15 @@
+{
+    "title": "Perfil",
+    "options": {
+      "myAccount": "Minha conta",
+      "privacyPolicy": "Política de privacidade",
+      "settings": "Configurações",
+      "helpSupport": "Ajuda e Suporte",
+      "contactUs": "Contate-nos"
+    },
+    "logout": "Sair",
+    "imagePermission": {
+      "title": "Permissão negada",
+      "message": "Você precisa conceder acesso à galeria."
+    }
+  }

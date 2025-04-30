@@ -3,14 +3,15 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Linkin
 import { Ionicons } from '@expo/vector-icons';
 import { Alert } from 'react-native';
 import { useUser } from '../context/UserContext';
+import { useTranslation } from 'react-i18next'; // Importez le hook
 
 export default function ContactUsScreen() {
-  const { userData } = useUser(); // Récupération des données utilisateur
+  const { userData } = useUser();
   const [message, setMessage] = useState('');
+  const { t } = useTranslation('contact'); // Utilisez le namespace correspondant à votre fichier JSON
 
   const handleSubmit = () => {
-    // Ici vous ajouteriez votre logique d'envoi de formulaire
-    Alert.alert('Message sent', 'We will contact you soon!');
+    Alert.alert(t('sendButton'), t('success'));
     setMessage('');
   };
 
@@ -19,40 +20,40 @@ export default function ContactUsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Ionicons name="chatbubbles" size={32} color="#2E86DE" />
-        <Text style={styles.title}>Contact Us</Text>
-        <Text style={styles.subtitle}>We are here to help</Text>
+        <Text style={styles.title}>{t('title')}</Text>
+        <Text style={styles.subtitle}>{t('subtitle')}</Text>
       </View>
 
       {/* Contact Form */}
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Send us a message</Text>
+        <Text style={styles.sectionTitle}>{t('sendMessage')}</Text>
         
-        {/* Champ Nom (non modifiable) */}
+        {/* Champ Nom */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Full Name</Text>
+          <Text style={styles.label}>{t('labels.fullName')}</Text>
           <View style={[styles.input, styles.disabledInput]}>
             <Text style={styles.disabledText}>{userData.fullName}</Text>
           </View>
         </View>
         
-        {/* Champ Email (non modifiable) */}
+        {/* Champ Email */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
+          <Text style={styles.label}>{t('labels.email')}</Text>
           <View style={[styles.input, styles.disabledInput]}>
             <Text style={styles.disabledText}>{userData.email}</Text>
           </View>
         </View>
         
-        {/* Champ Message (seul champ modifiable) */}
+        {/* Champ Message */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Message</Text>
+          <Text style={styles.label}>{t('labels.message')}</Text>
           <TextInput
             style={[styles.input, styles.multilineInput]}
             value={message}
             onChangeText={setMessage}
             multiline
             numberOfLines={4}
-            placeholder="Describe your request..."
+            placeholder={t('messagePlaceholder')}
             placeholderTextColor="#95a5a6"
           />
         </View>
@@ -62,14 +63,14 @@ export default function ContactUsScreen() {
           onPress={handleSubmit}
           disabled={!message}
         >
-          <Text style={styles.submitButtonText}>Send Message</Text>
+          <Text style={styles.submitButtonText}>{t('sendButton')}</Text>
           <Ionicons name="send" size={20} color="#FFF" />
         </TouchableOpacity>
       </View>
 
       {/* Direct Contact */}
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Direct Contact</Text>
+        <Text style={styles.sectionTitle}>{t('directContact')}</Text>
         
         <TouchableOpacity 
           style={styles.contactMethod}
@@ -79,7 +80,7 @@ export default function ContactUsScreen() {
             <Ionicons name="call" size={20} color="#2E86DE" />
           </View>
           <View>
-            <Text style={styles.contactType}>Phone</Text>
+            <Text style={styles.contactType}>{t('contactMethods.phone')}</Text>
             <Text style={styles.contactValue}>+33 1 23 45 67 89</Text>
           </View>
         </TouchableOpacity>
@@ -92,7 +93,7 @@ export default function ContactUsScreen() {
             <Ionicons name="mail" size={20} color="#2E86DE" />
           </View>
           <View>
-            <Text style={styles.contactType}>Email</Text>
+            <Text style={styles.contactType}>{t('contactMethods.email')}</Text>
             <Text style={styles.contactValue}>support@votrebank.com</Text>
           </View>
         </TouchableOpacity>
@@ -105,7 +106,7 @@ export default function ContactUsScreen() {
             <Ionicons name="logo-whatsapp" size={20} color="#2E86DE" />
           </View>
           <View>
-            <Text style={styles.contactType}>WhatsApp</Text>
+            <Text style={styles.contactType}>{t('contactMethods.whatsapp')}</Text>
             <Text style={styles.contactValue}>+33 1 23 45 67 89</Text>
           </View>
         </TouchableOpacity>
@@ -113,14 +114,14 @@ export default function ContactUsScreen() {
 
       {/* Address */}
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Our Agency</Text>
+        <Text style={styles.sectionTitle}>{t('agency')}</Text>
         
         <View style={styles.contactMethod}>
           <View style={styles.contactIcon}>
             <Ionicons name="location" size={20} color="#2E86DE" />
           </View>
           <View>
-            <Text style={styles.contactType}>Address</Text>
+            <Text style={styles.contactType}>{t('contactMethods.address')}</Text>
             <Text style={styles.contactValue}>
               123 Avenue des Champs-Élysées{"\n"}
               75008 Paris, France
@@ -133,7 +134,7 @@ export default function ContactUsScreen() {
           onPress={() => Linking.openURL('https://maps.app.goo.gl/...')}
         >
           <Ionicons name="map" size={20} color="#2E86DE" />
-          <Text style={styles.mapButtonText}>View on Map</Text>
+          <Text style={styles.mapButtonText}>{t('viewMap')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

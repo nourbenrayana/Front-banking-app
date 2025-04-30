@@ -1,25 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router'; // ✅ Import router
+import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
-type IconName =
-  | "filter"
-  | "notifications"
-  | "location"
-  | "settings"
-  | "lock-closed"
+type IconName = 
+  | "lock-closed" 
   | "finger-print"
   | "language"
   | "moon"
-  | "push"
-  | "map"
-  | "at"
-  | "key"
-  | "search"
-  | "repeat"
-  | "link"
-  | "body";
+  | "notifications"
+  | "location";
 
 type Settings = {
   faceId: boolean;
@@ -29,9 +20,82 @@ type Settings = {
   darkMode: boolean;
 };
 
-export default function SettingsScreen() {
-  const router = useRouter(); // ✅ Initialise router
+type SettingItem = {
+  icon: IconName;
+  name: string;
+  action?: () => void;
+  type: 'button' | 'switch' | 'custom';
+  value?: boolean;
+  component?: React.ReactNode;
+};
 
+type SettingSection = {
+  title: string;
+  data: SettingItem[];
+};
+
+const LanguageSelector = ({ darkMode }: { darkMode: boolean }) => {
+  const { t, i18n } = useTranslation('settings');
+  const [showLanguageOptions, setShowLanguageOptions] = useState(false);
+
+  const languages = [
+    { code: 'en', name: t('languageValue', { lng: 'en' }) },
+    { code: 'fr', name: t('languageValue', { lng: 'fr' }) },
+    { code: 'pt', name: t('languageValue', { lng: 'pt' }) }
+  ];
+
+  const currentLanguage = languages.find(l => l.code === i18n.language)?.name;
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    setShowLanguageOptions(false);
+  };
+
+  return (
+    <View>
+      <TouchableOpacity
+        onPress={() => setShowLanguageOptions(!showLanguageOptions)}
+        style={styles.languageSelector}
+      >
+        <Text style={[styles.languageText, darkMode && styles.darkLanguageText]}>
+          {currentLanguage}
+        </Text>
+        <Ionicons
+          name={showLanguageOptions ? "chevron-up" : "chevron-down"}
+          size={20}
+          color={darkMode ? '#9E9E9E' : '#666'}
+        />
+      </TouchableOpacity>
+
+      {showLanguageOptions && (
+        <View style={[styles.languageOptions, darkMode && styles.darkLanguageOptions]}>
+          {languages.map((lang) => (
+            <TouchableOpacity
+              key={lang.code}
+              onPress={() => changeLanguage(lang.code)}
+              style={[
+                styles.languageOption,
+                darkMode && styles.darkLanguageOption,
+                i18n.language === lang.code && (darkMode ? styles.darkSelectedLanguage : styles.selectedLanguage)
+              ]}
+            >
+              <Text style={[styles.languageOptionText, darkMode && styles.darkLanguageOptionText]}>
+                {lang.name}
+              </Text>
+              {i18n.language === lang.code && (
+                <Ionicons name="checkmark" size={18} color={darkMode ? '#64B5F6' : '#1E90FF'} />
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+};
+
+export default function SettingsScreen() {
+  const router = useRouter();
+  const { t } = useTranslation('settings');
   const [settings, setSettings] = useState<Settings>({
     faceId: true,
     fingerprint: true,
@@ -44,19 +108,19 @@ export default function SettingsScreen() {
     setSettings(prev => ({ ...prev, [setting]: !prev[setting] }));
   };
 
-  const settingsOptions = [
+  const settingsOptions: SettingSection[] = [
     {
-      section: 'Security',
+      title: t('sections.security.title'),
       data: [
         {
-          icon: 'lock-closed' as IconName,
-          name: 'Change PIN',
-          action: () => router.push('/changercodepin'), // ✅ Redirection ici
+          icon: 'lock-closed',
+          name: t('sections.security.options.changePin'),
+          action: () => router.push('/changercodepin'),
           type: 'button',
         },
         {
-          icon: 'lock-closed' as IconName,
-          name: 'Face ID',
+          icon: 'finger-print',
+          name: t('sections.security.options.faceId'),
           value: settings.faceId,
           action: () => toggleSwitch('faceId'),
           type: 'switch',
@@ -64,37 +128,36 @@ export default function SettingsScreen() {
       ]
     },
     {
-      section: 'Preferences',
+      title: t('sections.preferences.title'),
       data: [
         {
-          icon: 'language' as IconName,
-          name: 'Language',
-          value: 'English',
-          action: () => console.log('Navigate to Language Settings'),
-          type: 'button',
+          icon: 'language',
+          name: t('sections.preferences.options.language'),
+          type: 'custom',
+          component: <LanguageSelector darkMode={settings.darkMode} />,
         },
         {
-          icon: 'moon' as IconName,
-          name: 'Dark Mode',
+          icon: 'moon',
+          name: t('sections.preferences.options.darkMode'),
           value: settings.darkMode,
           action: () => toggleSwitch('darkMode'),
           type: 'switch',
-        }
+        },
       ]
     },
     {
-      section: 'Notifications',
+      title: t('sections.notifications.title'),
       data: [
         {
-          icon: 'notifications' as IconName,
-          name: 'App Notifications',
+          icon: 'notifications',
+          name: t('sections.notifications.options.appNotifications'),
           value: settings.notifications,
           action: () => toggleSwitch('notifications'),
           type: 'switch',
         },
         {
-          icon: 'location' as IconName,
-          name: 'Location Services',
+          icon: 'location',
+          name: t('sections.notifications.options.locationServices'),
           value: settings.location,
           action: () => toggleSwitch('location'),
           type: 'switch',
@@ -106,61 +169,73 @@ export default function SettingsScreen() {
   return (
     <ScrollView style={[styles.container, settings.darkMode && styles.darkContainer]}>
       <View style={styles.headerContainer}>
-        <Ionicons 
-          name="settings" 
-          size={28} 
-          color={settings.darkMode ? '#64B5F6' : '#1E90FF'} 
-          style={{ marginRight: 10 }} 
+        <Ionicons
+          name="settings"
+          size={28}
+          color={settings.darkMode ? '#64B5F6' : '#1E90FF'}
+          style={{ marginRight: 10 }}
         />
         <Text style={[styles.header, settings.darkMode && styles.darkHeader]}>
-          Settings
+          {t('header')}
         </Text>
       </View>
 
       {settingsOptions.map((section, sectionIndex) => (
         <View key={sectionIndex} style={styles.sectionContainer}>
           <Text style={[styles.sectionHeader, settings.darkMode && styles.darkSectionHeader]}>
-            {section.section}
+            {section.title}
           </Text>
           <View style={[styles.settingsContainer, settings.darkMode && styles.darkSettingsContainer]}>
             {section.data.map((item, index) => (
-              <TouchableOpacity 
-                key={index} 
-                style={styles.settingItem}
-                onPress={item.action}
-                activeOpacity={0.7}
-              >
-                <View style={styles.settingLeft}>
-                  <Ionicons 
-                    name={item.icon} 
-                    size={22} 
-                    color={settings.darkMode ? '#64B5F6' : '#1E90FF'} 
-                  />
-                  <Text style={[styles.settingText, settings.darkMode && styles.darkSettingText]}>
-                    {item.name}
-                  </Text>
-                  {item.type === 'button' && item.value && (
-                    <Text style={[styles.settingValue, settings.darkMode && styles.darkSettingValue]}>
-                      {item.value}
-                    </Text>
-                  )}
-                </View>
-                {item.type === 'switch' ? (
-                  <Switch
-                    trackColor={{ false: "#767577", true: settings.darkMode ? "#0D47A1" : "#1E90FF" }}
-                    thumbColor={settings[item.name.toLowerCase().replace(' ', '') as keyof Settings] ? "#FFFFFF" : "#F4F3F4"}
-                    ios_backgroundColor="#3E3E3E"
-                    onValueChange={item.action}
-                    value={item.value as boolean}
-                  />
+              <View key={index}>
+                {item.type === 'custom' && item.component ? (
+                  <View style={styles.settingItem}>
+                    <View style={styles.settingLeft}>
+                      <Ionicons
+                        name={item.icon}
+                        size={22}
+                        color={settings.darkMode ? '#64B5F6' : '#1E90FF'}
+                      />
+                      <Text style={[styles.settingText, settings.darkMode && styles.darkSettingText]}>
+                        {item.name}
+                      </Text>
+                    </View>
+                    {item.component}
+                  </View>
                 ) : (
-                  <Ionicons 
-                    name="chevron-forward" 
-                    size={20} 
-                    color={settings.darkMode ? '#757575' : '#95a5a6'} 
-                  />
+                  <TouchableOpacity
+                    style={[styles.settingItem, settings.darkMode && styles.darkSettingItem]}
+                    onPress={item.action}
+                    activeOpacity={0.7}
+                  >
+                    <View style={styles.settingLeft}>
+                      <Ionicons
+                        name={item.icon}
+                        size={22}
+                        color={settings.darkMode ? '#64B5F6' : '#1E90FF'}
+                      />
+                      <Text style={[styles.settingText, settings.darkMode && styles.darkSettingText]}>
+                        {item.name}
+                      </Text>
+                    </View>
+                    {item.type === 'switch' ? (
+                      <Switch
+                        trackColor={{ false: "#767577", true: settings.darkMode ? "#0D47A1" : "#1E90FF" }}
+                        thumbColor={item.value ? "#FFFFFF" : "#F4F3F4"}
+                        ios_backgroundColor="#3E3E3E"
+                        onValueChange={item.action}
+                        value={item.value ?? false}
+                      />
+                    ) : (
+                      <Ionicons
+                        name="chevron-forward"
+                        size={20}
+                        color={settings.darkMode ? '#757575' : '#95a5a6'}
+                      />
+                    )}
+                  </TouchableOpacity>
                 )}
-              </TouchableOpacity>
+              </View>
             ))}
           </View>
         </View>
@@ -246,12 +321,54 @@ const styles = StyleSheet.create({
   darkSettingText: {
     color: '#E0E0E0',
   },
-  settingValue: {
-    fontSize: 14,
-    color: '#7F8C8D',
-    marginRight: 8,
+  languageSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 10,
   },
-  darkSettingValue: {
-    color: '#9E9E9E',
+  languageText: {
+    fontSize: 16,
+    color: '#2C3E50',
+  },
+  darkLanguageText: {
+    color: '#E0E0E0',
+  },
+  languageOptions: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    marginTop: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  darkLanguageOptions: {
+    backgroundColor: '#2D2D2D',
+  },
+  languageOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ECF0F1',
+  },
+  darkLanguageOption: {
+    borderBottomColor: '#333333',
+  },
+  selectedLanguage: {
+    backgroundColor: '#F5F9FF',
+  },
+  darkSelectedLanguage: {
+    backgroundColor: '#2A3A4A',
+  },
+  languageOptionText: {
+    fontSize: 16,
+    color: '#2C3E50',
+  },
+  darkLanguageOptionText: {
+    color: '#E0E0E0',
   },
 });

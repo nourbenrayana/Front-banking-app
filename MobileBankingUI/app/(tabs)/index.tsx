@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useUser } from "../../context/UserContext";
 import { useEffect, useState } from "react";
 import AnimatedCard from "../../components/AnimatedCard";
+import { useTranslation } from "react-i18next"; // 🔥 Import i18n
 import config from "@/utils/config";
 
 interface Transaction {
@@ -32,6 +33,7 @@ interface TransactionItemProps {
 export default function Dashboard() {
   const router = useRouter();
   const { userData, accountData } = useUser();
+  const { t } = useTranslation('dashboard'); // 🔥 Hook traduction
 
   const { fullName } = userData || {};
   const { cardNumber, expiryDate, cardType, status, accountId } = accountData || {};
@@ -42,18 +44,13 @@ export default function Dashboard() {
     const fetchUserName = async (compteId: string): Promise<string> => {
       try {
         const cleanedId = compteId.replace(/^comptes\//, '');
-  
-        // Étape 1 : récupérer le compte pour obtenir l'userId
         const resCompte = await fetch(`${config.BASE_URL}/api/comptes/${cleanedId}`);
         if (!resCompte.ok) return "Unknown";
         const compteData = await resCompte.json();
         const userId = (compteData.userId || compteData.ownerId || "").replace(/^users\//, '');
-  
-        // Étape 2 : récupérer l'utilisateur pour obtenir son nom
         const resUser = await fetch(`${config.BASE_URL}/api/users/${userId}`);
         if (!resUser.ok) return "Unknown";
         const userData = await resUser.json();
-  
         return userData.fullName || userData.nom || "Unknown";
       } catch (error) {
         console.error("Error fetching user name:", error);
@@ -63,7 +60,6 @@ export default function Dashboard() {
   
     const fetchTransactions = async () => {
       if (!accountId) return;
-  
       try {
         const cleanedAccountId = accountId.replace(/^comptes\//, '');
         const res = await fetch(`${config.BASE_URL}/api/transactions/compte/${cleanedAccountId}`);
@@ -71,15 +67,13 @@ export default function Dashboard() {
           const errorText = await res.text();
           throw new Error(`HTTP ${res.status}: ${errorText}`);
         }
-  
         const data = await res.json();
-  
         const formatted = await Promise.all(
           data.map(async (tx: any) => {
             const isIncoming = tx.compteDestinataire?.includes(cleanedAccountId);
             const otherCompteId = isIncoming ? tx.compteExpediteur : tx.compteDestinataire;
             const name = await fetchUserName(otherCompteId);
-  
+
             return {
               id: tx._id,
               image: require("../../assets/images/avatar1.jpg"),
@@ -89,7 +83,6 @@ export default function Dashboard() {
             };
           })
         );
-  
         setTransactions(formatted);
       } catch (err) {
         console.error("Error details:", err);
@@ -111,15 +104,16 @@ export default function Dashboard() {
   const handlePaymentChoice = () => {
     router.push("/choixdepaiment");
   };
-  
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.headerTextContainer}>
-          <Text style={styles.greeting}>Hello, {fullName || "User"}!</Text>
-          <Text style={styles.subtitle}>Welcome back to your dashboard</Text>
+          <Text style={styles.greeting}>
+            {t("greeting", { name: fullName || "User" })}
+          </Text>
+          <Text style={styles.subtitle}>{t("welcome_back")}</Text>
         </View>
         <TouchableOpacity 
           style={styles.notificationButton}
@@ -142,25 +136,25 @@ export default function Dashboard() {
 
       {/* QUICK ACTIONS */}
       <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
+        <Text style={styles.sectionTitle}>{t("quick_actions")}</Text>
         <View style={styles.actionsContainer}>
-          <Action icon="arrow-up-outline" label="Send" color="#6C5CE7" onPress={handleTransfer} />
-          <Action icon="arrow-down-outline" label="Request" color="#00B894" />
-          <Action icon="wallet-outline" label="Pay" color="#FD79A8" onPress={handlePaymentChoice} />
-          <Action icon="swap-horizontal-outline" label="Swap" color="#0984E3" />
+          <Action icon="arrow-up-outline" label={t("send")} color="#6C5CE7" onPress={handleTransfer} />
+          <Action icon="arrow-down-outline" label={t("request")} color="#00B894" />
+          <Action icon="wallet-outline" label={t("pay")} color="#FD79A8" onPress={handlePaymentChoice} />
+          <Action icon="swap-horizontal-outline" label={t("swap")} color="#0984E3" />
         </View>
       </View>
 
       {/* TRANSACTIONS */}
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recent Transactions</Text>
+          <Text style={styles.sectionTitle}>{t("recent_transactions")}</Text>
           <TouchableOpacity
             onPress={() =>
               router.push({ pathname: "/historique", params: { compteId: accountData?.accountId } })
             }
           >
-            <Text style={styles.viewAll}>View All</Text>
+            <Text style={styles.viewAll}>{t("view_all")}</Text>
           </TouchableOpacity>
         </View>
 
@@ -178,7 +172,7 @@ export default function Dashboard() {
         ) : (
           <View style={styles.noTransactions}>
             <Ionicons name="receipt-outline" size={40} color="#DFE6E9" />
-            <Text style={styles.noTransactionsText}>No recent transactions</Text>
+            <Text style={styles.noTransactionsText}>{t("no_transactions")}</Text>
           </View>
         )}
       </View>
@@ -186,7 +180,6 @@ export default function Dashboard() {
   );
 }
 
-// Updated Action component with better styling
 function Action({ icon, label, color = "#3498db", onPress }: ActionProps) {
   return (
     <TouchableOpacity style={styles.actionButton} onPress={onPress}>
@@ -198,7 +191,6 @@ function Action({ icon, label, color = "#3498db", onPress }: ActionProps) {
   );
 }
 
-// Updated TransactionItem with better styling
 function TransactionItem({
   image,
   name,
@@ -222,7 +214,6 @@ function TransactionItem({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

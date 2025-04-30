@@ -1,0 +1,15 @@
+{
+    "header": {
+      "title": "ADICIONAR DESTINATÁRIO",
+      "subtitle": "Insira os detalhes do pagamento"
+    },
+    "inputs": {
+      "fullName": "Nome completo",
+      "bankAccount": "Conta bancária (RIB) *",
+      "phoneNumber": "Telefone (opcional)"
+    },
+    "button": "Adicionar",
+    "errors": {
+      "ribRequired": "RIB é obrigatório"
+    }
+  }

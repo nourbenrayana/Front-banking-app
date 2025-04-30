@@ -1,0 +1,10 @@
+{
+  "scanSelection": {
+    "title": "Choisissez le type de scan",
+    "subtitle": "Sélectionnez le document que vous souhaitez scanner",
+    "passportTitle": "Passeport",
+    "passportDescription": "Scannez la page d'identité de votre passeport",
+    "idCardTitle": "Carte d'identité",
+    "idCardDescription": "Scannez le recto de votre carte d'identité"
+  }
+}

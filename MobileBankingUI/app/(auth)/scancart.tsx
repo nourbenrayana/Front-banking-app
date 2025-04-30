@@ -1,25 +1,26 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from 'react-native';
 import LottieView from 'lottie-react-native';
-
+import { useTranslation } from 'react-i18next'; // ➔ i18n import
 import { useRouter } from "expo-router";
-const router = useRouter();
 
 const { width, height } = Dimensions.get('window');
 
 const PassportScanScreen = () => {
+  const { t } = useTranslation('scanCard'); // ➔ i18n hook
+  const router = useRouter(); // ➔ router hook
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* En-tête */}
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Scan cart</Text>
+        <Text style={styles.title}>{t('passportScan.title')}</Text>
         <Text style={styles.instructions}>
-          Now place your phone directly on top of your passport
-          {'\n'}so we can connect securely
+          {t('passportScan.instructions')}
         </Text>
       </View>
 
-      {/* Conteneur de l'animation Lottie */}
+      {/* Animation */}
       <View style={styles.animationContainer}>
         <LottieView
           source={require('../../assets/animations/Main Scene.json')}
@@ -29,10 +30,12 @@ const PassportScanScreen = () => {
         />
       </View>
 
-      {/* Bouton de scan */}
-      <TouchableOpacity style={styles.scanButton}
-      onPress={() => router.push("/(auth)/cincamera")}>
-        <Text style={styles.scanButtonText}>Scan Now</Text>
+      {/* Scan Button */}
+      <TouchableOpacity 
+        style={styles.scanButton}
+        onPress={() => router.push("/(auth)/cincamera")}
+      >
+        <Text style={styles.scanButtonText}>{t('passportScan.scanButton')}</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

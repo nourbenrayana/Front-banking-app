@@ -1,0 +1,37 @@
+{
+    "header": "Aplicação de Cartão Caixa Bank",
+    "cardType": "Tipo de Cartão",
+    "personalInfo": "Informações Pessoais",
+    "address": "Endereço",
+    "contactInfo": "Informações de Contato",
+    "reason": "Motivo para Cartão Adicional",
+    "placeholders": {
+      "firstName": "Nome *",
+      "lastName": "Sobrenome *",
+      "cpf": "CPF *",
+      "birthDate": "Data de Nascimento (DD/MM/AAAA)",
+      "address": "Endereço",
+      "city": "Cidade",
+      "zipCode": "CEP",
+      "phone": "Telefone",
+      "email": "Email",
+      "reason": "Por favor explique por que você precisa de um cartão adicional"
+    },
+    "submit": "Enviar Aplicação",
+    "note": "* Campos obrigatórios",
+    "errors": {
+      "firstName": "Nome é obrigatório",
+      "lastName": "Sobrenome é obrigatório",
+      "cpf": "CPF é obrigatório"
+    },
+    "success": "Aplicação de cartão enviada com sucesso",
+    "cardOptions": [
+      { "label": "Cartão de Crédito ELO", "value": "ELO_CREDIT" },
+      { "label": "Cartão de Débito ELO", "value": "ELO_DEBIT" },
+      { "label": "Visa Infinite", "value": "VISA_INFINITE" },
+      { "label": "Visa Platinum", "value": "VISA_PLATINUM" },
+      { "label": "Visa Gold", "value": "VISA_GOLD" },
+      { "label": "Mastercard Black", "value": "MASTERCARD_BLACK" },
+      { "label": "Cartão Caixa Fácil", "value": "CAIXA_FACIL" }
+    ]
+  }

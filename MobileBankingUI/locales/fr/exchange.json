@@ -1,0 +1,15 @@
+{
+    "title": "Convertisseur de Devises",
+    "labels": {
+      "from": "De",
+      "to": "À"
+    },
+    "button": "Convertir",
+    "buttonLoading": "Conversion...",
+    "result": "1 {{base}} = {{result}} {{target}}",
+    "info": "Entrez les codes de devise (ex : USD, EUR, JPY)",
+    "errors": {
+      "noCurrencies": "Veuillez sélectionner les devises",
+      "conversionFailed": "Échec de la conversion"
+    }
+  }

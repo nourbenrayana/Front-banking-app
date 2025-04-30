@@ -8,8 +8,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from 'react-i18next';
 
 export default function PrivacyPolicy() {
+  const { t } = useTranslation('privacy');
   const handleOpenLink = (url: string) => {
     Linking.openURL(url).catch((err) =>
       console.error("Failed to open link:", err)
@@ -20,88 +22,83 @@ export default function PrivacyPolicy() {
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Privacy Policy</Text>
+        <Text style={styles.title}>{t('title')}</Text>
         <Text style={styles.subtitle}>
-          Last updated: {new Date().toLocaleDateString()}
+        {t('lastUpdated')}: {new Date().toLocaleDateString()}
         </Text>
       </View>
 
       {/* Introduction */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>1. Introduction</Text>
-        <Text style={styles.text}>
-          We are committed to protecting your privacy. This policy explains how
-          we collect, use, and safeguard your information when you use our
-          application.
+        <Text style={styles.sectionTitle}>{t('sections.introduction.title')}</Text>
+        <Text style={styles.text}>{t('sections.introduction.content')}
         </Text>
       </View>
 
       {/* Data Collection */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>2. Data We Collect</Text>
+        <Text style={styles.sectionTitle}>{t('sections.dataCollection.title')}</Text>
         <View style={styles.listItem}>
           <Ionicons name="ellipse" size={8} color="#3498db" style={styles.bullet} />
-          <Text style={styles.text}>Personal identification (name, email, phone)</Text>
+          <Text style={styles.text}>{t('sections.dataCollection.items1')}</Text>
         </View>
         <View style={styles.listItem}>
           <Ionicons name="ellipse" size={8} color="#3498db" style={styles.bullet} />
-          <Text style={styles.text}>Device information (model, OS version)</Text>
+          <Text style={styles.text}>{t('sections.dataCollection.items2')}</Text>
         </View>
         <View style={styles.listItem}>
           <Ionicons name="ellipse" size={8} color="#3498db" style={styles.bullet} />
-          <Text style={styles.text}>Usage data (app interactions, features used)</Text>
+          <Text style={styles.text}>{t('sections.dataCollection.items3')}</Text>
         </View>
       </View>
 
       {/* Use of Data */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>3. Use of Your Data</Text>
-        <Text style={styles.text}>We use the information we collect to:</Text>
+        <Text style={styles.sectionTitle}>{t('sections.dataUse.title')}</Text>
+        <Text style={styles.text}>{t('sections.dataUse.content')}</Text>
         <View style={styles.listItem}>
           <Ionicons name="checkmark-circle" size={16} color="#3498db" style={styles.icon} />
-          <Text style={styles.text}>Provide and maintain our service</Text>
+          <Text style={styles.text}>{t('sections.dataUse.items1')}</Text>
         </View>
         <View style={styles.listItem}>
           <Ionicons name="checkmark-circle" size={16} color="#3498db" style={styles.icon} />
-          <Text style={styles.text}>Improve user experience</Text>
+          <Text style={styles.text}>{t('sections.dataUse.items2')}</Text>
         </View>
         <View style={styles.listItem}>
           <Ionicons name="checkmark-circle" size={16} color="#3498db" style={styles.icon} />
-          <Text style={styles.text}>Ensure application security</Text>
+          <Text style={styles.text}>{t('sections.dataUse.items3')}</Text>
         </View>
       </View>
 
       {/* Data Sharing */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>4. Data Sharing</Text>
-        <Text style={styles.text}>
-          We do not sell your personal data. We may share information with:
-        </Text>
+        <Text style={styles.sectionTitle}>{t('sections.dataSharing.title')}</Text>
+        <Text style={styles.text}>{t('sections.dataSharing.content')} </Text>
         <View style={styles.listItem}>
           <Ionicons name="business" size={16} color="#3498db" style={styles.icon} />
-          <Text style={styles.text}>Service providers (for app functionality)</Text>
+          <Text style={styles.text}> {t('sections.dataSharing.items1')}</Text>
         </View>
         <View style={styles.listItem}>
           <Ionicons name="shield" size={16} color="#3498db" style={styles.icon} />
-          <Text style={styles.text}>Legal authorities (when required by law)</Text>
+          <Text style={styles.text}> {t('sections.dataSharing.items2')}</Text>
         </View>
       </View>
 
       {/* User Rights */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>5. Your Rights</Text>
-        <Text style={styles.text}>You have the right to:</Text>
+        <Text style={styles.sectionTitle}>{t('sections.userRights.title')}</Text>
+        <Text style={styles.text}>{t('sections.userRights.content')}:</Text>
         <View style={styles.listItem}>
           <Ionicons name="create" size={16} color="#3498db" style={styles.icon} />
-          <Text style={styles.text}>Access and update your information</Text>
+          <Text style={styles.text}>{t('sections.userRights.items1')}</Text>
         </View>
         <View style={styles.listItem}>
           <Ionicons name="trash" size={16} color="#3498db" style={styles.icon} />
-          <Text style={styles.text}>Request deletion of your data</Text>
+          <Text style={styles.text}>{t('sections.userRights.items2')}</Text>
         </View>
         <View style={styles.listItem}>
           <Ionicons name="download" size={16} color="#3498db" style={styles.icon} />
-          <Text style={styles.text}>Export your data</Text>
+          <Text style={styles.text}>{t('sections.userRights.items3')}</Text>
         </View>
       </View>
 
@@ -110,7 +107,7 @@ export default function PrivacyPolicy() {
       {/* Consent Box */}
       <View style={styles.consentBox}>
         <Text style={styles.consentText}>
-          By using our application, you consent to our Privacy Policy.
+        {t('sections.consent')}
         </Text>
       </View>
     </ScrollView>

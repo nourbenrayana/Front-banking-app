@@ -3,9 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-na
 import LottieView from 'lottie-react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 export default function SignupSuccessScreen() {
   const router = useRouter();
+  const { t } = useTranslation("signupSuccess");
 
   const handleGoToDashboard = () => {
     router.replace('/(tabs)');
@@ -13,28 +15,33 @@ export default function SignupSuccessScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.animationContainer}>
-        <LottieView
-          source={require('../../assets/lotties/success.json')}
-          autoPlay
-          loop={true}
-          style={styles.animation}
-        />
+      <View style={styles.content}>
+        <View style={styles.animationContainer}>
+          <LottieView
+            source={require('../../assets/lotties/success.json')}
+            autoPlay
+            loop={false}
+            style={styles.animation}
+          />
+        </View>
+
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>{t('accountCreated')}</Text>
+          <Text style={styles.subtitle}>
+            {t('successMessage')}
+          </Text>
+        </View>
+
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={handleGoToDashboard}
+          activeOpacity={0.8}
+          accessibilityLabel={t('goToDashboard')}
+        >
+          <Text style={styles.buttonText}>{t('goToDashboard')}</Text>
+          <Ionicons name="arrow-forward" size={20} color="white" />
+        </TouchableOpacity>
       </View>
-
-      <Text style={styles.title}>Account Created!</Text>
-      <Text style={styles.subtitle}>
-        Your bank account has been successfully created.
-      </Text>
-
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={handleGoToDashboard}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.buttonText}>Go to Dashboard</Text>
-        <Ionicons name="arrow-forward" size={20} color="white" />
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -43,36 +50,45 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  content: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
   },
   animationContainer: {
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
     marginBottom: 24,
   },
   animation: {
     width: '100%',
     height: '100%',
   },
+  textContainer: {
+    alignItems: 'center',
+    marginBottom: 40,
+    paddingHorizontal: 20,
+  },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '700',
     color: '#1E293B',
-    marginBottom: 12,
+    marginBottom: 16,
     textAlign: 'center',
+    fontFamily: 'Inter_700Bold',
   },
   subtitle: {
     fontSize: 16,
     color: '#64748B',
     textAlign: 'center',
-    marginBottom: 32,
+    lineHeight: 24,
   },
   button: {
     backgroundColor: '#2E86DE',
     paddingVertical: 16,
-    paddingHorizontal: 24,
+    paddingHorizontal: 32,
     borderRadius: 14,
     flexDirection: 'row',
     alignItems: 'center',
@@ -82,11 +98,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 5,
+    minWidth: 220,
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
-    marginRight: 8,
+    marginRight: 12,
+    fontFamily: 'Inter_600SemiBold',
   },
 });

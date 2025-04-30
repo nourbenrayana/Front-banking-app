@@ -6,6 +6,8 @@ import Colors from "../../constants/Colors";
 import LottieView from 'lottie-react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import Animated, { FadeIn } from 'react-native-reanimated';
+import { useTranslation } from 'react-i18next';
+
 
 const currencyOptions = [
   { label: 'USD', value: 'USD' },
@@ -26,6 +28,7 @@ export default function ExchangeScreen() {
   const [target, setTarget] = useState("EUR");
   const [result, setResult] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation('exchange');
 
   const handleConvert = async () => {
     if (!base || !target) {
@@ -63,13 +66,13 @@ export default function ExchangeScreen() {
         style={{ width: 150, height: 150, alignSelf: 'center', marginBottom: 20 }}
       />
         <Animated.Text entering={FadeIn.duration(1000)} style={styles.title}>
-          Currency Converter
+       {t("title")}
         </Animated.Text>
         
         <View style={styles.card}>
           {/* Base Currency */}
           <View style={styles.currencyContainer}>
-            <Text style={styles.label}>From</Text>
+            <Text style={styles.label}> {t("labels.from")}</Text>
             <RNPickerSelect
               onValueChange={(value) => setBase(value)}
               items={currencyOptions}
@@ -85,7 +88,7 @@ export default function ExchangeScreen() {
           
           {/* Target Currency */}
           <View style={styles.currencyContainer}>
-            <Text style={styles.label}>To</Text>
+            <Text style={styles.label}>{t("labels.to")}</Text>
             <RNPickerSelect
               onValueChange={(value) => setTarget(value)}
               items={currencyOptions}
@@ -102,7 +105,7 @@ export default function ExchangeScreen() {
           disabled={loading}
         >
           <Text style={styles.buttonText}>
-            {loading ? "Conversion..." : "Convert"}
+            {loading ? t('buttonLoading') : t('button')}
           </Text>
         </TouchableOpacity>
         
@@ -128,7 +131,7 @@ export default function ExchangeScreen() {
         
         {/* Info */}
         <Text style={styles.infoText}>
-        Enter currency codes (ex: USD, EUR, JPY)
+      {t('info')}
         </Text>
       </View>
     </KeyboardAvoidingView>

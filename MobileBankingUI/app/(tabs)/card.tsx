@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useUser } from '../../context/UserContext';
+import { useTranslation } from 'react-i18next';
 
 // Primary color
 const PRIMARY_COLOR = '#1E90FF';
@@ -39,6 +40,7 @@ const ModernCardUI = () => {
   const [activeTab, setActiveTab] = useState<'details' | 'management'>('details');
   const cardTilt = useRef(new Animated.Value(0)).current;
   const cardScale = useRef(new Animated.Value(1)).current;
+  const { t } = useTranslation('card');
 
   // Merge context data with defaults
   const mergedUserData = {
@@ -143,7 +145,7 @@ const ModernCardUI = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Card Management</Text>
+          <Text style={styles.headerTitle}>{t('title')}</Text>
         </View>
 
         {/* Interactive Card */}
@@ -179,7 +181,7 @@ const ModernCardUI = () => {
 
             <View style={styles.cardFooter}>
               <View>
-                <Text style={styles.cardLabel}>CARDHOLDER</Text>
+                <Text style={styles.cardLabel}>{t('details.cardholder')}</Text>
                 <Text style={styles.cardValue}>{mergedUserData.fullName}</Text>
               </View>
               <View>
@@ -203,7 +205,7 @@ const ModernCardUI = () => {
               color={activeTab === 'details' ? PRIMARY_COLOR : '#64748B'} 
             />
             <Text style={[styles.tabText, activeTab === 'details' && styles.activeTabText]}>
-              Details
+             {t('tabs.details')}
             </Text>
           </TouchableOpacity>
 
@@ -217,7 +219,7 @@ const ModernCardUI = () => {
               color={activeTab === 'management' ? PRIMARY_COLOR : '#64748B'} 
             />
             <Text style={[styles.tabText, activeTab === 'management' && styles.activeTabText]}>
-              Management
+             {t('tabs.management')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -228,27 +230,27 @@ const ModernCardUI = () => {
             <View style={styles.detailsContainer}>
               <DetailRow 
                 icon="person"
-                title="Cardholder" 
+                title={t('details.cardholder')}
                 value={mergedUserData.fullName}
               />
               <DetailRow 
                 icon="credit-card"
-                title="Card Number" 
+                title={t('details.cardNumber')}
                 value={maskedCardNumber}
               />
               <DetailRow 
                 icon="calendar-today"
-                title="Expiration Date" 
+                title={t('details.expiration')}
                 value={mergedAccountData.expiryDate}
               />
               <DetailRow 
                 icon="payment"
-                title="Card Type" 
+                title={t('details.cardType')}
                 value={mergedAccountData.cardType}
               />
               <DetailRow 
                 icon="lock"
-                title="Status" 
+                title={t('details.status')}
                 value={getStatusLabel(mergedAccountData.status)}
                 isLast
               />
@@ -257,7 +259,7 @@ const ModernCardUI = () => {
             <View style={styles.managementContainer}>
               <DetailRow 
                 icon="power-settings-new"
-                title="Enable/Disable Card"
+                title={t('management.enableDisable')}
                 isLast={false}
               >
                 <View style={styles.switchContainer}>
@@ -277,7 +279,7 @@ const ModernCardUI = () => {
 
               <DetailRow 
                 icon="delete"
-                title="Delete Card"
+                title={t('management.delete')}
                 isLast={true}
                 action={handleDeleteCard}
               >
@@ -292,7 +294,7 @@ const ModernCardUI = () => {
       <TouchableOpacity style={styles.addButton}
       onPress={() => router.push("/ajoutcart")}>
         <MaterialIcons name="add" size={28} color="white" />
-        <Text style={styles.addButtonText}>Add a Card</Text>
+        <Text style={styles.addButtonText}>{t('management.addCard')}</Text>
       </TouchableOpacity>
     </View>
   );

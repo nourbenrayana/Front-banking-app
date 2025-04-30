@@ -1,0 +1,21 @@
+{
+    "header": "My Account",
+    "accountInfo": {
+      "accountNumber": "Account Number",
+      "balance": "Balance",
+      "accountType": "Account Type",
+      "currency": "Currency"
+    },
+    "bankInfo": {
+      "title": "Bank Information",
+      "bank": "Bank",
+      "branch": "Branch",
+      "clientSince": "Client Since",
+      "website": "Website"
+    },
+    "status": {
+      "active": "Active",
+      "message": "Your account is in good standing and active"
+    },
+    "loading": "Loading bank data..."
+  }

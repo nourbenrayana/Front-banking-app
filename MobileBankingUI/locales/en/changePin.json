@@ -1,0 +1,21 @@
+{
+    "title": "Change PIN",
+    "subtitle": "Secure your account with a new PIN",
+    "currentPin": "Current PIN",
+    "newPin": "New PIN",
+    "confirmPin": "Confirm New PIN",
+    "update": "Update PIN",
+    "requirements": {
+      "title": "PIN Requirements",
+      "items": [
+        "PIN must be 6 digits",
+        "Don't use sequential numbers",
+        "Avoid obvious combinations"
+      ]
+    },
+    "errors": {
+      "mismatch": "New PINs don't match!",
+      "length": "PIN must be at least 4 digits"
+    },
+    "success": "PIN changed successfully!"
+  }

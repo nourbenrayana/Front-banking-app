@@ -5,7 +5,8 @@ import { Button, StyleSheet, Text, TouchableOpacity, View, Image, ActivityIndica
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { useRouter } from "expo-router";
-import config from '../../utils/config'
+import config from '../../utils/config';
+import { useTranslation } from 'react-i18next';
 
 export default function Camera() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -17,6 +18,7 @@ export default function Camera() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingResult, setProcessingResult] = useState<any>(null);
   const router = useRouter();
+  const { t } = useTranslation('camera');
 
   if (!permission) {
     return <View />;
@@ -25,8 +27,8 @@ export default function Camera() {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="Grant permission" />
+        <Text style={{ textAlign: 'center' }}>{t('camera.permissionRequest.message')}</Text>
+        <Button onPress={requestPermission} title={t('camera.permissionRequest.button')} />
       </View>
     );
   }
@@ -73,15 +75,12 @@ export default function Camera() {
     setIsProcessing(true);
     try {
       const formData = new FormData();
-      
-      // Utilisation directe de l'URI comme vous l'avez demandé
       formData.append('image', {
         uri: photo.uri,
         type: 'image/jpeg',
         name: 'passport.jpg',
       } as any);
       
-      // Envoi au backend Flask
       const result = await axios.post(`${config.URL}/process`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -92,7 +91,7 @@ export default function Camera() {
       setIsPhotoAccepted(true);
     } catch (error) {
       console.error('Error processing image:', error);
-      setProcessingResult({ error: "Failed to process image" });
+      setProcessingResult({ error: t('camera.processing.error') });
     } finally {
       setIsProcessing(false);
     }
@@ -114,7 +113,7 @@ export default function Camera() {
       {photo ? (
         <View style={styles.previewContainer}>
           <View style={styles.passportPlaceholder}>
-            <Text style={styles.placeholderText}>Passport image will appear here</Text>
+            <Text style={styles.placeholderText}>{t('camera.placeholder')}</Text>
             <Image
               style={styles.previewImage}
               source={{ uri: photo.uri }}
@@ -124,7 +123,7 @@ export default function Camera() {
           {isProcessing ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#007AFF" />
-              <Text style={styles.loadingText}>Processing image...</Text>
+              <Text style={styles.loadingText}>{t('camera.processing.loading')}</Text>
             </View>
           ) : processingResult ? (
             <View style={styles.resultContainer}>
@@ -132,18 +131,20 @@ export default function Camera() {
                 <Text style={styles.errorText}>{processingResult.error}</Text>
               ) : (
                 <>
-                  <Text style={styles.successText}>Image processed successfully!</Text>
-                  <Text style={styles.resultText}>Faces detected: {processingResult.faces_saved?.length || 0}</Text>
+                  <Text style={styles.successText}>{t('camera.processing.success')}</Text>
+                  <Text style={styles.resultText}>
+                    {t('camera.processing.faces')}: {processingResult.faces_saved?.length || 0}
+                  </Text>
                   {processingResult.faces_saved?.map((base64Face: string, index: number) => (
-                  <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
-                    <Text>Face {index + 1}</Text>
-                    <Image
-                      source={{ uri: `data:image/png;base64,${base64Face}` }}
-                      style={{ width: 150, height: 150, borderRadius: 10 }}
-                      resizeMode="cover"
-                    />
-                  </View>
-                ))}
+                    <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
+                      <Text>Face {index + 1}</Text>
+                      <Image
+                        source={{ uri: `data:image/png;base64,${base64Face}` }}
+                        style={{ width: 150, height: 150, borderRadius: 10 }}
+                        resizeMode="cover"
+                      />
+                    </View>
+                  ))}
                 </>
               )}
             </View>
@@ -151,14 +152,14 @@ export default function Camera() {
           
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.retakeButton} onPress={handleRetakePhoto}>
-              <Text style={styles.buttonText}>Retake</Text>
+              <Text style={styles.buttonText}>{t('camera.actions.retake')}</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.acceptButton} 
               onPress={handleAcceptPhoto}
               disabled={isProcessing}
             >
-              <Text style={styles.buttonText}>Process Image</Text>
+              <Text style={styles.buttonText}>{t('camera.actions.process')}</Text>
             </TouchableOpacity>
           </View>
           
@@ -167,15 +168,15 @@ export default function Camera() {
               style={styles.nextButton}
               onPress={() => router.push("/(auth)/detectface")}
             >
-              <Text style={styles.nextButtonText}>Continue to Face Detection</Text>
+              <Text style={styles.nextButtonText}>{t('camera.actions.continue')}</Text>
             </TouchableOpacity>
           )}
         </View>
       ) : (
         <View style={styles.cameraContainer}>
-          <Text style={styles.instructionText}>Scan Passport</Text>
+          <Text style={styles.instructionText}>{t('camera.instructions.title')}</Text>
           <Text style={styles.subInstructionText}>
-            Now place your phone directly on top of your passport so we can connect securely
+            {t('camera.instructions.subtitle')}
           </Text>
           
           <View style={styles.cameraModeSelector}>
@@ -183,18 +184,22 @@ export default function Camera() {
               style={[styles.cameraModeButton, cameraMode === 'normal' && styles.cameraModeButtonActive]}
               onPress={() => switchCameraMode('normal')}
             >
-              <Text style={[styles.cameraModeText, cameraMode === 'normal' && styles.cameraModeTextActive]}>Normal</Text>
+              <Text style={[styles.cameraModeText, cameraMode === 'normal' && styles.cameraModeTextActive]}>
+                {t('camera.modes.normal')}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={[styles.cameraModeButton, cameraMode === 'selfie' && styles.cameraModeButtonActive]}
               onPress={() => switchCameraMode('selfie')}
             >
-              <Text style={[styles.cameraModeText, cameraMode === 'selfie' && styles.cameraModeTextActive]}>Selfie</Text>
+              <Text style={[styles.cameraModeText, cameraMode === 'selfie' && styles.cameraModeTextActive]}>
+                {t('camera.modes.selfie')}
+              </Text>
             </TouchableOpacity>
           </View>
           
           <View style={styles.passportPlaceholder}>
-            <Text style={styles.placeholderText}>Passport image will appear here</Text>
+            <Text style={styles.placeholderText}>{t('camera.placeholder')}</Text>
             <CameraView 
               style={styles.camera} 
               facing={facing} 
@@ -203,11 +208,11 @@ export default function Camera() {
           </View>
           
           <TouchableOpacity style={styles.scanButton} onPress={handleTakePhoto}>
-            <Text style={styles.scanButtonText}>Scan Now</Text>
+            <Text style={styles.scanButtonText}>{t('camera.actions.scan')}</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.uploadButton} onPress={handlePickImage}>
-            <Text style={styles.uploadButtonText}>Upload from gallery</Text>
+            <Text style={styles.uploadButtonText}>{t('camera.actions.upload')}</Text>
           </TouchableOpacity>
         </View>
       )}

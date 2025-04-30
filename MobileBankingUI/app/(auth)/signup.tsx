@@ -1,4 +1,3 @@
-// SignUpScreen.tsx
 import React from 'react';
 import {
   StyleSheet, Text, View, TextInput, TouchableOpacity,
@@ -10,8 +9,11 @@ import { useRouter } from "expo-router";
 import { useUser } from '../../context/UserContext';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import config from '@/utils/config';
+import { useTranslation } from 'react-i18next';
+
 
 export default function SignUpScreen() {
+   const { t } = useTranslation("signup");  
   const router = useRouter();
   const { setUserData , userData } = useUser();
 
@@ -85,31 +87,31 @@ export default function SignUpScreen() {
     
 
     if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Full name required';
+      newErrors.fullName = t('errors.fullName');
       isValid = false;
     }
 
     if (!formData.email || !validateEmail(formData.email)) {
-      newErrors.email = 'Invalid email';
+      newErrors.email = t('errors.emai');
       isValid = false;
     }
 
     if (!formData.birthDate) {
-      newErrors.birthDate = 'Date of birth required';
+      newErrors.birthDate =  t('errors.birthDate');
       isValid = false;
     }
 
     if (!/^\d{8,15}$/.test(formData.phone)) {
-      newErrors.phone = 'Numéro invalide : 8 à 15 chiffres requis';
+      newErrors.phone = t('errors.phone');
       isValid = false;
     }
 
     if (!/^\d{5,11}$/.test(formData.idNumber)) {
-      newErrors.idNumber = 'Numéro invalide (min. 5 chiffres)';
+      newErrors.idNumber = t('errors.idNumber');
       isValid = false;
     }
     if (!validatePin(formData.pin)) {
-      newErrors.pin = 'PIN doit contenir exactement 6 chiffres';
+      newErrors.pin = t('errors.pin');
       isValid = false;
     }
     
@@ -120,7 +122,7 @@ export default function SignUpScreen() {
 
   const handleSignUp = async () => {
     if (!validateForm()) {
-      Alert.alert('Error', 'Please fill in all fields correctly.');
+      Alert.alert('Error', t('alerts.error'));
       return;
     }
   
@@ -148,7 +150,7 @@ export default function SignUpScreen() {
       // Log the data you're setting, not the state which might not be updated yet
       console.log("userData envoyé :", newUserData);
   
-      Alert.alert('Success', 'Registration successful!');
+      Alert.alert('Success', t('alerts.success'));
       router.push("/(auth)/get-started");
   
     } catch (error) {
@@ -169,8 +171,8 @@ export default function SignUpScreen() {
       </View>
 
       <View style={styles.header}>
-        <Text style={styles.title}>SIGN UP</Text>
-        <Text style={styles.subtitle}>FOR YOUR ACCOUNT</Text>
+        <Text style={styles.title}>{t('title')}</Text>
+        <Text style={styles.subtitle}>{t('subtitle')}</Text>
       </View>
 
       <View style={styles.form}>
@@ -178,7 +180,7 @@ export default function SignUpScreen() {
           <Ionicons name="person-outline" size={20} color="#2E86DE" style={styles.icon} />
           <TextInput
             style={styles.input}
-            placeholder="Full Name"
+            placeholder={t('inputs.fullName')}
             value={formData.fullName}
             onChangeText={(text) => setFormData(prev => ({ ...prev, fullName: text }))}
           />
@@ -189,7 +191,7 @@ export default function SignUpScreen() {
           <Ionicons name="mail-outline" size={20} color="#2E86DE" style={styles.icon} />
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder={t('inputs.email')}
             keyboardType="email-address"
             value={formData.email}
             onChangeText={handleEmailChange}
@@ -201,7 +203,7 @@ export default function SignUpScreen() {
           <Ionicons name="call-outline" size={20} color="#2E86DE" style={styles.icon} />
           <TextInput
             style={styles.input}
-            placeholder="Phone Number"
+            placeholder={t('inputs.phone')}
             keyboardType="phone-pad"
             value={formData.phone}
             onChangeText={(text) => handleNumberInput('phone', text)}
@@ -217,7 +219,7 @@ export default function SignUpScreen() {
           <Ionicons name="calendar-outline" size={20} color="#2E86DE" style={styles.icon} />
           <TextInput
             style={styles.input}
-            placeholder="Date of Birth (DD/MM/YYYY)"
+            placeholder={t('inputs.birthDate')}
             value={formData.birthDate}
             editable={false}
           />
@@ -238,7 +240,7 @@ export default function SignUpScreen() {
           <Ionicons name="card-outline" size={20} color="#2E86DE" style={styles.icon} />
           <TextInput
             style={styles.input}
-            placeholder="ID Number (CPF/RG)"
+            placeholder={t('inputs.idNumber')}
             value={formData.idNumber}
             onChangeText={(text) => handleNumberInput('idNumber', text)}
             maxLength={11}
@@ -250,7 +252,7 @@ export default function SignUpScreen() {
         <Ionicons name="keypad-outline" size={20} color="#2E86DE" style={styles.icon} />
         <TextInput
           style={styles.input}
-          placeholder="PIN (6 digits)"
+          placeholder={t('inputs.pin')}
           keyboardType="numeric"
           secureTextEntry
           value={formData.pin}

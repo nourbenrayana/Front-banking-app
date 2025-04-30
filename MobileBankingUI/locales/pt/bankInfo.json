@@ -1,0 +1,20 @@
+{
+  "welcome": "Bem-vindo",
+  "complete_bank_info": "Complete suas informações bancárias",
+  "account_type": "Tipo de conta *",
+  "initial_balance": "Saldo inicial *",
+  "currency": "Moeda *",
+  "complete_registration": "Concluir o cadastro",
+  "already_have_account": "Já tem uma conta bancária?",
+  "login": "Entrar",
+  "current_account": "Conta corrente",
+  "savings_account": "Conta poupança",
+  "checking_account": "Conta de verificação",
+  "business_account": "Conta empresarial",
+  "enter_amount": "Digite o valor",
+  "error_login_first": "Por favor, faça login primeiro",
+  "error_invalid_amount": "Por favor, insira um valor válido",
+  "error_negative_balance": "O saldo não pode ser negativo",
+  "success_account_created": "Conta criada com sucesso!",
+  "error_generic": "Ocorreu um erro"
+}

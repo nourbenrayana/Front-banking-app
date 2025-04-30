@@ -1,16 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Animated, Easing } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacity, 
+  Image, 
+  Animated, 
+  Easing,
+  I18nManager 
+} from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 const SignupLogin = () => {
   const router = useRouter();
   const [scaleValue] = useState(new Animated.Value(1));
   const [logoAnim] = useState(new Animated.Value(0));
+  const { t, i18n } = useTranslation('login');
+  const [showLanguagePicker, setShowLanguagePicker] = useState(false);
+
+  const languages = [
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'pt', name: 'Português', flag: '🇵🇹' },
+    { code: 'en', name: 'English', flag: '🇬🇧' },
+  ];
 
   useEffect(() => {
-    // Animation du logo au chargement
     Animated.sequence([
       Animated.timing(logoAnim, {
         toValue: 1,
@@ -43,6 +60,11 @@ const SignupLogin = () => {
     }).start();
   };
 
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    I18nManager.forceRTL(lng === 'ar');
+  };
+
   const logoScale = logoAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [0.5, 1]
@@ -55,6 +77,31 @@ const SignupLogin = () => {
 
   return (
     <View style={styles.container}>
+      {/* Language selector button */}
+      <TouchableOpacity 
+        style={styles.languageButton}
+        onPress={() => setShowLanguagePicker(!showLanguagePicker)}
+      >
+        <MaterialIcons name="language" size={24} color="#2E86DE" />
+      </TouchableOpacity>
+
+      {showLanguagePicker && (
+        <View style={styles.languagePicker}>
+          {languages.map((lang) => (
+            <TouchableOpacity
+              key={lang.code}
+              style={styles.languageOption}
+              onPress={() => {
+                changeLanguage(lang.code);
+                setShowLanguagePicker(false);
+              }}
+            >
+              <Text style={styles.languageText}>{lang.flag} {lang.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
       <Animated.View style={[styles.logoContainer, {
         transform: [{ scale: logoScale }],
         opacity: logoOpacity
@@ -66,11 +113,11 @@ const SignupLogin = () => {
         />
       </Animated.View>
       
-      <Text style={styles.title}>Welcome to Caixa Bank</Text>
-      <Text style={styles.subtitle}>Your financial freedom starts here</Text>
+      <Text style={styles.title}>{t('signupLogin.title')}</Text>
+      <Text style={styles.subtitle}>{t('signupLogin.subtitle')}</Text>
       
       <View style={styles.instructionContainer}>
-        <Text style={styles.instructionText}>Please use your login details to connect</Text>
+        <Text style={styles.instructionText}>{t('signupLogin.instruction')}</Text>
       </View>
 
       <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
@@ -81,24 +128,23 @@ const SignupLogin = () => {
           activeOpacity={0.8}
         >
           <MaterialCommunityIcons name="face-recognition" size={24} color="white" />
-          <Text style={styles.buttonText}>Login with Face ID</Text>
+          <Text style={styles.buttonText}>{t('signupLogin.loginFaceId')}</Text>
           <MaterialCommunityIcons name="chevron-right" size={24} color="white" />
         </TouchableOpacity>
       </Animated.View>
 
       <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
-      <TouchableOpacity 
-        style={[styles.loginButton, styles.passcodeButton]}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        onPress={() => router.push('/(auth)/LoginPinScreen')} 
-        activeOpacity={0.8}
-      >
-        <MaterialIcons name="password" size={24} color="white" />
-        <Text style={styles.buttonText}>Login with PassCode</Text>
-        <MaterialCommunityIcons name="chevron-right" size={24} color="white" />
-      </TouchableOpacity>
-
+        <TouchableOpacity 
+          style={[styles.loginButton, styles.passcodeButton]}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          onPress={() => router.push('/(auth)/LoginPinScreen')} 
+          activeOpacity={0.8}
+        >
+          <MaterialIcons name="password" size={24} color="white" />
+          <Text style={styles.buttonText}>{t('signupLogin.loginPasscode')}</Text>
+          <MaterialCommunityIcons name="chevron-right" size={24} color="white" />
+        </TouchableOpacity>
       </Animated.View>
 
       <TouchableOpacity 
@@ -106,7 +152,7 @@ const SignupLogin = () => {
         style={styles.signupContainer}
       >
         <Text style={styles.signupText}>
-          Don't have an account? <Text style={styles.signupLink}>Sign up</Text>
+          {t('signupLogin.noAccount')} <Text style={styles.signupLink}>{t('signupLogin.signup')}</Text>
         </Text>
       </TouchableOpacity>
     </View>
@@ -196,6 +242,35 @@ const styles = StyleSheet.create({
     color: '#2E86DE',
     fontWeight: '600',
     textDecorationLine: 'underline',
+  },
+  languageButton: {
+    position: 'absolute',
+    top: 40,
+    right: 30,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#f0f8ff',
+  },
+  languagePicker: {
+    position: 'absolute',
+    top: 80,
+    right: 30,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+    zIndex: 100,
+  },
+  languageOption: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  languageText: {
+    fontSize: 16,
   },
 });
 
