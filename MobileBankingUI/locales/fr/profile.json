@@ -1,0 +1,15 @@
+{
+    "title": "Profil",
+    "options": {
+      "myAccount": "Mon compte",
+      "privacyPolicy": "Politique de confidentialité",
+      "settings": "Paramètres",
+      "helpSupport": "Aide et Support",
+      "contactUs": "Contactez-nous"
+    },
+    "logout": "Déconnexion",
+    "imagePermission": {
+      "title": "Permission refusée",
+      "message": "Vous devez autoriser l'accès à la galerie."
+    }
+  }

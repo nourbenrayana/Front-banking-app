@@ -1,0 +1,22 @@
+{
+    "title": "Fale Conosco",
+    "subtitle": "Estamos aqui para ajudar",
+    "sendMessage": "Envie-nos uma mensagem",
+    "labels": {
+      "fullName": "Nome completo",
+      "email": "Email",
+      "message": "Mensagem"
+    },
+    "messagePlaceholder": "Descreva sua solicitação...",
+    "sendButton": "Enviar Mensagem",
+    "directContact": "Contato Direto",
+    "contactMethods": {
+      "phone": "Telefone",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "address": "Endereço"
+    },
+    "agency": "Nossa Agência",
+    "viewMap": "Ver no mapa",
+    "success": "Entraremos em contato em breve!"
+  }

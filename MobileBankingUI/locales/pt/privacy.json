@@ -1,0 +1,41 @@
+{
+    "title": "Política de Privacidade",
+    "lastUpdated": "Última atualização",
+    "sections": {
+      "introduction": {
+        "title": "1. Introdução",
+        "content": "Estamos comprometidos em proteger sua privacidade. Esta política explica como coletamos, usamos e protegemos suas informações quando você usa nosso aplicativo."
+      },
+      "dataCollection": {
+        "title": "2. Dados Coletados",
+        "items1":  "Identificação pessoal (nome, email, telefone)",
+        "items2":"Informações do dispositivo (modelo, versão do SO)",
+        "items3": "Dados de uso (interações com o app)" 
+        
+      },
+      "dataUse": {
+        "title": "3. Uso dos Dados",
+        "content": "Usamos as informações coletadas para:",
+        "items1":  "Fornecer e manter nosso serviço",
+        "items2" :"Melhorar a experiência do usuário",
+        "items3":"Garantir a segurança do aplicativo"
+        
+      },
+      "dataSharing": {
+        "title": "4. Compartilhamento de Dados",
+        "content": "Não vendemos seus dados pessoais. Podemos compartilhar informações com:",
+        "items1": "Prestadores de serviços (para funcionalidades do app)",
+        "items2": "Autoridades legais (quando exigido por lei)"
+        
+      },
+      "userRights": {
+        "title": "5. Seus Direitos",
+        "content": "Você tem o direito de:",
+        "items1": "Acessar e atualizar suas informações",
+        "items2": "Solicitar a exclusão dos seus dados",
+        "items3": "Exportar seus dados"
+        
+      },
+      "consent": "Ao usar nosso aplicativo, você concorda com nossa Política de Privacidade."
+    }
+  }

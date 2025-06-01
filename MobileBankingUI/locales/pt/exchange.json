@@ -1,0 +1,15 @@
+{
+    "title": "Conversor de Moedas",
+    "labels": {
+      "from": "De",
+      "to": "Para"
+    },
+    "button": "Converter",
+    "buttonLoading": "Convertendo...",
+    "result": "1 {{base}} = {{result}} {{target}}",
+    "info": "Insira os códigos de moeda (ex: USD, EUR, JPY)",
+    "errors": {
+      "noCurrencies": "Selecione as moedas",
+      "conversionFailed": "Falha na conversão"
+    }
+  }

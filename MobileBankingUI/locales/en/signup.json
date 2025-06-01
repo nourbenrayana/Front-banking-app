@@ -1,0 +1,25 @@
+{
+    "title": "SIGN UP",
+    "subtitle": "FOR YOUR ACCOUNT",
+    "inputs": {
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "birthDate": "Date of Birth (DD/MM/YYYY)",
+      "idNumber": "ID Number (CPF/RG)",
+      "pin": "PIN (6 digits)"
+    },
+    "errors": {
+      "fullName": "Full name required",
+      "email": "Invalid email",
+      "birthDate": "Date of birth required",
+      "phone": "Invalid number: 8 to 15 digits required",
+      "idNumber": "Invalid number (min. 5 digits)",
+      "pin": "PIN must contain exactly 6 digits"
+    },
+    "nextButton": "Next",
+    "alerts": {
+      "error": "Please fill in all fields correctly.",
+      "success": "Registration successful!"
+    }
+  }

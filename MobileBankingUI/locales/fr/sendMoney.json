@@ -1,0 +1,18 @@
+{
+    "title": "ENVOYER DE L'ARGENT",
+    "subtitle": "Détails du transfert",
+    "inputs": {
+      "amount": "Montant",
+      "currency": "Sélectionnez la devise"
+    },
+    "button": "Confirmer le transfert",
+    "modal": {
+      "title": "Sélectionnez la devise",
+      "close": "Fermer"
+    },
+    "errors": {
+      "amountRequired": "Veuillez entrer un montant",
+      "invalidAmount": "Montant invalide"
+    },
+    "success": "Transfert effectué avec succès !"
+  }

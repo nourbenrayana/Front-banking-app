@@ -1,0 +1,21 @@
+{
+    "title": "Alterar PIN",
+    "subtitle": "Proteja sua conta com um novo PIN",
+    "currentPin": "PIN Atual",
+    "newPin": "Novo PIN",
+    "confirmPin": "Confirmar Novo PIN",
+    "update": "Atualizar PIN",
+    "requirements": {
+      "title": "Requisitos do PIN",
+      "items": [
+        "O PIN deve ter 6 dígitos",
+        "Não use números sequenciais",
+        "Evite combinações óbvias"
+      ]
+    },
+    "errors": {
+      "mismatch": "Os novos PINs não coincidem!",
+      "length": "O PIN deve ter pelo menos 4 dígitos"
+    },
+    "success": "PIN alterado com sucesso!"
+  }

@@ -1,0 +1,20 @@
+{
+  "welcome": "Bienvenue",
+  "complete_bank_info": "Complétez vos informations bancaires",
+  "account_type": "Type de compte *",
+  "initial_balance": "Solde initial *",
+  "currency": "Devise *",
+  "complete_registration": "Finaliser l'inscription",
+  "already_have_account": "Vous avez déjà un compte bancaire ?",
+  "login": "Connexion",
+  "current_account": "Compte courant",
+  "savings_account": "Compte épargne",
+  "checking_account": "Compte chèque",
+  "business_account": "Compte entreprise",
+  "enter_amount": "Entrez le montant",
+  "error_login_first": "Veuillez d'abord vous connecter",
+  "error_invalid_amount": "Veuillez entrer un montant valide",
+  "error_negative_balance": "Le solde ne peut pas être négatif",
+  "success_account_created": "Compte créé avec succès !",
+  "error_generic": "Une erreur s'est produite"
+}

@@ -1,0 +1,41 @@
+{
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated",
+    "sections": {
+      "introduction": {
+        "title": "1. Introduction",
+        "content": "We are committed to protecting your privacy. This policy explains how we collect, use, and safeguard your information when you use our application."
+      },
+      "dataCollection": {
+        "title": "2. Data We Collect",
+        "items1": "Personal identification (name, email, phone)",
+         "items2" :"Device information (model, OS version)",
+         "items3" :"Usage data (app interactions)"    
+      },
+      "dataUse": {
+        "title": "3. Use of Your Data",
+        "content": "We use the information we collect to:",
+        "items1": "Provide and maintain our service",
+        "items2":"Improve user experience",
+        "items3": "Ensure application security"
+        
+         
+        
+      },
+      "dataSharing": {
+        "title": "4. Data Sharing",
+        "content": "We do not sell your personal data. We may share information with:",
+        "items1": "Service providers (for app functionality)",
+        "items2":"Legal authorities (when required by law)"
+      },
+      "userRights": {
+        "title": "5. Your Rights",
+        "content": "You have the right to:",
+        "items1":  "Access and update your information",  
+        "items2":"Request deletion of your data",
+        "items3": "Export your data"
+    
+      },
+      "consent": "By using our application, you consent to our Privacy Policy."
+    }
+  }

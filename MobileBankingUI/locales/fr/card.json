@@ -1,0 +1,26 @@
+{
+    "title": "Gestion de Carte",
+    "status": {
+      "active": "Active",
+      "blocked": "Bloquée",
+      "expired": "Expirée",
+      "unknown": "Inconnue"
+    },
+    "tabs": {
+      "details": "Détails",
+      "management": "Gestion"
+    },
+    "details": {
+      "cardholder": "Titulaire",
+      "cardNumber": "Numéro de carte",
+      "expiration": "Date d'expiration",
+      "cardType": "Type de carte",
+      "status": "Statut"
+    },
+    "management": {
+      "enableDisable": "Activer/Désactiver",
+      "delete": "Supprimer la carte",
+      "irreversible": "Action irréversible",
+      "addCard": "Ajouter une carte"
+    }
+  }

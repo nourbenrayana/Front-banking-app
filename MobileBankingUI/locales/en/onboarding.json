@@ -1,0 +1,24 @@
+{
+    "skip": "Skip",
+    "slides": [
+      {
+        "title": "Free Transactions",
+        "description": "Provides the quality of the financial system with free money transactions without any fees."
+      },
+      {
+        "title": "Bills Payment",
+        "subtitle": "Made Easy",
+        "description": "Pay monthly or daily bills at home in a site of TransferMe."
+      },
+      {
+        "title": "Easy, Fast & Trusted",
+        "description": "Fast money transfer and guaranteed safe transactions with others."
+      },
+      {
+        "title": "Secure Face Recognition",
+        "subtitle": "Your Identity, Your Key",
+        "description": "Our advanced facial recognition ensures the highest level of security for all your transactions."
+      }
+    ],
+    "continue": "Continue"
+  }

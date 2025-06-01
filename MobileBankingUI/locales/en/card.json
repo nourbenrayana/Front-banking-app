@@ -1,0 +1,26 @@
+{
+    "title": "Card Management",
+    "status": {
+      "active": "Active",
+      "blocked": "Blocked",
+      "expired": "Expired",
+      "unknown": "Unknown"
+    },
+    "tabs": {
+      "details": "Details",
+      "management": "Management"
+    },
+    "details": {
+      "cardholder": "Cardholder",
+      "cardNumber": "Card Number",
+      "expiration": "Expiration Date",
+      "cardType": "Card Type",
+      "status": "Status"
+    },
+    "management": {
+      "enableDisable": "Enable/Disable Card",
+      "delete": "Delete Card",
+      "irreversible": "Irreversible action",
+      "addCard": "Add a Card"
+    }
+  }

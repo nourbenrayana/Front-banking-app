@@ -1,0 +1,15 @@
+{
+    "header": {
+      "title": "ADD RECIPIENT",
+      "subtitle": "Enter Payment Details"
+    },
+    "inputs": {
+      "fullName": "Full Name",
+      "bankAccount": "Bank Account (RIB) *",
+      "phoneNumber": "Phone Number (optional)"
+    },
+    "button": "Add",
+    "errors": {
+      "ribRequired": "RIB is required"
+    }
+  }

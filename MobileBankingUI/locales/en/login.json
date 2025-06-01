@@ -1,0 +1,11 @@
+{
+  "signupLogin": {
+    "title": "Welcome to Caixa Bank",
+    "subtitle": "Your financial freedom starts here",
+    "instruction": "Use your credentials to login",
+    "loginFaceId": "Login with Face ID",
+    "loginPasscode": "Login with PIN code",
+    "noAccount": "Don't have an account yet?",
+    "signup": "Sign up"
+  }
+}

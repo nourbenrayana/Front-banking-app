@@ -1,0 +1,22 @@
+{
+    "title": "Contactez-nous",
+    "subtitle": "Nous sommes là pour vous aider",
+    "sendMessage": "Envoyez-nous un message",
+    "labels": {
+      "fullName": "Nom complet",
+      "email": "Email",
+      "message": "Message"
+    },
+    "messagePlaceholder": "Décrivez votre demande...",
+    "sendButton": "Envoyer le message",
+    "directContact": "Contact direct",
+    "contactMethods": {
+      "phone": "Téléphone",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "address": "Adresse"
+    },
+    "agency": "Notre agence",
+    "viewMap": "Voir sur la carte",
+    "success": "Nous vous contacterons bientôt !"
+  }

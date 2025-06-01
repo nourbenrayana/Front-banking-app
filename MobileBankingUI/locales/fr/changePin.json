@@ -1,0 +1,21 @@
+{
+    "title": "Changer le code PIN",
+    "subtitle": "Sécurisez votre compte avec un nouveau code",
+    "currentPin": "Code PIN actuel",
+    "newPin": "Nouveau code PIN",
+    "confirmPin": "Confirmer le nouveau code",
+    "update": "Mettre à jour",
+    "requirements": {
+      "title": "Exigences du code PIN",
+      "items": [
+        "Le code doit avoir 6 chiffres",
+        "N'utilisez pas de séquences numériques",
+        "Évitez les combinaisons évidentes"
+      ]
+    },
+    "errors": {
+      "mismatch": "Les nouveaux codes ne correspondent pas !",
+      "length": "Le code doit avoir au moins 4 chiffres"
+    },
+    "success": "Code PIN changé avec succès !"
+  }

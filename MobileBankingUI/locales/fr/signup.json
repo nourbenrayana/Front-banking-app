@@ -1,0 +1,25 @@
+{
+    "title": "INSCRIPTION",
+    "subtitle": "POUR VOTRE COMPTE",
+    "inputs": {
+      "fullName": "Nom complet",
+      "email": "Email",
+      "phone": "Numéro de téléphone",
+      "birthDate": "Date de naissance (JJ/MM/AAAA)",
+      "idNumber": "Numéro d'identité (CPF/RG)",
+      "pin": "PIN (6 chiffres)"
+    },
+    "errors": {
+      "fullName": "Nom complet requis",
+      "email": "Email invalide",
+      "birthDate": "Date de naissance requise",
+      "phone": "Numéro invalide : 8 à 15 chiffres requis",
+      "idNumber": "Numéro invalide (min. 5 chiffres)",
+      "pin": "Le PIN doit contenir exactement 6 chiffres"
+    },
+    "nextButton": "Suivant",
+    "alerts": {
+      "error": "Veuillez remplir tous les champs correctement.",
+      "success": "Inscription réussie !"
+    }
+  }

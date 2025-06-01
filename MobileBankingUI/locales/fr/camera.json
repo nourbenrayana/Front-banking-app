@@ -1,0 +1,30 @@
+{
+  "camera": {
+    "permissionRequest": {
+      "message": "Nous avons besoin de votre permission pour accéder à la caméra",
+      "button": "Autoriser l'accès"
+    },
+    "instructions": {
+      "title": "Scanner le passeport",
+      "subtitle": "Placez votre téléphone directement sur votre passeport pour une connexion sécurisée"
+    },
+    "modes": {
+      "normal": "Normal",
+      "selfie": "Selfie"
+    },
+    "placeholder": "L'image du passeport apparaîtra ici",
+    "actions": {
+      "scan": "Scanner maintenant",
+      "upload": "Importer depuis la galerie",
+      "retake": "Reprendre",
+      "process": "Traiter l'image",
+      "continue": "Continuer vers la détection faciale"
+    },
+    "processing": {
+      "loading": "Traitement de l'image...",
+      "success": "Image traitée avec succès !",
+      "error": "Échec du traitement de l'image",
+      "faces": "Visages détectés"
+    }
+  }
+}

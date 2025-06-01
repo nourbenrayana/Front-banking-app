@@ -1,0 +1,19 @@
+{
+  "selfieVerification": {
+    "header": {
+      "title": "Prenez un selfie",
+      "subtitle": "Nous utilisons votre selfie pour le comparer avec la photo de votre passeport"
+    },
+    "instructions": {
+      "lighting": {
+        "title": "Bon éclairage",
+        "detail": "Assurez-vous d'être dans un endroit bien éclairé et que vos deux oreilles soient découvertes"
+      },
+      "position": {
+        "title": "Regard droit",
+        "detail": "Tenez votre téléphone à hauteur des yeux et regardez droit vers la caméra"
+      }
+    },
+    "button": "Ouvrir la caméra"
+  }
+}

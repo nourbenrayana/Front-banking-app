@@ -1,0 +1,15 @@
+{
+  "title": "Tirar Selfie",
+  "subtitle": "Usamos a sua selfie para comparar com a foto do seu passaporte",
+  "instructions": [
+    {
+      "title": "Boa iluminação",
+      "detail": "Certifique-se de estar em um local bem iluminado e com as orelhas descobertas"
+    },
+    {
+      "title": "Olhe diretamente",
+      "detail": "Segure o telefone ao nível dos olhos e olhe diretamente para a câmera"
+    }
+  ],
+  "openCamera": "Abrir câmera"
+}

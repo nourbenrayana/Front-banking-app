@@ -1,0 +1,20 @@
+{
+  "welcome": "Welcome",
+  "complete_bank_info": "Complete your banking information",
+  "account_type": "Account type *",
+  "initial_balance": "Initial balance *",
+  "currency": "Currency *",
+  "complete_registration": "Complete registration",
+  "already_have_account": "Already have a bank account?",
+  "login": "Login",
+  "current_account": "Current account",
+  "savings_account": "Savings account",
+  "checking_account": "Checking account",
+  "business_account": "Business account",
+  "enter_amount": "Enter amount",
+  "error_login_first": "Please login first",
+  "error_invalid_amount": "Please enter a valid amount",
+  "error_negative_balance": "Balance cannot be negative",
+  "success_account_created": "Account created successfully!",
+  "error_generic": "An error occurred"
+}

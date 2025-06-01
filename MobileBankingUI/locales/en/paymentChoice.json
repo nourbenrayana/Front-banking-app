@@ -1,0 +1,11 @@
+{
+    "title": "Payment Options",
+    "payBill": {
+      "title": "Pay a Bill",
+      "subtitle": "Electricity, water bills, etc."
+    },
+    "scanQR": {
+      "title": "Scan QR Code",
+      "subtitle": "Quick payment via QR"
+    }
+  }
