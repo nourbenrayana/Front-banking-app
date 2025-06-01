@@ -1,0 +1,26 @@
+{
+  "cameraCard": {
+    "permission": {
+      "message": "We need your permission to use the camera",
+      "button": "Grant permission"
+    },
+    "instructions": {
+      "front": "Scan front side of the ID card",
+      "back": "Scan back side of the ID card",
+      "preview": "Captured Photos"
+    },
+    "buttons": {
+      "switchCamera": "Switch to {mode} Camera",
+      "takePhoto": "Take a photo",
+      "importGallery": "Import from gallery",
+      "retake": "Retake",
+      "next": "Next"
+    },
+    "labels": {
+      "front": "Front",
+      "back": "Back",
+      "normal": "Back",
+      "selfie": "Selfie"
+    }
+  }
+}

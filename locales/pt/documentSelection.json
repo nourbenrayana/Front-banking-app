@@ -1,0 +1,10 @@
+{
+  "scanSelection": {
+    "title": "Escolher tipo de digitalização",
+    "subtitle": "Selecione o documento que deseja digitalizar",
+    "passportTitle": "Passaporte",
+    "passportDescription": "Digitalize a página de identidade do seu passaporte",
+    "idCardTitle": "Cartão de identidade",
+    "idCardDescription": "Digitalize o lado frontal do seu cartão de identidade"
+  }
+}

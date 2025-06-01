@@ -1,0 +1,37 @@
+{
+    "header": "Caixa Bank Card Application",
+    "cardType": "Card Type",
+    "personalInfo": "Personal Information",
+    "address": "Address",
+    "contactInfo": "Contact Information",
+    "reason": "Reason for Additional Card",
+    "placeholders": {
+      "firstName": "First Name *",
+      "lastName": "Last Name *",
+      "cpf": "CPF *",
+      "birthDate": "Birth Date (DD/MM/YYYY)",
+      "address": "Street Address",
+      "city": "City",
+      "zipCode": "ZIP Code",
+      "phone": "Phone Number",
+      "email": "Email",
+      "reason": "Please explain why you need an additional card"
+    },
+    "submit": "Submit Application",
+    "note": "* Required fields",
+    "errors": {
+      "firstName": "First name is required",
+      "lastName": "Last name is required",
+      "cpf": "CPF is required"
+    },
+    "success": "Card application submitted successfully",
+    "cardOptions": [
+      { "label": "ELO Credit Card", "value": "ELO_CREDIT" },
+      { "label": "ELO Debit Card", "value": "ELO_DEBIT" },
+      { "label": "Visa Infinite", "value": "VISA_INFINITE" },
+      { "label": "Visa Platinum", "value": "VISA_PLATINUM" },
+      { "label": "Visa Gold", "value": "VISA_GOLD" },
+      { "label": "Mastercard Black", "value": "MASTERCARD_BLACK" },
+      { "label": "Caixa Fácil Card", "value": "CAIXA_FACIL" }
+    ]
+  }

@@ -1,0 +1,7 @@
+{
+  "passportScan": {
+    "title1": "Escanear Passaporte",
+    "instructions1": "Agora coloque o seu telefone diretamente em cima do seu passaporte\npara que possamos nos conectar com segurança",
+    "scanButton1": "Escanear agora"
+  }
+}

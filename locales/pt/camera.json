@@ -1,0 +1,30 @@
+{
+  "camera": {
+    "permissionRequest": {
+      "message": "Precisamos da sua permissão para acessar a câmera",
+      "button": "Conceder permissão"
+    },
+    "instructions": {
+      "title": "Escanear passaporte",
+      "subtitle": "Posicione seu telefone diretamente sobre seu passaporte para uma conexão segura"
+    },
+    "modes": {
+      "normal": "Normal",
+      "selfie": "Selfie"
+    },
+    "placeholder": "A imagem do passaporte aparecerá aqui",
+    "actions": {
+      "scan": "Escanear agora",
+      "upload": "Carregar da galeria",
+      "retake": "Tirar novamente",
+      "process": "Processar imagem",
+      "continue": "Continuar para detecção facial"
+    },
+    "processing": {
+      "loading": "Processando imagem...",
+      "success": "Imagem processada com sucesso!",
+      "error": "Falha ao processar a imagem",
+      "faces": "Rostos detectados"
+    }
+  }
+}

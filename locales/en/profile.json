@@ -1,0 +1,15 @@
+{
+    "title": "Profile",
+    "options": {
+      "myAccount": "My account",
+      "privacyPolicy": "Privacy policy",
+      "settings": "Settings",
+      "helpSupport": "Help and Support",
+      "contactUs": "Contact Us"
+    },
+    "logout": "Logout",
+    "imagePermission": {
+      "title": "Permission denied",
+      "message": "You need to grant gallery access."
+    }
+  }

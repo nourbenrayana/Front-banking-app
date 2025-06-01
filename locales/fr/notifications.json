@@ -1,0 +1,14 @@
+{
+    "header": "Notifications",
+    "notifications": {
+      "priceAlert": {
+        "title": "Alerte de prix",
+        "content": "Le Bitcoin (BTC) a baissé de 5.98% à $24,433.58 ces dernières 24 heures."
+      },
+      "transactionSent": {
+        "title": "Transaction envoyée",
+        "content": "1.30 ETH envoyé à 0x36246976"
+      }
+    },
+    "refreshText": "Glissez vers le bas pour actualiser"
+  }

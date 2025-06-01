@@ -1,0 +1,18 @@
+{
+    "title": "ENVIAR DINHEIRO",
+    "subtitle": "Detalhes da transferência",
+    "inputs": {
+      "amount": "Valor",
+      "currency": "Selecione a moeda"
+    },
+    "button": "Confirmar Transferência",
+    "modal": {
+      "title": "Selecione a Moeda",
+      "close": "Fechar"
+    },
+    "errors": {
+      "amountRequired": "Insira um valor",
+      "invalidAmount": "Valor inválido"
+    },
+    "success": "Transferência concluída com sucesso!"
+  }

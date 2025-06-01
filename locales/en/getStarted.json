@@ -1,0 +1,9 @@
+{
+  "onboarding": {
+    "title": "Let's get started",
+    "subtitle": "To create ID and verify your identity you need to do these 3 simple steps",
+    "step1": "Scan document",
+    "step2": "Take Selfie",
+    "button": "I'm ready"
+  }
+}

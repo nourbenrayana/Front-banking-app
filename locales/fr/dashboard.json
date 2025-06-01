@@ -1,0 +1,12 @@
+{
+  "greeting": "Bonjour, {{name}} !",
+  "welcome_back": "Bienvenue sur votre tableau de bord",
+  "quick_actions": "Actions Rapides",
+  "send": "Envoyer",
+  "request": "Demander",
+  "pay": "Payer",
+  "swap": "Échanger",
+  "recent_transactions": "Transactions Récentes",
+  "view_all": "Voir tout",
+  "no_transactions": "Aucune transaction récente"
+}

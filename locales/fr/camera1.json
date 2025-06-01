@@ -1,0 +1,21 @@
+{
+  "modes": {
+    "normal": "Normal",
+    "selfie": "Selfie"
+  },
+  "switchCamera": "Passer à la caméra {mode}",
+  "instructions": {
+    "passport": "Placez votre téléphone au-dessus de votre passeport",
+    "idFront": "Scannez le recto de la carte d'identité",
+    "idBack": "Scannez le verso de la carte d'identité"
+  },
+  "permissionNeeded": "Nous avons besoin de votre permission pour utiliser la caméra",
+  "grantPermission": "Accorder la permission",
+  "takePhoto": "Prendre une photo",
+  "importFromGallery": "Importer depuis la galerie",
+  "capturedPhotos": "Photos capturées",
+  "front": "Recto",
+  "back": "Verso",
+  "retake": "Reprendre",
+  "next": "Suivant"
+}

@@ -1,0 +1,21 @@
+{
+    "header": "Mon Compte",
+    "accountInfo": {
+      "accountNumber": "Numéro de compte",
+      "balance": "Solde",
+      "accountType": "Type de compte",
+      "currency": "Devise"
+    },
+    "bankInfo": {
+      "title": "Informations bancaires",
+      "bank": "Banque",
+      "branch": "Agence",
+      "clientSince": "Client depuis",
+      "website": "Site web"
+    },
+    "status": {
+      "active": "Actif",
+      "message": "Votre compte est en règle et actif"
+    },
+    "loading": "Chargement des données bancaires..."
+  }

@@ -1,0 +1,14 @@
+{
+    "header": "Notifications",
+    "notifications": {
+      "priceAlert": {
+        "title": "Price Alert",
+        "content": "Bitcoin (BTC) is down 5.98% to $24,433.58 in the last 24 hours."
+      },
+      "transactionSent": {
+        "title": "Transaction Sent",
+        "content": "1.30 ETH sent to 0x36246976"
+      }
+    },
+    "refreshText": "Swipe down to refresh"
+  }

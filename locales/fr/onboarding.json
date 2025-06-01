@@ -1,0 +1,24 @@
+{
+    "skip": "Passer",
+    "slides": [
+      {
+        "title": "Transactions Gratuites",
+        "description": "Bénéficiez d'un système financier de qualité avec des transactions gratuites sans frais."
+      },
+      {
+        "title": "Paiement de Factures",
+        "subtitle": "Simplifié",
+        "description": "Payez vos factures mensuelles ou quotidiennes depuis chez vous avec TransferMe."
+      },
+      {
+        "title": "Simple, Rapide et Sécurisé",
+        "description": "Transferts d'argent rapides et transactions garanties avec vos proches."
+      },
+      {
+        "title": "Reconnaissance Faciale Sécurisée",
+        "subtitle": "Votre Identité, Votre Clé",
+        "description": "Notre technologie de reconnaissance faciale assure un niveau de sécurité maximal pour toutes vos transactions."
+      }
+    ],
+    "continue": "Continuer"
+  }

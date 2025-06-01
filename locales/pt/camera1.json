@@ -1,0 +1,26 @@
+{
+  "cameraCard": {
+    "permission": {
+      "message": "Precisamos da sua permissão para usar a câmera",
+      "button": "Conceder permissão"
+    },
+    "instructions": {
+      "front": "Escaneie a frente do documento de identidade",
+      "back": "Escaneie o verso do documento de identidade",
+      "preview": "Fotos capturadas"
+    },
+    "buttons": {
+      "switchCamera": "Mudar para câmera {mode}",
+      "takePhoto": "Tirar foto",
+      "importGallery": "Importar da galeria",
+      "retake": "Tirar novamente",
+      "next": "Próximo"
+    },
+    "labels": {
+      "front": "Frente",
+      "back": "Verso",
+      "normal": "Traseira",
+      "selfie": "Selfie"
+    }
+  }
+}

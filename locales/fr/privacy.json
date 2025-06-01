@@ -1,0 +1,42 @@
+{
+    "title": "Politique de Confidentialité",
+    "lastUpdated": "Dernière mise à jour",
+    "sections": {
+      "introduction": {
+        "title": "1. Introduction",
+        "content": "Nous nous engageons à protéger votre vie privée. Cette politique explique comment nous collectons, utilisons et protégeons vos informations lorsque vous utilisez notre application."
+      },
+      "dataCollection": {
+        "title": "2. Données Collectées",
+        "items1": "Identification personnelle (nom, email, téléphone)",
+        "items2":"Informations sur l'appareil (modèle, version du système d'exploitation)",
+        "items3": "Données d'utilisation (interactions avec l'application)"
+      },
+      "dataUse": {
+        "title": "3. Utilisation des Données",
+        "content": "Nous utilisons les informations collectées pour :",
+        "items1":  "Fournir et maintenir notre service",
+          "items2":"Améliorer l'expérience utilisateur",
+          "items3":"Assurer la sécurité de l'application"
+        
+      },
+      "dataSharing": {
+        "title": "4. Partage des Données",
+        "content": "Nous ne vendons pas vos données personnelles. Nous pouvons partager des informations avec :",
+        "items1": "Prestataires de services (pour les fonctionnalités de l'application)",
+          
+        "items2":"Autorités légales (si requis par la loi)"
+        
+      },
+      "userRights": {
+        "title": "5. Vos Droits",
+        "content": "Vous avez le droit de :",
+        "items1":  "Accéder et mettre à jour vos informations", 
+        
+        "items2":"Demander la suppression de vos données",
+        "items3" :"Exporter vos données"
+        
+      },
+      "consent": "En utilisant notre application, vous acceptez notre Politique de Confidentialité."
+    }
+  }

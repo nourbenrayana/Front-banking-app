@@ -1,0 +1,26 @@
+{
+    "header": {
+      "title": "Transaction History",
+      "filters": {
+        "all": "All",
+        "incoming": "Incoming",
+        "outgoing": "Outgoing"
+      }
+    },
+    "transactions": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "paymentReceived": "Payment Received",
+      "paymentSent": "Payment Sent",
+      "deposit": "Deposit",
+      "withdrawal": "Withdrawal",
+      "from": "From",
+      "to": "To",
+      "unknown": "Unknown"
+    },
+    "loading": "Loading transactions...",
+    "empty": {
+      "title": "No transactions found",
+      "subtitle": "Your transactions will appear here"
+    }
+  }

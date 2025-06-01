@@ -1,0 +1,18 @@
+{
+    "title": "SEND MONEY",
+    "subtitle": "Transfer details",
+    "inputs": {
+      "amount": "Amount",
+      "currency": "Select Currency"
+    },
+    "button": "Confirm Transfer",
+    "modal": {
+      "title": "Select Currency",
+      "close": "Close"
+    },
+    "errors": {
+      "amountRequired": "Please enter an amount",
+      "invalidAmount": "Invalid amount"
+    },
+    "success": "Transfer completed successfully!"
+  }

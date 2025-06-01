@@ -1,0 +1,26 @@
+{
+    "header": {
+      "title": "Historique des transactions",
+      "filters": {
+        "all": "Toutes",
+        "incoming": "Entrantes",
+        "outgoing": "Sortantes"
+      }
+    },
+    "transactions": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "paymentReceived": "Paiement reçu",
+      "paymentSent": "Paiement envoyé",
+      "deposit": "Dépôt",
+      "withdrawal": "Retrait",
+      "from": "De",
+      "to": "À",
+      "unknown": "Inconnu"
+    },
+    "loading": "Chargement des transactions...",
+    "empty": {
+      "title": "Aucune transaction trouvée",
+      "subtitle": "Vos transactions apparaîtront ici"
+    }
+  }
